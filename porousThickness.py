@@ -4,6 +4,7 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 from matplotlib import cm
+from statistics import mean, median
 
 from skimage import data, io, filters
 from skimage.feature import blob_dog, blob_log, blob_doh, canny
@@ -22,10 +23,29 @@ example_file = glob.glob(r"./examples/WF56_1_20.tif")[0]
 #reading the file
 image = io.imread(example_file, as_gray=True)
 
+mask_filter_min = [min(row) for row in image]
+mask_filter_max = [max(row) for row in image]
+mask_filter_mean = [mean(row) for row in image]
+mask_filter_median = [median(row) for row in image]
+
+def is_noise(row_min,row_max,row_mean,row_median): 
+    return [row_min == 0 and row_max > 253 and row_mean > 147 and row_mean < 178 and row_median > 24 and row_median < 79]
+
+mask_rows = is_noise(mask_filter_min, mask_filter_max, mask_filter_mean, mask_filter_median)
+print(mask_rows)
+
+plt.plot(mask_filter_min,'-b')
+plt.plot(mask_filter_max,'-r')
+plt.plot(mask_filter_mean,'-g')
+plt.plot(mask_filter_median, '-k')
+plt.plot(mask_rows,'--b')
+
 #remove Zeiss banner
 image = crop(image, ((0, 95), (0, 0)), copy=False)
 #TODO remove noisy parts of image
 #scan rows until it's random?
+
+
 
 #edge detection
 edges = canny(image,sigma=1.0, low_threshold=None, high_threshold=None, mask=None, use_quantiles=False)
