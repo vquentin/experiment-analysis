@@ -37,8 +37,9 @@ class SEMImage(object):
                     self.image = page.asarray()
                 self.metaDataFull = image.sem_metadata
                 self.parse_metadata()
-                self.mask(debug=debug)
+                self.mask()
                 self.canny(debug=debug)
+                self.lines_h_all(debug=debug)
                 if debug:
                     #print all the metadata in a file
                     metadataFile = open(f"{filePath}_meta.txt", "w")
@@ -112,7 +113,7 @@ class SEMImage(object):
         """Creates a canny edge filter for the masked image.
 
         Keyword arguments:
-        debug: overlays the edges in red on the image (default: False)
+        debug: compares the edges and the original image (default: False)
         """
         self.edges = canny(self.image,sigma=1.0, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
         if debug:
@@ -124,42 +125,27 @@ class SEMImage(object):
             ax[1].set_title('Detected edges')
             plt.tight_layout()
 
+    def lines_h_all(self, debug = False):
+        """Detect all horizontal lines in the image
 
+        Keyword arguments:
+        debug: overlay original image and lines found (default: False)
+        """
+        #hough transform
+        angle = 90 # 90 degrees = horizontal line
+        dAngle = 10 # delta around which to search
+        angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), 500)
+        h, thetas, d = hough_line(self.edges, theta=angles)
 
-"""
-#hough transform
-tested_angles = np.linspace(80*(np.pi / 180), 100*(np.pi / 180), 360)
-h, theta, d = hough_line(edges, theta=tested_angles)
-
-# Generating figure
-fig, axes = plt.subplots(1, 3, figsize=(15, 6))
-ax = axes.ravel()
-
-ax[0].imshow(image_original, cmap=cm.gray)
-ax[0].set_title('Input image')
-#ax[0].set_axis_off()
-
-ax[1].imshow(edges, cmap=cm.gray)
-ax[1].set_title('Canny edges')
-""""""
-ax[2].imshow(np.log(1 + h),
-             extent=[np.rad2deg(theta[-1]), np.rad2deg(theta[0]), d[-1], d[0]],
-             cmap=cm.gray, aspect=1/1.5)
-ax[2].set_title('Hough transform')
-ax[2].set_xlabel('Angles (degrees)')
-ax[2].set_ylabel('Distance (pixels)')
-ax[2].axis('image')
-""""""
-ax[2].imshow(image, cmap=cm.gray)
-origin = np.array((0, image.shape[1]))
-for _, angle, dist in zip(*hough_line_peaks(h, theta, d)):
-    y0, y1 = (dist - origin * np.cos(angle)) / np.sin(angle)
-    ax[2].plot(origin, (y0, y1), '-r')
-ax[2].set_xlim(origin)
-ax[2].set_ylim((image.shape[0], 0))
-ax[2].set_axis_off()
-ax[2].set_title('Detected lines')
-
-plt.tight_layout()
-plt.show()
-"""
+        if debug:
+            plt.figure()
+            plt.imshow(self.image, cmap=cm.gray)
+             
+            origin = np.array((0, self.image.shape[1]))
+            for _, theta, dist in zip(*hough_line_peaks(h, thetas, d)):
+                y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
+                plt.plot(origin, (y0, y1), '-r')
+            plt.xlim(origin)
+            plt.ylim((self.image.shape[0], 0))
+            plt.title('Detected lines')
+            plt.tight_layout()
