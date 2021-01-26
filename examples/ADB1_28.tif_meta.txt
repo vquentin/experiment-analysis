@@ -1,0 +1,3522 @@
+{
+    "": [
+        0,
+        0,
+        0,
+        1.860833e-07,
+        600.0,
+        6,
+        5000.0,
+        2.31,
+        2e-07,
+        0.00431186,
+        1,
+        1.860833e-07,
+        600.0,
+        6,
+        5000.0,
+        2.31,
+        2e-07,
+        0.00431186,
+        2,
+        1.860833e-07,
+        600.0,
+        6,
+        5000.0,
+        2.31,
+        2e-07,
+        0.00431186,
+        3,
+        1.860833e-07,
+        600.0,
+        6,
+        5000.0,
+        2.31,
+        2e-07,
+        0.00431186,
+        778
+    ],
+    "dp_vent_invalid_reason": [
+        "Vent inhibit",
+        "Beam Present"
+    ],
+    "dp_optimode": [
+        "OptiBeam Mode",
+        "Resolution"
+    ],
+    "dp_fixed_aperture": [
+        "VP Aperture",
+        false
+    ],
+    "dp_bsd_autolevel_mode": [
+        "BSD Autolevel Mode",
+        "Normal"
+    ],
+    "dp_recipe": [
+        "Recipe",
+        "Idle"
+    ],
+    "dp_implied_detector": [
+        "Signal B",
+        "InLens"
+    ],
+    "dp_4qbsd_visible": [
+        "BSD Fast",
+        false
+    ],
+    "dp_opt_aperture": [
+        "Opt.Aperture",
+        2
+    ],
+    "dp_track_z": [
+        "Track Z",
+        true
+    ],
+    "dp_epse_electrode": [
+        "EPSE Electrode",
+        "Ring"
+    ],
+    "dp_c3_rot_correction": [
+        "C3 Rot Corrn.",
+        true
+    ],
+    "dp_fisheye_mode": [
+        "Fisheye Mode",
+        false
+    ],
+    "dp_stage_tilted": [
+        "Stage Tilt",
+        "in X"
+    ],
+    "dp_ar_gun": [
+        "Argon Gun",
+        "Absent"
+    ],
+    "dp_column_isolated": [
+        "Column Isolated",
+        false
+    ],
+    "dp_mixing": [
+        "Mixing",
+        false
+    ],
+    "dp_fib_fg_mode_target": [
+        "Flood Gun Mode Target",
+        "Low Energy Mode"
+    ],
+    "dp_stem_gain": [
+        "STEM Gain",
+        "Low"
+    ],
+    "dp_high_current": [
+        "High Current",
+        false
+    ],
+    "dp_dwell_time": [
+        "Dwell Time",
+        100,
+        "ns"
+    ],
+    "dp_si_noise_reduction": [
+        "SmartImage Noise Reduction",
+        false
+    ],
+    "dp_right_frozen": [
+        "Right Frozen",
+        false
+    ],
+    "dp_fib_fg_blanked": [
+        "Flood Gun Blanked",
+        false
+    ],
+    "dp_fast_mode": [
+        "Fast Mode",
+        false
+    ],
+    "dp_compucentric_mode": [
+        "Compuc. Mode",
+        false
+    ],
+    "dp_anode_aperture_changer": [
+        "Anode Aperture Changer",
+        "Absent"
+    ],
+    "dp_gis_shutdown_state": [
+        "GIS Shutdown State",
+        "Normal"
+    ],
+    "dp_fib_column": [
+        "FIB Column",
+        "Orsay COBRA"
+    ],
+    "dp_tilted": [
+        "Stage Tilted",
+        false
+    ],
+    "dp_fib_suppressor": [
+        "FIB Suppressor is",
+        "Present"
+    ],
+    "dp_vpse": [
+        "VPSE detector",
+        "Absent"
+    ],
+    "dp_crosshairs": [
+        "Crosshairs",
+        false
+    ],
+    "dp_double_deflection_state": [
+        "Double Deflection State",
+        false
+    ],
+    "dp_gate_valve_position": [
+        "WDX Gate Valve posn",
+        "OK"
+    ],
+    "dp_hese2_fitted": [
+        "HE-SE2 Fitted",
+        false
+    ],
+    "dp_ep_mode": [
+        "EP Gas",
+        "Air"
+    ],
+    "dp_condenser": [
+        "Condenser Normal",
+        "Normal"
+    ],
+    "dp_implied_invert": [
+        "Invert B",
+        false
+    ],
+    "dp_4qbsd_gain": [
+        "BSD Gain",
+        "High"
+    ],
+    "dp_fib_gun_valve": [
+        "FIB Gun Valve",
+        "Closed"
+    ],
+    "dp_aperture_state": [
+        "Aperture",
+        "Clean"
+    ],
+    "dp_electron_counting": [
+        "Electron Counting",
+        false
+    ],
+    "dp_saturate_at": [
+        "Saturate at",
+        "Second peak"
+    ],
+    "dp_stage_angle": [
+        "Stage Angle corrn.",
+        true
+    ],
+    "dp_image_store": [
+        "Store resolution",
+        "1024 * 768"
+    ],
+    "dp_field_mode": [
+        "Field Mode",
+        false
+    ],
+    "dp_coolstage_type": [
+        "CoolStage Type",
+        "Cold"
+    ],
+    "dp_best_aperture": [
+        "Best Aperture",
+        true
+    ],
+    "dp_fib_fg_mode_actual": [
+        "Flood Gun Actual Mode",
+        "Low Energy Mode"
+    ],
+    "dp_stem_auto": [
+        "STEM Auto",
+        false
+    ],
+    "dp_stage_init": [
+        "Stage Initialised",
+        true
+    ],
+    "dp_cc_on_gis_channel": [
+        "GIS Channel with CC",
+        "Channel 1"
+    ],
+    "dp_channel": [
+        "Display",
+        0
+    ],
+    "dp_fib_fg_fitted": [
+        "Flood Gun Fitted",
+        false
+    ],
+    "dp_bsd_mode": [
+        "BSD Mode",
+        "User"
+    ],
+    "dp_fib_mode": [
+        "FIB Mode",
+        "Imaging"
+    ],
+    "dp_nano_tips": [
+        "Nano Tips",
+        "Absent"
+    ],
+    "dp_bsd_n_on_p": [
+        "BSD Invert",
+        false
+    ],
+    "dp_mgs_evac_state": [
+        "MGS Evacuation State",
+        false
+    ],
+    "dp_use_epd": [
+        "Use End Point Detection",
+        false
+    ],
+    "dp_mains_sync": [
+        "Mains Sync",
+        "Single Edge"
+    ],
+    "dp_fib_pneumatic_prep_state": [
+        "FIB preparation for pneumatic",
+        "FIB ready for system vent"
+    ],
+    "dp_frozen": [
+        "Image",
+        "Live"
+    ],
+    "dp_filament_type": [
+        "Filament Type",
+        "FE FEI"
+    ],
+    "dp_sample_holder": [
+        "Sample Holder",
+        "Carousel 9x 10mm"
+    ],
+    "dp_high_resolution_mode": [
+        "High Resolution Mode",
+        false
+    ],
+    "dp_fib_scan": [
+        "FIB Scan",
+        "Continuous"
+    ],
+    "dp_beam_blanked": [
+        "Beam Blanked",
+        false
+    ],
+    "dp_cc_type": [
+        "CC Type",
+        "None"
+    ],
+    "dp_4qbsd": [
+        "BSD",
+        "Absent"
+    ],
+    "dp_image_saved": [
+        "Image saved",
+        true
+    ],
+    "dp_mag_range": [
+        "Mag Range",
+        1
+    ],
+    "dp_user_align": [
+        "User Align",
+        true
+    ],
+    "dp_zone": [
+        "Zone",
+        0
+    ],
+    "dp_fil_blown": [
+        "Filament blown",
+        false
+    ],
+    "dp_humidity_valve": [
+        "Humidity Valve",
+        "Closed"
+    ],
+    "dp_fib_external_polarity": [
+        "FIB External Polarity",
+        0
+    ],
+    "dp_peltier_photo": [
+        "Peltier Photo",
+        false
+    ],
+    "dp_main_detector": [
+        "Control",
+        "Signal A"
+    ],
+    "dp_invert": [
+        "Invert A",
+        false
+    ],
+    "dp_fib_fg_remoting_target": [
+        "Remoting Target",
+        "Flood Gun Normal"
+    ],
+    "dp_stage_is": [
+        "Stage Is",
+        "Idle"
+    ],
+    "dp_fib_present": [
+        "FIB Present",
+        true
+    ],
+    "dp_peltier_type": [
+        "Peltier Type",
+        "Deben"
+    ],
+    "dp_signalaz0": [
+        "Signal A Z0",
+        "InLens"
+    ],
+    "dp_freeze_on": [
+        "Freeze on",
+        "End Frame"
+    ],
+    "dp_fib_blanked": [
+        "FIB Blanked",
+        true
+    ],
+    "dp_stage_bias_high": [
+        "Beam deceleration",
+        false
+    ],
+    "dp_epse_gain": [
+        "EPSE Gain",
+        "Low"
+    ],
+    "dp_end_detection": [
+        "End Detection",
+        false
+    ],
+    "dp_vac_comms_fail": [
+        "Vac comms fail",
+        false
+    ],
+    "dp_bsd_auto": [
+        "BSD Auto Range",
+        true
+    ],
+    "dp_pneumatic_device_in_use": [
+        "Pneumatic Device in use",
+        "None"
+    ],
+    "dp_fib_wide_view": [
+        "FIB Wide View",
+        false
+    ],
+    "dp_anode": [
+        "Anode Spacer",
+        "High KV"
+    ],
+    "dp_use_ref_mag": [
+        "Reference Mag",
+        "Polaroid 545"
+    ],
+    "dp_beamsleeve_position": [
+        "Beam sleeve",
+        "Out"
+    ],
+    "dp_user_mag_cal": [
+        "User Calibration",
+        false
+    ],
+    "dp_safe_stem_valid": [
+        "Safe STEM Valid",
+        false
+    ],
+    "dp_4qbsd_q5": [
+        "Q5",
+        false
+    ],
+    "dp_scd_gain": [
+        "SCD Gain",
+        "Low"
+    ],
+    "dp_all_zones": [
+        "All Zones",
+        false
+    ],
+    "dp_detector_channel": [
+        "Signal A",
+        "InLens"
+    ],
+    "dp_eht_tripped": [
+        "EHT tripped",
+        false
+    ],
+    "dp_flood_state": [
+        "Flood State",
+        "Idle"
+    ],
+    "dp_extractor_trip": [
+        "Extractor Trip",
+        false
+    ],
+    "dp_bsd_fast_scan": [
+        "BSD Fast Scan",
+        false
+    ],
+    "dp_inlens_duo_mode": [
+        "InlensDuo Mode",
+        "SE"
+    ],
+    "dp_auto_video": [
+        "Auto BC",
+        false
+    ],
+    "dp_fib_fg_remoting_actual": [
+        "Flood Gun Remoting Actual",
+        "Flood Gun Normal"
+    ],
+    "dp_signalaz1": [
+        "Signal A Z1",
+        "InLens"
+    ],
+    "dp_stage_bias_hv_fitted": [
+        "Variable stage bias fitted",
+        false
+    ],
+    "dp_epse_auto": [
+        "EPSE Auto Range",
+        false
+    ],
+    "dp_stage_comms_fail": [
+        "Stage comms fail",
+        false
+    ],
+    "dp_optiprobe": [
+        "OptiProbe",
+        false
+    ],
+    "dp_cls_valve": [
+        "C.L.S.Valve",
+        "Closed"
+    ],
+    "dp_newfilament": [
+        "New Filament",
+        false
+    ],
+    "dp_image_detect": [
+        "Image Detect",
+        "Black"
+    ],
+    "dp_custom_holder": [
+        "Custom Holder",
+        false
+    ],
+    "dp_zoom": [
+        "Zoom",
+        false
+    ],
+    "dp_scd_auto": [
+        "SCD Auto Range",
+        false
+    ],
+    "dp_ext_scan_control": [
+        "Ext.Scan Control",
+        false
+    ],
+    "dp_detector_type": [
+        "Detector",
+        "InLens"
+    ],
+    "dp_eht_reset": [
+        "EHT spurious reset",
+        false
+    ],
+    "dp_stem_q4": [
+        "STEM Q4",
+        false
+    ],
+    "dp_fib_fg_extractor_target": [
+        "Extractor Target State",
+        false
+    ],
+    "dp_gemini_large_beamshift": [
+        "Gemini large beam shift",
+        false
+    ],
+    "dp_jazz_gain": [
+        "Jazz Gain",
+        "Low"
+    ],
+    "dp_monitor": [
+        "Monitor",
+        "19/21 inch"
+    ],
+    "dp_freeze_status": [
+        "Freeze",
+        "Idle"
+    ],
+    "dp_fib_extractor_conflict": [
+        "FIB Extractor Conflict",
+        false
+    ],
+    "dp_stage_bias_carassel_fitted": [
+        "Beam deceleration carousel",
+        false
+    ],
+    "dp_epse_bandwidth": [
+        "EPSE Bandwidth",
+        "DC"
+    ],
+    "dp_stage_bias": [
+        "Stage bias low voltage",
+        false
+    ],
+    "dp_stigbalance": [
+        "Stig Balance",
+        false
+    ],
+    "dp_frame_grabber": [
+        "Frame Grabber",
+        "Matrix Titan"
+    ],
+    "dp_fib_ext_scan_select": [
+        "FIB Ext Scan Select",
+        "Ext 0"
+    ],
+    "dp_beamsleeve_fitted": [
+        "Beam sleeve fitted",
+        false
+    ],
+    "dp_vpse2": [
+        "VPSE-G3 Fitted",
+        "Absent"
+    ],
+    "dp_4qbsd_q1": [
+        "Q1",
+        false
+    ],
+    "dp_fib_lock_mag": [
+        "FIB Lock Mags",
+        false
+    ],
+    "dp_freeze_blanks": [
+        "Freeze Blanks",
+        true
+    ],
+    "dp_windowing": [
+        "Windowing",
+        false
+    ],
+    "dp_partial_vent": [
+        "Partial Vent on Standby",
+        false
+    ],
+    "dp_scd_bandwidth": [
+        "SCD Bandwidth",
+        "DC"
+    ],
+    "dp_calibration": [
+        "Calibration",
+        "Disabled"
+    ],
+    "dp_stem_q1": [
+        "STEM Q1",
+        false
+    ],
+    "dp_eht_vac_ready": [
+        "EHT Vac ready",
+        true
+    ],
+    "dp_stem_q5": [
+        "STEM Q5",
+        false
+    ],
+    "dp_fib_fg_extractor_actual": [
+        "Flood Gun Extractor Actual State",
+        false
+    ],
+    "dp_bakeout_full": [
+        "full service bakeout",
+        false
+    ],
+    "dp_water_ok": [
+        "Water OK",
+        true
+    ],
+    "dp_low_mag": [
+        "Low Mag",
+        false
+    ],
+    "dp_vent_inhibited": [
+        "Venting inhibited",
+        true
+    ],
+    "dp_fib_probe": [
+        "FIB Probe",
+        "30kV:10pA"
+    ],
+    "dp_lut_mode": [
+        "Display LUT mode",
+        "Normal"
+    ],
+    "dp_optibeam": [
+        "OptiBeam Is",
+        false
+    ],
+    "dp_scangen_type": [
+        "ScanGen Type",
+        "L-REM"
+    ],
+    "dp_fib_ext_scan_mode": [
+        "FIB Ext Scan Mode",
+        false
+    ],
+    "dp_final_lens": [
+        "Final Lens",
+        "1500: 68 deg"
+    ],
+    "dp_ehtcommsfail": [
+        "EHT Comms Fail",
+        false
+    ],
+    "dp_scangen": [
+        "Scan Gen",
+        "Present"
+    ],
+    "dp_num_regions": [
+        "Num. Regions",
+        0
+    ],
+    "dp_fib_error": [
+        "FIB Error",
+        "None"
+    ],
+    "dp_gis_heating_status_1": [
+        "GIS Heating Status Channel 1",
+        "GIS Not Heating"
+    ],
+    "dp_quattro_bandwidth": [
+        "BSD Bandwidth",
+        "DC"
+    ],
+    "dp_4qbsd_q2": [
+        "Q2",
+        false
+    ],
+    "dp_dynfocus": [
+        "Dyn.Focus",
+        false
+    ],
+    "dp_supervisor": [
+        "Supervisor",
+        "Enabled"
+    ],
+    "dp_colour_mode": [
+        "Colour Mode",
+        false
+    ],
+    "dp_tilt_correction": [
+        "Tilt Corrn.",
+        false
+    ],
+    "dp_spot": [
+        "Spot",
+        false
+    ],
+    "dp_fixed_aperture2": [
+        "EP Aperture",
+        "None fitted"
+    ],
+    "dp_detector_fast_scan": [
+        "Noise reduction for fast scanspeeds",
+        false
+    ],
+    "dp_ion_detector_mode": [
+        "SESI Mode",
+        "SE"
+    ],
+    "dp_fisheye_fitted": [
+        "Fish-Eye Fitted",
+        true
+    ],
+    "dp_stem_q2": [
+        "STEM Q2",
+        false
+    ],
+    "dp_pixel_size": [
+        "Pix Size state",
+        "calibrated"
+    ],
+    "dp_ebbu_mode": [
+        "Beam Blanker Mode",
+        "Blanked"
+    ],
+    "dp_fib_image_probe": [
+        "FIB Image Probe",
+        "30kV:10pA"
+    ],
+    "dp_ar_mill": [
+        "Argon Mill",
+        false
+    ],
+    "dp_fib_mag_range": [
+        "FIB Mag Range",
+        0
+    ],
+    "dp_user_level": [
+        "User Level",
+        "Expert"
+    ],
+    "dp_ar_scan": [
+        "Argon Scan",
+        false
+    ],
+    "dp_hp_status": [
+        "Chamber Status",
+        "Power Up"
+    ],
+    "dp_column_type": [
+        "Column",
+        "1500XB"
+    ],
+    "dp_large_beamshift": [
+        "Large Beam Shift",
+        false
+    ],
+    "dp_ar_mfcvalve": [
+        "Argon MFC Valve",
+        "Closed"
+    ],
+    "dp_contrast_enhancement": [
+        "Contrast Enhanced",
+        false
+    ],
+    "dp_4qbsd_q3": [
+        "Q3",
+        false
+    ],
+    "dp_scan_rot": [
+        "Scan Rot",
+        false
+    ],
+    "dp_dc_sem_state": [
+        "Sem drift status",
+        "Not Available"
+    ],
+    "dp_line_scan": [
+        "Line Scan",
+        false
+    ],
+    "dp_tandem_deceleration": [
+        "Tandem deceleration",
+        false
+    ],
+    "dp_signalaz2": [
+        "Signal A Z2",
+        "InLens"
+    ],
+    "dp_scm_range": [
+        "SCM range",
+        "3->10 pA"
+    ],
+    "dp_fib_fg_floodgun_type": [
+        "Flood Gun Type",
+        "Flood Gun Unknown Type"
+    ],
+    "dp_stem_q3": [
+        "STEM Q3",
+        false
+    ],
+    "dp_mag_cal": [
+        "Mag State",
+        "calibrated"
+    ],
+    "dp_hv_at_shutdown": [
+        "Go to HV @ Shutdown",
+        false
+    ],
+    "dp_scm_status": [
+        "SCM Status",
+        false
+    ],
+    "dp_si_source": [
+        "SI source-hidden",
+        0
+    ],
+    "dp_conjugate": [
+        "OptiBeam conjugate",
+        false
+    ],
+    "dp_fib_fg_status": [
+        "Flood Gun Status",
+        false
+    ],
+    "dp_vp_optibeam": [
+        "VP Optibeam",
+        false
+    ],
+    "dp_condenser_reversed": [
+        "Condenser Reversed",
+        true
+    ],
+    "dp_z0": [
+        "Zone 0",
+        "Live"
+    ],
+    "dp_fib_mill_probe": [
+        "FIB Milling Probe",
+        "30kV:240pA"
+    ],
+    "dp_scint": [
+        "Scint.",
+        true
+    ],
+    "dp_optiresmode": [
+        "OptiBeam Res Mode",
+        "manual"
+    ],
+    "dp_jazz_bandwidth": [
+        "Jazz Bandwidth",
+        "Low"
+    ],
+    "dp_igp_enabled": [
+        "IGP Enabled",
+        true
+    ],
+    "dp_gate_valve": [
+        "WDX Gate valve",
+        "Closed"
+    ],
+    "dp_peltier": [
+        "Peltier",
+        false
+    ],
+    "dp_output_reduction": [
+        "Output Reduction",
+        1
+    ],
+    "dp_4qbsd_q4": [
+        "Q4",
+        false
+    ],
+    "dp_aperture": [
+        "Aperture No.",
+        1
+    ],
+    "dp_stage_bias_mode": [
+        "Stage bias mode",
+        "contrast mode"
+    ],
+    "dp_sem": [
+        "Sem",
+        "Auriga"
+    ],
+    "dp_scan_orthog": [
+        "Scan Orthog",
+        true
+    ],
+    "dp_display_channels": [
+        "Channels",
+        1
+    ],
+    "dp_dual_monitor": [
+        "Dual Monitor",
+        false
+    ],
+    "dp_signalaz3": [
+        "Signal A Z3",
+        "InLens"
+    ],
+    "dp_c3_rot_sign": [
+        "C3 Rotn Sign",
+        "+"
+    ],
+    "dp_stem_fast": [
+        "STEM Fast",
+        false
+    ],
+    "dp_out_dev": [
+        "Output dev",
+        "19/21 inch display"
+    ],
+    "dp_user": [
+        "User",
+        "Busy"
+    ],
+    "dp_fib_track_wd": [
+        "FIB Tracking WD",
+        false
+    ],
+    "dp_fib_fg_interlock": [
+        "Flood Gun Interlock",
+        false
+    ],
+    "dp_low_kv_lens": [
+        "Low KV Lens",
+        "Absent"
+    ],
+    "dp_z1": [
+        "Zone 1",
+        "Live"
+    ],
+    "dp_cc_status": [
+        "CC Status",
+        false
+    ],
+    "dp_fib_gun_state": [
+        "FIB Gun State",
+        false
+    ],
+    "dp_ar_gun_state": [
+        "Argon Gun is",
+        false
+    ],
+    "dp_out_type": [
+        "Output To",
+        "Display/File"
+    ],
+    "dp_column_chamber_valve": [
+        "Column Chamber valve",
+        "Open"
+    ],
+    "dp_column_pumping": [
+        "Column pumping",
+        "Ready"
+    ],
+    "dp_scanrate": [
+        "Scan Speed",
+        4
+    ],
+    "dp_left_frozen": [
+        "All Frozen",
+        false
+    ],
+    "dp_input_lut_mode": [
+        "Input LUT Mode",
+        "Transparent"
+    ],
+    "dp_operating_mode": [
+        "Operating Mode",
+        "Normal"
+    ],
+    "dp_gis_channel": [
+        "GIS Channel",
+        "None"
+    ],
+    "dp_fib_imaging": [
+        "FIB Imaging",
+        "SEM"
+    ],
+    "dp_c3reversal": [
+        "C3 Reversal",
+        "Normal"
+    ],
+    "dp_vac_mode": [
+        "Vacuum Mode",
+        "High Vacuum"
+    ],
+    "dp_column_mode": [
+        "Column Mode",
+        "High Resolution"
+    ],
+    "dp_stem_seg_mode": [
+        "STEM Seg. Mode",
+        false
+    ],
+    "dp_calmode": [
+        "Cal Mode",
+        false
+    ],
+    "dp_runupstate": [
+        "Beam State",
+        "Beam On"
+    ],
+    "dp_noise_reduction": [
+        "Noise Reduction",
+        "Line Int. Busy"
+    ],
+    "dp_optibeam_state": [
+        "OptiBeam",
+        false
+    ],
+    "dp_vacstatus": [
+        "Vac Status",
+        "Ready"
+    ],
+    "ap_fib_fg_emission_target": [
+        "Flood Gun Emission target",
+        0.0,
+        "\u00b5A"
+    ],
+    "ap_fib_shift_correction_y": [
+        "FIB Shift Correction Y",
+        0.0,
+        "nm"
+    ],
+    "ap_mag": [
+        "Mag",
+        600,
+        "X"
+    ],
+    "ap_line_time": [
+        "Line Time",
+        18.43,
+        "ms"
+    ],
+    "ap_fib_mag_fine_gain_y": [
+        "FIB Mag fine gain Y",
+        0.0
+    ],
+    "ap_spot_posn_y": [
+        "Spot at Y",
+        192
+    ],
+    "ap_scanorthog_lower": [
+        "Orthogonality Lower",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_angular_3": [
+        "Aa 4",
+        0.0,
+        "kV"
+    ],
+    "ap_stage_vector_x": [
+        "Stage vector X",
+        0.0,
+        "%"
+    ],
+    "ap_detector_bandwidth_offset": [
+        "Det BW Offset",
+        0
+    ],
+    "ap_ar_condenser": [
+        "Argon Condenser",
+        0,
+        "V"
+    ],
+    "ap_aperture_at_fisheye_x": [
+        "Aperture value at FishEye X",
+        0.0,
+        "%"
+    ],
+    "ap_minmag": [
+        "Min Mag",
+        26,
+        "X"
+    ],
+    "ap_stage_goto_r": [
+        "Stage goto R",
+        16.2,
+        "\u00b0"
+    ],
+    "ap_asap_dfe4_minus5v_analogue": [
+        "ASAP DFE4 Minus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_hp_target": [
+        "VP Target",
+        10,
+        "Pa"
+    ],
+    "ap_eht_cal_100": [
+        "EHT Cal@0.1KV",
+        110,
+        "V"
+    ],
+    "ap_ppa_6": [
+        "Pa 7",
+        0.0,
+        "nm"
+    ],
+    "ap_v_3": [
+        "V 4",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_delta_r": [
+        "Stage Delta R",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_file_number": [
+        "File No",
+        6961
+    ],
+    "ap_esd_lower_y": [
+        "ESD Lower Y",
+        0.0,
+        "%"
+    ],
+    "ap_free_wd": [
+        "Free WD",
+        4.3,
+        "mm"
+    ],
+    "ap_brightnessz3": [
+        "Brightness D",
+        63.2,
+        "%"
+    ],
+    "ap_fm_quadriture": [
+        "Field Mode Quadriture",
+        1000
+    ],
+    "ap_tilt_angle": [
+        "Tilt Angle",
+        54.0,
+        "\u00b0"
+    ],
+    "ap_mill_list_elapsed_time": [
+        "Mill List Elapsed Time",
+        0,
+        "ms"
+    ],
+    "ap_stig_x": [
+        "Stigmation X",
+        0.6,
+        "%"
+    ],
+    "ap_ppb_2": [
+        "Pb 3",
+        1.6,
+        "\u00b0"
+    ],
+    "ap_magcal_upper_y": [
+        "Calibrate Mag Upper Y",
+        0.0
+    ],
+    "ap_radial_1": [
+        "Da 2",
+        205.5,
+        "nm"
+    ],
+    "ap_reduced_raster_width": [
+        "Reduced Raster Width",
+        512
+    ],
+    "ap_vpse2_bias": [
+        "VPSE Bias",
+        60.0,
+        "%"
+    ],
+    "ap_stage_low_z": [
+        "Stage low Z",
+        0.0,
+        "mm"
+    ],
+    "ap_ar_mag": [
+        "Argon Magnification",
+        0,
+        "X"
+    ],
+    "ap_ar_shift_ratio_y": [
+        "Argon Shift Ratio Y",
+        0.0
+    ],
+    "ap_scan_offset_x": [
+        "Scan X cal.",
+        0
+    ],
+    "ap_asap_dfe2_plus5v_analogue": [
+        "ASAP DFE2 Plus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_stage_high_t": [
+        "Stage high T",
+        70.0,
+        "\u00b0"
+    ],
+    "ap_profile_top": [
+        "Profile Top",
+        300
+    ],
+    "ap_mag_gain_x": [
+        "Mag Gain Cal X",
+        700.0
+    ],
+    "ap_h_7": [
+        "H 8",
+        0.0,
+        "nm"
+    ],
+    "ap_spacer_thickness": [
+        "Spacer Thickness",
+        0.0,
+        "mm"
+    ],
+    "ap_stage_high_r": [
+        "Stage high R",
+        380.0,
+        "\u00b0"
+    ],
+    "ap_fib_condenser": [
+        "FIB Condenser",
+        24940,
+        "V"
+    ],
+    "ap_fib_fg_fil_current_target": [
+        "Flood Gun Filament Target",
+        0,
+        "\u00b5A"
+    ],
+    "ap_dc_shift_x": [
+        "Aperture Align X",
+        0.0,
+        "%"
+    ],
+    "ap_sem_level_at_tilt": [
+        "SEM Level @",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_vac_ready_at": [
+        "Vac Ready @",
+        1.5e-05,
+        "Torr"
+    ],
+    "ap_c1rem": [
+        "C1 Rem",
+        0.0105
+    ],
+    "ap_fib_slice_width": [
+        "Slice Width",
+        1.404,
+        "\u00b5m"
+    ],
+    "ap_beamshift_y": [
+        "Beam Shift Y",
+        -0.0,
+        "%"
+    ],
+    "ap_ppa_0": [
+        "Pa 1",
+        17.77,
+        "\u00b5m"
+    ],
+    "ap_tilt_align_x": [
+        "Tilt Align X",
+        0.0,
+        "%"
+    ],
+    "ap_stage_xm_r": [
+        "Stage X+M Rotation",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_si_topography": [
+        "SmartImage Topography",
+        0.0,
+        "%"
+    ],
+    "ap_stage_at_field_y": [
+        "Stage at field Y",
+        1
+    ],
+    "ap_ar_angle": [
+        "Argon Column Angle",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_asap_dfe3_temperature": [
+        "ASAP DFE3 Temperature",
+        0.0,
+        "\u00b0C"
+    ],
+    "ap_test_n": [
+        "Test No.",
+        0
+    ],
+    "ap_h_1": [
+        "H 2",
+        0.0,
+        "nm"
+    ],
+    "ap_radial_area_0": [
+        "Db 1",
+        21.58,
+        "\u00b5m\u00b2"
+    ],
+    "ap_opt_semiangle": [
+        "Opt. Semi Angle",
+        0.0,
+        "\u00b5rad"
+    ],
+    "ap_fib_aperture_align_x": [
+        "FIB Aper.Align X",
+        6961
+    ],
+    "ap_fib_fil_i_target": [
+        "FIB Fil I Target",
+        2.2,
+        "A"
+    ],
+    "ap_dc_max_pix_error": [
+        "Drift Max.Pix.Error",
+        1
+    ],
+    "ap_inlens_duo_grid_actual": [
+        "InlensDuo Grid is",
+        0,
+        "V"
+    ],
+    "ap_fisheye_angle": [
+        "Fisheye Angle",
+        167.0,
+        "\u00b0"
+    ],
+    "ap_contrastz0": [
+        "Contrast A",
+        32.2,
+        "%"
+    ],
+    "ap_dual_mag_offset_y": [
+        "Dual Mag Offset Y",
+        3.0
+    ],
+    "ap_mag_decl": [
+        "Mag scaling decel",
+        1.0
+    ],
+    "ap_mag_gain_upper_x": [
+        "Shift Amp Upper Gain X",
+        0.0
+    ],
+    "ap_holder_length": [
+        "Holder Length",
+        0.0,
+        "mm"
+    ],
+    "ap_stage_fields_y": [
+        "Stage fields Y",
+        1
+    ],
+    "ap_fib_source_lifetime": [
+        "FIB Source Lifetime",
+        262.85,
+        "\u00b5Ah"
+    ],
+    "ap_ar_gas_flow_actual": [
+        "Argon Gas Flow is",
+        0.0,
+        "%"
+    ],
+    "ap_gain": [
+        "Gain A",
+        100.0,
+        "%"
+    ],
+    "ap_beam_blank_gun_y": [
+        "Beam Blanked Gun Pos Y",
+        100.0,
+        "%"
+    ],
+    "ap_conjugate": [
+        "Conjugate posn.",
+        -164.0,
+        "mm"
+    ],
+    "ap_asap_scan_offset_y": [
+        "Scan Offset Y",
+        0
+    ],
+    "ap_mag_shift_x": [
+        "Mag Shift Cal X",
+        5.0
+    ],
+    "ap_jazz_back_grid": [
+        "Back Grid",
+        0,
+        "V"
+    ],
+    "ap_actualsupp": [
+        "Suppressor V",
+        300,
+        "V"
+    ],
+    "ap_aperture_align_x": [
+        "Aperture Align X",
+        5.9,
+        "%"
+    ],
+    "ap_ppb_5": [
+        "Pb 6",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_v_8": [
+        "V 9",
+        0.0,
+        "nm"
+    ],
+    "ap_prof2_x2": [
+        "Profile 2 X2",
+        0
+    ],
+    "ap_fib_magnification": [
+        "FIB Mag",
+        270,
+        "X"
+    ],
+    "ap_fib_fg_emission_actual": [
+        "Flood Gun Emission Actual",
+        0.0,
+        "\u00b5A"
+    ],
+    "ap_fib_shift_correction_x": [
+        "FIB Shift Correction X",
+        0.0,
+        "nm"
+    ],
+    "ap_iprobe": [
+        "I Probe",
+        200.0,
+        "nA"
+    ],
+    "ap_fcf_tilt": [
+        "FCF Tilt Angle",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_fib_mag_fine_gain_x": [
+        "FIB Mag fine gain X",
+        0.0
+    ],
+    "ap_stage_xm_angle": [
+        "Stage X+M Angle",
+        8.0,
+        "\u00b0"
+    ],
+    "ap_spot_posn_x": [
+        "Spot at X",
+        256
+    ],
+    "ap_scanorthog_upper": [
+        "Orthogonality Upper",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_angular_2": [
+        "Aa 3",
+        0.0,
+        "kV"
+    ],
+    "ap_stage_goto_z": [
+        "Stage goto Z",
+        27.003,
+        "mm"
+    ],
+    "ap_ar_discharge_current": [
+        "Argon Discharge I is",
+        0.0,
+        "\u00b5A"
+    ],
+    "ap_gun_at_fisheye_y": [
+        "Gun Value at FishEye mode Y",
+        0.0,
+        "%"
+    ],
+    "ap_spotsize": [
+        "Spot Size",
+        1
+    ],
+    "ap_asap_dfe3_minus5v_analogue": [
+        "ASAP DFE3 Minus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_ppa_5": [
+        "Pa 6",
+        0.0,
+        "nm"
+    ],
+    "ap_v_2": [
+        "V 3",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_delta_t": [
+        "Stage Delta T",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_specimen_height": [
+        "Specimen Height",
+        1,
+        "mm"
+    ],
+    "ap_esd_lower_x": [
+        "ESD Lower X",
+        0.0,
+        "%"
+    ],
+    "ap_fib_emission_current": [
+        "FIB Emission I",
+        0.2,
+        "\u00b5A"
+    ],
+    "ap_fib_stig_y_centre_y": [
+        "FIB Stig Y Centre Y",
+        -0.18
+    ],
+    "ap_brightnessz2": [
+        "Brightness C",
+        63.2,
+        "%"
+    ],
+    "ap_fm_orthog": [
+        "Field Mode Orthog",
+        -1.0,
+        "\u00b0"
+    ],
+    "ap_tilt_axis": [
+        "Tilt Axis",
+        90.0,
+        "\u00b0"
+    ],
+    "ap_mill_list_total_time": [
+        "Mill List Total Time",
+        0,
+        "ms"
+    ],
+    "ap_apertureposn_y": [
+        "Aperture Posn Y",
+        1.0,
+        "mm"
+    ],
+    "ap_ppb_1": [
+        "Pb 2",
+        30.1,
+        "\u00b0"
+    ],
+    "ap_magcal_upper_x": [
+        "Calibrate Mag Upper X",
+        0.0
+    ],
+    "ap_radial_0": [
+        "Da 1",
+        5.242,
+        "\u00b5m"
+    ],
+    "ap_epse_bias": [
+        "EPSE Bias",
+        0.0,
+        "%"
+    ],
+    "ap_profile_w": [
+        "Profile width",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_low_y": [
+        "Stage low Y",
+        0.0,
+        "mm"
+    ],
+    "ap_ar_beam_shift_y": [
+        "Argon Beam Shift Y",
+        0.0,
+        "nm"
+    ],
+    "ap_ar_shift_ratio_x": [
+        "Argon Shift Ratio X",
+        0.0
+    ],
+    "ap_xtalk21": [
+        "Xtalk21",
+        0.0
+    ],
+    "ap_asap_dfe1_plus5v_analogue": [
+        "ASAP DFE1 Plus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_min_ext": [
+        "Min Extractor V",
+        3.0,
+        "kV"
+    ],
+    "ap_h_6": [
+        "H 7",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_centre_y": [
+        "Stage Centre Y",
+        49.839,
+        "mm"
+    ],
+    "ap_fib_scan_size": [
+        "FIB Scan Size",
+        0.0,
+        "nm"
+    ],
+    "ap_stig_cal_y": [
+        "Stig. Cal Y",
+        7.5,
+        "%"
+    ],
+    "ap_fib_ext_actual": [
+        "FIB Extractor",
+        0.0,
+        "kV"
+    ],
+    "ap_fib_fg_energy_actual": [
+        "Flood Gun Energy Actual",
+        0.0,
+        "V"
+    ],
+    "ap_fib_stig_x_centre_y": [
+        "FIB Stig X Centre Y",
+        0.065
+    ],
+    "ap_piezo_goto_y": [
+        "Piezo Goto Y",
+        0.0,
+        "\u00b5m"
+    ],
+    "ap_fib_tilt_comp": [
+        "FIB Tilt Comp",
+        54.0,
+        "\u00b0"
+    ],
+    "ap_c1cal": [
+        "C1 Cal",
+        0.958
+    ],
+    "ap_fib_slice_y": [
+        "Slice Y",
+        -229.06,
+        "nm"
+    ],
+    "ap_beamshift_x": [
+        "Beam Shift X",
+        0.0,
+        "%"
+    ],
+    "ap_red_raster_h": [
+        "Red.Raster Height",
+        207
+    ],
+    "ap_magcal_base": [
+        "Calibrate Mag Base",
+        50000.0
+    ],
+    "ap_fib_nudge_step": [
+        "FIB Nudge Step",
+        100,
+        "nm"
+    ],
+    "ap_piezo_exchange_y": [
+        "Piezo Exchange Y",
+        0.0,
+        "\u00b5m"
+    ],
+    "ap_stage_at_field_x": [
+        "Stage at field X",
+        1
+    ],
+    "ap_low_mag_focus": [
+        "Low Mag Focus",
+        1.0
+    ],
+    "ap_ar_acc_i": [
+        "Argon Acc I is",
+        0.0,
+        "\u00b5A"
+    ],
+    "ap_ar_mill_progress": [
+        "Argon Mill Progress",
+        0.0,
+        "%"
+    ],
+    "ap_asap_dfe2_temperature": [
+        "ASAP DFE2 Temperature",
+        0.0,
+        "\u00b0C"
+    ],
+    "ap_area_fraction": [
+        "Area Fraction",
+        0.0,
+        "%"
+    ],
+    "ap_nominalfil": [
+        "Nominal Fil I",
+        2.31,
+        "A"
+    ],
+    "ap_gun_y": [
+        "Gun at Y",
+        0.5,
+        "%"
+    ],
+    "ap_stage_vector_m": [
+        "Stage Vector M",
+        0.0,
+        "%"
+    ],
+    "ap_h_0": [
+        "H 1",
+        4.787,
+        "\u00b5m"
+    ],
+    "ap_semiangle": [
+        "Semi Angle",
+        0.0,
+        "\u00b5rad"
+    ],
+    "ap_fib_scan_rotation": [
+        "FIB Scan Rot",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_fib_fil_v": [
+        "FIB Fil Voltage",
+        0.0,
+        "V"
+    ],
+    "ap_stageangle": [
+        "Stage Angle",
+        178.8,
+        "\u00b0"
+    ],
+    "ap_inlens_duo_grid": [
+        "InlensDuo Grid",
+        0,
+        "V"
+    ],
+    "ap_manualcurrent": [
+        "Fil I Target",
+        2.31,
+        "A"
+    ],
+    "ap_brightnessz1": [
+        "Brightness B",
+        49.5,
+        "%"
+    ],
+    "ap_dual_mag_offset_x": [
+        "Dual Mag Offset X",
+        4.0
+    ],
+    "ap_mag_shift_lower_y": [
+        "Shift Amp Lower Offset Y",
+        0.0
+    ],
+    "ap_holder_width": [
+        "Holder Width",
+        0.0,
+        "mm"
+    ],
+    "ap_si_factor": [
+        "SmartImage Sharpening",
+        0.0,
+        "%"
+    ],
+    "ap_stage_fields_x": [
+        "Stage fields X",
+        1
+    ],
+    "ap_fib_probe_current_actual": [
+        "FIB Probe Current Actual",
+        0.0,
+        "pA"
+    ],
+    "ap_ar_gas_flow": [
+        "Argon Gas Flow",
+        0.0,
+        "%"
+    ],
+    "ap_gamma": [
+        "Gamma",
+        1.0
+    ],
+    "ap_beam_blank_gun_x": [
+        "Beam Blanked Gun Pos X",
+        100.0,
+        "%"
+    ],
+    "ap_asap_scan_offset_x": [
+        "Scan Offset X",
+        0
+    ],
+    "ap_jazz_front_grid": [
+        "Front Grid",
+        0,
+        "V"
+    ],
+    "ap_actualext": [
+        "Extractor V",
+        4.0,
+        "kV"
+    ],
+    "ap_asap_vbe2_minus5v_analogue": [
+        "ASAP VBE2 Minus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_gunalign_y": [
+        "Gun Align Y",
+        0.0,
+        "%"
+    ],
+    "ap_max_extractor_v": [
+        "Max Extractor V",
+        4.52,
+        "kV"
+    ],
+    "ap_ppb_4": [
+        "Pb 5",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_v_7": [
+        "V 8",
+        0.0,
+        "nm"
+    ],
+    "ap_prof2_x1": [
+        "Profile 2 X1",
+        0
+    ],
+    "ap_fib_objective_potential": [
+        "FIB Objective",
+        16144,
+        "V"
+    ],
+    "ap_fib_fg_extractor_voltage": [
+        "Flood Gun Extractor Voltage",
+        0,
+        "V"
+    ],
+    "ap_piezo_at_y": [
+        "Piezo at Y",
+        0.0,
+        "\u00b5m"
+    ],
+    "ap_emissionzoom": [
+        "Emission Zoom",
+        100
+    ],
+    "ap_zoom_factor": [
+        "Zoom factor",
+        2.0
+    ],
+    "ap_fib_working_distance": [
+        "FIB Working Distance",
+        0.0,
+        "mm"
+    ],
+    "ap_linetoframe_lower": [
+        "Line To Frame Lower",
+        0.0
+    ],
+    "ap_angular_1": [
+        "Aa 2",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_stage_goto_y": [
+        "Stage goto Y",
+        46.942,
+        "mm"
+    ],
+    "ap_beamsleeve_voltage": [
+        "Beam sleeve Bias",
+        0,
+        "V"
+    ],
+    "ap_ar_discharge_actual": [
+        "Argon Discharge is",
+        0,
+        "V"
+    ],
+    "ap_k2": [
+        "Mix Signal",
+        0.0
+    ],
+    "ap_gun_at_fisheye_x": [
+        "Gun Value at FishEye mode X",
+        0.0,
+        "%"
+    ],
+    "ap_cc_pressure": [
+        "CC Pressure",
+        0.0,
+        "%"
+    ],
+    "ap_asap_dfe2_minus5v_analogue": [
+        "ASAP DFE2 Minus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_ppa_4": [
+        "Pa 5",
+        0.0,
+        "nm"
+    ],
+    "ap_v_1": [
+        "V 2",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_delta_z": [
+        "Stage Delta Z",
+        -5.0,
+        "mm"
+    ],
+    "ap_esd_upper_y": [
+        "ESD Upper Y",
+        0.0,
+        "%"
+    ],
+    "ap_fib_abs_delta_beam_shift_y": [
+        "FIB Abs Beam Shift Y",
+        40.0,
+        "nm"
+    ],
+    "ap_fib_suppressor_target": [
+        "FIB Suppressor Target",
+        -2000,
+        "V"
+    ],
+    "ap_fib_stig_y_centre_x": [
+        "FIB Stig Y Centre X",
+        0.03
+    ],
+    "ap_purge_min": [
+        "Purge Min",
+        133,
+        "Pa"
+    ],
+    "ap_fib_column_pressure": [
+        "FIB Column Pressure",
+        0.0,
+        "Torr"
+    ],
+    "ap_fm_angle": [
+        "Field Mode Angle",
+        -1.0,
+        "\u00b0"
+    ],
+    "ap_c3rem": [
+        "C3 Rem",
+        0.0137
+    ],
+    "ap_fib_pixel_size": [
+        "FIB Pixel Size",
+        413.5,
+        "nm"
+    ],
+    "ap_apertureposn_x": [
+        "Aperture Posn X",
+        5.0,
+        "mm"
+    ],
+    "ap_ppb_0": [
+        "Pb 1",
+        164.8,
+        "\u00b0"
+    ],
+    "ap_c3_save": [
+        "C3 saved for beam decel",
+        0,
+        "\u00b5A"
+    ],
+    "ap_esb_grid_is": [
+        "ESB Grid is",
+        1500,
+        "V"
+    ],
+    "ap_eht_set_max": [
+        "EHT set maximum",
+        30.0,
+        "kV"
+    ],
+    "ap_stage_low_x": [
+        "Stage low X",
+        0.0,
+        "mm"
+    ],
+    "ap_ar_beam_shift_x": [
+        "Argon Beam Shift X",
+        0.0,
+        "nm"
+    ],
+    "ap_ar_xy_ratio": [
+        "Argon XY Ratio",
+        0.0
+    ],
+    "ap_frame_ampl": [
+        "Frame Ampl Cal.",
+        0
+    ],
+    "ap_xtalk12": [
+        "Xtalk12",
+        0.0
+    ],
+    "ap_asap_dfe4_plus5v_digital": [
+        "ASAP DFE4 Plus5V Digital",
+        0.0,
+        "V"
+    ],
+    "ap_manuallens": [
+        "Liner Target",
+        8.0,
+        "kV"
+    ],
+    "ap_h_5": [
+        "H 6",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_centre_x": [
+        "Stage Centre X",
+        49.466,
+        "mm"
+    ],
+    "ap_stig_cal_x": [
+        "Stig. Cal X",
+        0.0,
+        "%"
+    ],
+    "ap_fib_ext_target": [
+        "FIB Extr.Target",
+        -7.4,
+        "kV"
+    ],
+    "ap_fib_fg_energy_target": [
+        "Flood Gun Energy Target",
+        0.0,
+        "V"
+    ],
+    "ap_fib_stig_x_centre_x": [
+        "FIB Stig X Centre X",
+        -0.105
+    ],
+    "ap_piezo_goto_x": [
+        "Piezo Goto X",
+        0.0,
+        "\u00b5m"
+    ],
+    "ap_c2": [
+        "C2 Lens I",
+        0,
+        "\u00b5A"
+    ],
+    "ap_mag_comp_offset": [
+        "Mag Comp. Offset",
+        505
+    ],
+    "ap_fib_slice_x": [
+        "Slice X",
+        1.234,
+        "\u00b5m"
+    ],
+    "ap_guntilt_y": [
+        "Gun Tilt Y",
+        0.0,
+        "%"
+    ],
+    "ap_red_raster_w": [
+        "Red.Raster Width",
+        336
+    ],
+    "ap_scan_rotation_offset_lower": [
+        "Scan Rotation Offset Lower",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_piezo_exchange_x": [
+        "Piezo Exchange X",
+        0.0,
+        "\u00b5m"
+    ],
+    "ap_stage_goto_field_y": [
+        "Stage goto field Y",
+        1
+    ],
+    "ap_ar_extractor_actual": [
+        "Argon Extractor is",
+        0,
+        "V"
+    ],
+    "ap_auto_contrast": [
+        "Auto C Target",
+        50.0,
+        "%"
+    ],
+    "ap_implied_offset": [
+        "Offset B",
+        0.0,
+        "%"
+    ],
+    "ap_align1_y": [
+        "Align 1 Y",
+        0.0,
+        "%"
+    ],
+    "ap_beam_offset_y": [
+        "Beam Offset Y",
+        -0.0,
+        "nm"
+    ],
+    "ap_white_detect": [
+        "White Threshold",
+        100.0,
+        "%"
+    ],
+    "ap_asap_vbe2_temperature": [
+        "ASAP VBE2 Temperature",
+        0.0,
+        "\u00b0C"
+    ],
+    "ap_gun_x": [
+        "Gun at X",
+        -2.0,
+        "%"
+    ],
+    "ap_water_temp_limit": [
+        "EO Temp Limit",
+        35.0,
+        "\u00b0C"
+    ],
+    "ap_spot_x_cal": [
+        "Spot X Cal",
+        0
+    ],
+    "ap_fib_beam_shift_y": [
+        "FIB Beam Shift Y",
+        1.168,
+        "\u00b5m"
+    ],
+    "ap_fib_fil_i": [
+        "FIB Fil Current",
+        0,
+        "\u00b5A"
+    ],
+    "ap_scanorthog": [
+        "Scan Orth corrn",
+        -0.9,
+        "\u00b0"
+    ],
+    "ap_manualkv": [
+        "EHT Target",
+        5.0,
+        "kV"
+    ],
+    "ap_magcalheight": [
+        "Mag Cal Actual Height",
+        0.0,
+        "nm"
+    ],
+    "ap_brightnessz0": [
+        "Brightness A",
+        49.5,
+        "%"
+    ],
+    "ap_c3_decl": [
+        "Decl cal 2",
+        1.0
+    ],
+    "ap_mag_shift_lower_x": [
+        "Shift Amp Lower Offset X",
+        0.0
+    ],
+    "ap_holder_diameter": [
+        "Holder Diameter",
+        50.0,
+        "mm"
+    ],
+    "ap_si_threshold": [
+        "SmartImage Threshold",
+        0.0,
+        "%"
+    ],
+    "ap_stage_scan_angle": [
+        "Stage scan angle",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_fib_objective_actual": [
+        "FIB Objective Actual",
+        3,
+        "V"
+    ],
+    "ap_ar_objective_actual": [
+        "Argon Objective is",
+        0,
+        "V"
+    ],
+    "ap_line_int_count": [
+        "Line int. count",
+        0
+    ],
+    "ap_beam_blank_aperture_y": [
+        "Beam Blanked Aperture Pos Y",
+        100.0,
+        "%"
+    ],
+    "ap_filament_age": [
+        "Filament Age",
+        10213.1,
+        "Hours"
+    ],
+    "ap_dual_mag_y_slope": [
+        "Dual Mag Gain Y",
+        683.0
+    ],
+    "ap_stage_vector_t": [
+        "Stage vector T",
+        0.0,
+        "%"
+    ],
+    "ap_hcstage_temp": [
+        "Peltier Temp",
+        20.0,
+        "\u00b0C"
+    ],
+    "ap_asap_vbe1_minus5v_analogue": [
+        "ASAP VBE1 Minus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_gunalign_x": [
+        "Gun Align X",
+        0.0,
+        "%"
+    ],
+    "ap_eht_cal_30kv": [
+        "EHT Cal@30KV",
+        30.09,
+        "kV"
+    ],
+    "ap_ppa_9": [
+        "Pa 10",
+        0.0,
+        "nm"
+    ],
+    "ap_v_6": [
+        "V 7",
+        0.0,
+        "nm"
+    ],
+    "ap_prof1_x2": [
+        "Profile 1 X2",
+        0
+    ],
+    "ap_stage_bias_voltage": [
+        "Stage bias Low Volts",
+        0.0,
+        "V"
+    ],
+    "ap_vp_limit": [
+        "VP LaB6 Limit",
+        275,
+        "Pa"
+    ],
+    "ap_fib_eht_actual": [
+        "FIB EHT",
+        0.0,
+        "kV"
+    ],
+    "ap_humidity_target": [
+        "Humidity Target",
+        0.0,
+        "%"
+    ],
+    "ap_piezo_at_x": [
+        "Piezo at X",
+        0.0,
+        "\u00b5m"
+    ],
+    "ap_linetoframe_upper": [
+        "Line To Frame Upper",
+        0.0
+    ],
+    "ap_angular_0": [
+        "Aa 1",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_reduced_raster_y": [
+        "Reduced Raster Y",
+        192
+    ],
+    "ap_laser_finder_illum": [
+        "Laser Illumination",
+        0.0,
+        "%"
+    ],
+    "ap_stage_goto_x": [
+        "Stage goto X",
+        60.596,
+        "mm"
+    ],
+    "ap_column_vac": [
+        "Gun Vacuum",
+        3.99e-10,
+        "Torr"
+    ],
+    "ap_ar_discharge": [
+        "Argon Discharge",
+        0,
+        "V"
+    ],
+    "ap_k1": [
+        "Signal",
+        1.0
+    ],
+    "ap_line_average_count": [
+        "Line Avg.Count",
+        20
+    ],
+    "ap_beam_time": [
+        "Beam Time",
+        4391.88,
+        "Hours"
+    ],
+    "ap_asap_dfe1_minus5v_analogue": [
+        "ASAP DFE1 Minus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_cursor_height": [
+        "Cursor Height",
+        78.67,
+        "\u00b5m"
+    ],
+    "ap_profile_w2": [
+        "Profile Width 2",
+        0.0,
+        "nm"
+    ],
+    "ap_v_0": [
+        "V 1",
+        178.6,
+        "nm"
+    ],
+    "ap_stage_delta_y": [
+        "Stage Delta Y",
+        -0.002,
+        "mm"
+    ],
+    "ap_polaris_probe_cal": [
+        "Probe Cal Factor",
+        1.0
+    ],
+    "ap_esd_upper_x": [
+        "ESD Upper X",
+        0.0,
+        "%"
+    ],
+    "ap_fib_abs_delta_beam_shift_x": [
+        "FIB Abs Beam Shift X",
+        -400.0,
+        "nm"
+    ],
+    "ap_fib_drift_y": [
+        "FIB Drift Y",
+        0.0,
+        "nm"
+    ],
+    "ap_purge_max": [
+        "Purge Max",
+        1066,
+        "Pa"
+    ],
+    "ap_fib_heating_limit": [
+        "FIB Heating Limit",
+        4.2,
+        "A"
+    ],
+    "ap_c3cal": [
+        "C3 Cal",
+        0.939
+    ],
+    "ap_line_counter": [
+        "Line Counter",
+        762
+    ],
+    "ap_aperturesize": [
+        "Aperture Size",
+        30.0,
+        "\u00b5m"
+    ],
+    "ap_ppa_3": [
+        "Pa 4",
+        17.83,
+        "\u00b5m"
+    ],
+    "ap_wd_save": [
+        "wd saved for beam decel",
+        10.0,
+        "mm"
+    ],
+    "ap_liner_cal_at_10kv": [
+        "Liner Cal @ 10KV",
+        9901,
+        "V"
+    ],
+    "ap_beam_current": [
+        "Beam Current",
+        80.0,
+        "\u00b5A"
+    ],
+    "ap_stage_high_z": [
+        "Stage high Z",
+        50.0,
+        "mm"
+    ],
+    "ap_ion_convertor_voltage": [
+        "Convertor Voltage",
+        0.0,
+        "kV"
+    ],
+    "ap_ar_mag_factor": [
+        "Argon Mag Factor",
+        0.0,
+        "nm"
+    ],
+    "ap_mag1": [
+        "Mag Z1",
+        1.0
+    ],
+    "ap_asap_dfe3_plus5v_digital": [
+        "ASAP DFE3 Plus5V Digital",
+        0.0,
+        "V"
+    ],
+    "ap_manualsupp": [
+        "Suppressor V Target",
+        300,
+        "V"
+    ],
+    "ap_h_4": [
+        "H 5",
+        0.0,
+        "nm"
+    ],
+    "ap_sample_height": [
+        "Compu. Height",
+        0.0,
+        "mm"
+    ],
+    "ap_fib_aper_y_actual": [
+        "FIB Aperture Y Actual",
+        2898
+    ],
+    "ap_fib_emission_target": [
+        "FIB Emission Target",
+        2.0,
+        "\u00b5A"
+    ],
+    "ap_c1": [
+        "C1 Lens I",
+        0,
+        "\u00b5A"
+    ],
+    "ap_mag_comp_ampl": [
+        "Mag Comp. Amplitude",
+        37.0,
+        "%"
+    ],
+    "ap_fib_slice_index": [
+        "Slice Index",
+        -1
+    ],
+    "ap_guntilt_x": [
+        "Gun Tilt X",
+        0.0,
+        "%"
+    ],
+    "ap_red_raster_posn_y": [
+        "Red.Raster Posn Y",
+        102
+    ],
+    "ap_mag_gain_lower_y": [
+        "Shift Amp Lower Gain Y",
+        0.0
+    ],
+    "ap_holder_height": [
+        "Holder Height",
+        17.2,
+        "mm"
+    ],
+    "ap_specimen_diameter": [
+        "Specimen Diameter",
+        50,
+        "mm"
+    ],
+    "ap_stage_goto_field_x": [
+        "Stage goto field X",
+        1
+    ],
+    "ap_ar_extractor": [
+        "Argon Extractor",
+        0,
+        "V"
+    ],
+    "ap_auto_bright": [
+        "Auto B Target",
+        54.8,
+        "%"
+    ],
+    "ap_implied_gain": [
+        "Gain B",
+        100.0,
+        "%"
+    ],
+    "ap_align1_x": [
+        "Align 1 X",
+        0.0,
+        "%"
+    ],
+    "ap_beam_offset_x": [
+        "Beam Offset X",
+        0.0,
+        "nm"
+    ],
+    "ap_black_detect": [
+        "Black Threshold",
+        0.0,
+        "%"
+    ],
+    "ap_asap_vbe1_temperature": [
+        "ASAP VBE1 Temperature",
+        0.0,
+        "\u00b0C"
+    ],
+    "ap_nominalext": [
+        "Nominal extractor V",
+        4.0,
+        "kV"
+    ],
+    "ap_aperture_y": [
+        "Aperture at Y",
+        -1.2,
+        "%"
+    ],
+    "ap_stage_high_m": [
+        "Stage high M",
+        13.0,
+        "mm"
+    ],
+    "ap_water_temp": [
+        "EO Temp",
+        23.9,
+        "\u00b0C"
+    ],
+    "ap_user_max_eht": [
+        "User Max EHT",
+        30.0,
+        "kV"
+    ],
+    "ap_ccd_illumination": [
+        "CCD Illum.",
+        60.0,
+        "%"
+    ],
+    "ap_fib_beam_shift_x": [
+        "FIB Beam Shift X",
+        -0.0,
+        "nm"
+    ],
+    "ap_scanrotation": [
+        "Scan Rotation",
+        24.2,
+        "\u00b0"
+    ],
+    "ap_fib_focus": [
+        "FIB Focus",
+        -0.5
+    ],
+    "ap_usermaxcurrent": [
+        "Fil I (Usermax)",
+        4.0,
+        "A"
+    ],
+    "ap_magcalwidth": [
+        "Mag Cal Actual Width",
+        0.0,
+        "nm"
+    ],
+    "ap_defect_id": [
+        "Defect ID",
+        0
+    ],
+    "ap_line_posn_y": [
+        "Line posn Y",
+        192
+    ],
+    "ap_wd_decl": [
+        "Decl cal 1",
+        0.0
+    ],
+    "ap_mag_shift_upper_y": [
+        "Shift Amp Upper Offset Y",
+        0.0
+    ],
+    "ap_si_enhancement": [
+        "SmartImage Contrast",
+        0.0,
+        "%"
+    ],
+    "ap_stage_vector_z": [
+        "Stage vector Z",
+        0.0,
+        "%"
+    ],
+    "ap_bgpl": [
+        "BGPL",
+        10.0,
+        "mm"
+    ],
+    "ap_ar_objective": [
+        "Argon Objective",
+        0,
+        "V"
+    ],
+    "ap_frame_int_count": [
+        "Frames to Int.",
+        0
+    ],
+    "ap_beam_blank_aperture_x": [
+        "Beam Blanked Aperture Pos X",
+        100.0,
+        "%"
+    ],
+    "ap_alias_wd": [
+        "Focus",
+        4.3,
+        "mm"
+    ],
+    "ap_stage_vector_r": [
+        "Stage vector R",
+        0.0,
+        "%"
+    ],
+    "ap_asap_vbe2_plus5v_analogue": [
+        "ASAP VBE2 Plus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_eht_cal_24kv": [
+        "EHT Cal@24KV",
+        24.07,
+        "kV"
+    ],
+    "ap_ppa_8": [
+        "Pa 9",
+        0.0,
+        "nm"
+    ],
+    "ap_v_5": [
+        "V 6",
+        0.0,
+        "nm"
+    ],
+    "ap_prof1_x1": [
+        "Profile 1 X1",
+        0
+    ],
+    "ap_hrru_number": [
+        "HRRU No.",
+        0
+    ],
+    "ap_fib_eht_target": [
+        "FIB EHT Target",
+        30.0,
+        "kV"
+    ],
+    "ap_humidity": [
+        "Humidity",
+        0.0,
+        "%"
+    ],
+    "ap_esb_grid_max": [
+        "ESB Grid Max",
+        1500,
+        "V"
+    ],
+    "ap_contrastz3": [
+        "Contrast D",
+        44.7,
+        "%"
+    ],
+    "ap_mill_item_elapsed_time": [
+        "Mill Item Elapsed Time",
+        0,
+        "ms"
+    ],
+    "ap_stage_bias_voltage_high": [
+        "Beam deceleration Volts",
+        0,
+        "V"
+    ],
+    "ap_magcal_lower_y": [
+        "Calibrate Mag Lower Y",
+        0.0
+    ],
+    "ap_radial_3": [
+        "Da 4",
+        0.0,
+        "nm"
+    ],
+    "ap_fib_condenser_actual": [
+        "FIB Condenser actual",
+        4,
+        "V"
+    ],
+    "ap_ar_acc_actual": [
+        "Argon Energy is",
+        0,
+        "V"
+    ],
+    "ap_scm": [
+        "Specimen I",
+        0.0,
+        "pA"
+    ],
+    "ap_photo_number": [
+        "Photo No.",
+        8734
+    ],
+    "ap_field_overlap": [
+        "Field Overlap",
+        0.0,
+        "%"
+    ],
+    "ap_spot": [
+        "Spot signal",
+        0
+    ],
+    "ap_asap_dfe4_plus5v_analogue": [
+        "ASAP DFE4 Plus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_cursor_width": [
+        "Cursor Width",
+        4.15,
+        "\u00b5m"
+    ],
+    "ap_profile_w1": [
+        "Profile Width 1",
+        0.0,
+        "nm"
+    ],
+    "ap_h_9": [
+        "H 10",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_delta_x": [
+        "Stage Delta X",
+        -0.55,
+        "mm"
+    ],
+    "ap_compu_tilt_error": [
+        "Compu. Tilt Error",
+        0.0
+    ],
+    "ap_fib_drift_x": [
+        "FIB Drift X",
+        0.0,
+        "nm"
+    ],
+    "ap_purge_cycles": [
+        "Purge cycles",
+        2
+    ],
+    "ap_c3": [
+        "C3 Lens I",
+        971.62,
+        "mA"
+    ],
+    "ap_epd_low": [
+        "EPD Low Limit",
+        0
+    ],
+    "ap_c2rem": [
+        "C2 Rem",
+        0.0318
+    ],
+    "ap_fib_slice_angle": [
+        "Slice Angle",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_zoompos_y": [
+        "Zoom Posn Y",
+        192
+    ],
+    "ap_ppa_2": [
+        "Pa 3",
+        23.67,
+        "\u00b5m"
+    ],
+    "ap_clip_limit": [
+        "Clip Limit",
+        0
+    ],
+    "ap_liner_cal_at_100v": [
+        "Liner cal @ 100V",
+        97,
+        "V"
+    ],
+    "ap_pixel_size": [
+        "Pixel Size",
+        186.1,
+        "nm"
+    ],
+    "ap_stage_high_y": [
+        "Stage high Y",
+        100.0,
+        "mm"
+    ],
+    "ap_stage_bias_wobble_amplitude": [
+        "Stage bias wobble amplitude",
+        0,
+        "V"
+    ],
+    "ap_ion_collector_voltage": [
+        "Collector Voltage",
+        0.4,
+        "kV"
+    ],
+    "ap_ar_pixel_size": [
+        "Argon Pixel Size",
+        0.0,
+        "fm"
+    ],
+    "ap_mag0": [
+        "Mag Z0",
+        1.0
+    ],
+    "ap_min_wd": [
+        "Focus scan min",
+        1,
+        "mm"
+    ],
+    "ap_asap_dfe2_plus5v_digital": [
+        "ASAP DFE2 Plus5V Digital",
+        0.0,
+        "V"
+    ],
+    "ap_manualext": [
+        "Extractor V Target",
+        4.0,
+        "kV"
+    ],
+    "ap_h_3": [
+        "H 4",
+        0.0,
+        "nm"
+    ],
+    "ap_image_pixel_size": [
+        "Image Pixel Size",
+        186.1,
+        "nm"
+    ],
+    "ap_fib_aper_x_actual": [
+        "FIB Aperture X Actual",
+        6960
+    ],
+    "ap_fib_suppressor": [
+        "FIB Suppressor",
+        0,
+        "V"
+    ],
+    "ap_dc_max_attempts": [
+        "Drift Max Tries",
+        10
+    ],
+    "ap_beam_shift_align_y": [
+        "Beam Shift Align Y",
+        0.0,
+        "nm"
+    ],
+    "ap_brightness": [
+        "Brightness",
+        49.5,
+        "%"
+    ],
+    "ap_fisheye_quadriture": [
+        "Fisheye quadriture",
+        1000
+    ],
+    "ap_gunshift_y": [
+        "Gun Shift Y",
+        0.0,
+        "%"
+    ],
+    "ap_red_raster_posn_x": [
+        "Red.Raster Posn X",
+        270
+    ],
+    "ap_mag_gain_lower_x": [
+        "Shift Amp Lower Gain X",
+        0.0
+    ],
+    "ap_stage_field_size_y": [
+        "Stage field size Y",
+        0.0,
+        "mm"
+    ],
+    "ap_ar_v_int_actual": [
+        "Argon V Int is",
+        0,
+        "V"
+    ],
+    "ap_contrast": [
+        "Contrast",
+        32.2,
+        "%"
+    ],
+    "ap_asap_cal_video_delay": [
+        "Video Delay",
+        0,
+        "ns"
+    ],
+    "ap_height": [
+        "Height",
+        142.9,
+        "\u00b5m"
+    ],
+    "ap_asap_dfe1_temperature": [
+        "ASAP DFE1 Temperature",
+        0.0,
+        "\u00b0C"
+    ],
+    "ap_eht_set_min": [
+        "EHT Set minimum",
+        0.01,
+        "kV"
+    ],
+    "ap_asap_dfe4_temperature": [
+        "ASAP DFE4 Temperature",
+        0.0,
+        "\u00b0C"
+    ],
+    "ap_extcurrent": [
+        "Ext I Monitor",
+        169.5,
+        "\u00b5A"
+    ],
+    "ap_aperture_x": [
+        "Aperture at X",
+        4.5,
+        "%"
+    ],
+    "ap_stage_low_m": [
+        "Stage low M",
+        0.0,
+        "mm"
+    ],
+    "ap_fcf_setting": [
+        "FCF Setting",
+        0.0,
+        "%"
+    ],
+    "ap_radial_area_3": [
+        "Db 4",
+        0.0,
+        "nm\u00b2"
+    ],
+    "ap_fib_stigmator_y": [
+        "FIB Stig Y",
+        -1.2,
+        "%"
+    ],
+    "ap_frame_counter": [
+        "Frame Counter",
+        53214
+    ],
+    "ap_fib_fg_fil_current_actual": [
+        "Flood Gun Filament Actual",
+        0,
+        "\u00b5A"
+    ],
+    "ap_ep_target": [
+        "EP Target",
+        10,
+        "Pa"
+    ],
+    "ap_wd": [
+        "WD",
+        4.3,
+        "mm"
+    ],
+    "ap_hsync_delay": [
+        "HSync delay",
+        0,
+        "ns"
+    ],
+    "ap_frame_time": [
+        "Cycle Time",
+        14.2,
+        "Secs"
+    ],
+    "ap_fib_gun_pressure": [
+        "FIB Gun Pressure",
+        6.08e-10,
+        "Torr"
+    ],
+    "ap_line_posn_x": [
+        "Line posn X",
+        0
+    ],
+    "ap_mag_shift_upper_x": [
+        "Shift Amp Upper Offset X",
+        0.0
+    ],
+    "ap_compu_tilt_offset": [
+        "Compu. Tilt Offset",
+        0.0,
+        "mm"
+    ],
+    "ap_stage_vector_y": [
+        "Stage vector Y",
+        0.0,
+        "%"
+    ],
+    "ap_ar_condenser_actual": [
+        "Argon Condenser is",
+        0,
+        "V"
+    ],
+    "ap_frame_average_count": [
+        "Frames to average",
+        1
+    ],
+    "ap_aperture_at_fisheye_y": [
+        "Aperture value at FishEye Y",
+        0.0,
+        "%"
+    ],
+    "ap_dual_mag_slope": [
+        "Dual Mag Gain X",
+        671.0
+    ],
+    "ap_stage_goto_t": [
+        "Stage goto T",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_asap_vbe1_plus5v_analogue": [
+        "ASAP VBE1 Plus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_chamber_pressure": [
+        "Chamber",
+        0.0,
+        "Pa"
+    ],
+    "ap_eht_cal_10kv": [
+        "EHT Cal@10KV",
+        10.04,
+        "kV"
+    ],
+    "ap_ppa_7": [
+        "Pa 8",
+        0.0,
+        "nm"
+    ],
+    "ap_v_4": [
+        "V 5",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_delta_m": [
+        "Stage Delta M",
+        0.0,
+        "mm"
+    ],
+    "ap_print_number": [
+        "Print No.",
+        0
+    ],
+    "ap_esd_excitation": [
+        "ESD Excitation",
+        0.0,
+        "%"
+    ],
+    "ap_peltier_target": [
+        "Peltier Target",
+        20.0,
+        "\u00b0C"
+    ],
+    "ap_esb_grid": [
+        "ESB Grid",
+        1500,
+        "V"
+    ],
+    "ap_contrastz2": [
+        "Contrast C",
+        44.7,
+        "%"
+    ],
+    "ap_mill_item_total_time": [
+        "Mill Item Total Time",
+        0,
+        "ms"
+    ],
+    "ap_stig_y": [
+        "Stigmation Y",
+        4.4,
+        "%"
+    ],
+    "ap_ppb_3": [
+        "Pb 4",
+        177.4,
+        "\u00b0"
+    ],
+    "ap_magcal_lower_x": [
+        "Calibrate Mag Lower X",
+        0.0
+    ],
+    "ap_radial_2": [
+        "Da 3",
+        0.0,
+        "nm"
+    ],
+    "ap_system_vac": [
+        "System Vacuum",
+        3.49e-07,
+        "Torr"
+    ],
+    "ap_ar_acc": [
+        "Argon Energy",
+        0,
+        "V"
+    ],
+    "ap_scan_offset_y": [
+        "Scan Y cal.",
+        0
+    ],
+    "ap_asap_dfe3_plus5v_analogue": [
+        "ASAP DFE3 Plus5V Analogue",
+        0.0,
+        "V"
+    ],
+    "ap_stage_low_t": [
+        "Stage low T",
+        -4.0,
+        "\u00b0"
+    ],
+    "ap_mag_gain_y": [
+        "Mag Gain Cal Y",
+        710.0
+    ],
+    "ap_h_8": [
+        "H 9",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_low_r": [
+        "Stage low R",
+        -380.0,
+        "\u00b0"
+    ],
+    "ap_dc_shift_y": [
+        "Aperture Align Y",
+        0.0,
+        "%"
+    ],
+    "ap_fib_sem_angle": [
+        "FIB SEM Angle",
+        54.0,
+        "\u00b0"
+    ],
+    "ap_epd_high": [
+        "EPD High Limit",
+        255
+    ],
+    "ap_c2cal": [
+        "C2 Cal",
+        1.063
+    ],
+    "ap_fib_slice_height": [
+        "Slice Height",
+        60.0,
+        "nm"
+    ],
+    "ap_zoompos_x": [
+        "Zoom Posn X",
+        128
+    ],
+    "ap_ppa_1": [
+        "Pa 2",
+        19.36,
+        "\u00b5m"
+    ],
+    "ap_tilt_align_y": [
+        "Tilt Align Y",
+        0.0,
+        "%"
+    ],
+    "ap_fib_min_autoheat_current": [
+        "FIB Min. Autoheat Current",
+        0,
+        "\u00b5A"
+    ],
+    "ap_chamber_pressure_detailed": [
+        "Chamber Pressure Detailed",
+        0.0,
+        "Pa"
+    ],
+    "ap_stage_high_x": [
+        "Stage high X",
+        100.0,
+        "mm"
+    ],
+    "ap_landing_energy": [
+        "Landing energy",
+        5.0,
+        "kV"
+    ],
+    "ap_collector_bias": [
+        "Collector Bias",
+        300,
+        "V"
+    ],
+    "ap_max_wd": [
+        "Focus scan max",
+        40,
+        "mm"
+    ],
+    "ap_asap_dfe1_plus5v_digital": [
+        "ASAP DFE1 Plus5V Digital",
+        0.0,
+        "V"
+    ],
+    "ap_test_val": [
+        "Test Val",
+        0.0
+    ],
+    "ap_h_2": [
+        "H 3",
+        0.0,
+        "nm"
+    ],
+    "ap_radial_area_1": [
+        "Db 2",
+        33160.0,
+        "nm\u00b2"
+    ],
+    "ap_fib_aperture_align_y": [
+        "FIB Aper.Align Y",
+        2899
+    ],
+    "ap_fib_fil_v_target": [
+        "FIB Fil V target",
+        45.1,
+        "V"
+    ],
+    "ap_dc_min_conf": [
+        "Drift Min Conf",
+        50.0,
+        "%"
+    ],
+    "ap_beam_shift_align_x": [
+        "Beam Shift Align X",
+        0.0,
+        "nm"
+    ],
+    "ap_fisheye_orthog": [
+        "Fisheye Orthog",
+        180.0,
+        "\u00b0"
+    ],
+    "ap_gunshift_x": [
+        "Gun Shift X",
+        0.0,
+        "%"
+    ],
+    "ap_contrastz1": [
+        "Contrast B",
+        32.2,
+        "%"
+    ],
+    "ap_focus_rotation_comp": [
+        "Focus Rotation comp.",
+        -0.009,
+        "kV"
+    ],
+    "ap_mag_gain_upper_y": [
+        "Shift Amp Upper Gain Y",
+        0.0
+    ],
+    "ap_fib_track_wd_delta": [
+        "FIB Track WD Delta",
+        0.0,
+        "nm"
+    ],
+    "ap_stage_field_size_x": [
+        "Stage field size X",
+        0.0,
+        "mm"
+    ],
+    "ap_ar_v_int": [
+        "Argon V Int",
+        0,
+        "V"
+    ],
+    "ap_offset": [
+        "Offset A",
+        0.0,
+        "%"
+    ],
+    "ap_width": [
+        "Width",
+        190.5,
+        "\u00b5m"
+    ],
+    "ap_asap_mb_temperature": [
+        "ASAP MB Temperature",
+        0.0,
+        "\u00b0C"
+    ],
+    "ap_mag_shift_y": [
+        "Mag Shift Cal Y",
+        -5.0
+    ],
+    "ap_pirani_pressure": [
+        "Pirani Pressure",
+        0.0,
+        "Torr"
+    ],
+    "ap_actuallens": [
+        "Liner Tube",
+        8.0,
+        "kV"
+    ],
+    "ap_aperture_align_y": [
+        "Aperture Align Y",
+        4.9,
+        "%"
+    ],
+    "ap_stage_goto_m": [
+        "Stage goto M",
+        6.0,
+        "mm"
+    ],
+    "ap_ppb_6": [
+        "Pb 7",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_v_9": [
+        "V 10",
+        0.0,
+        "nm"
+    ],
+    "ap_radial_area_2": [
+        "Db 3",
+        0.0,
+        "nm\u00b2"
+    ],
+    "ap_fib_fg_serial_number": [
+        "Flood Gun Serial Number",
+        0
+    ],
+    "ap_fib_stigmator_x": [
+        "FIB Stig X",
+        1.5,
+        "%"
+    ],
+    "ap_stage_at_m": [
+        "Stage at M",
+        6.0,
+        "mm"
+    ],
+    "ap_stage_at_z": [
+        "Stage at Z",
+        34.172,
+        "mm"
+    ],
+    "ap_stage_at_y": [
+        "Stage at Y",
+        46.9416,
+        "mm"
+    ],
+    "ap_actualcurrent": [
+        "Fil I",
+        2.31,
+        "A"
+    ],
+    "ap_stage_at_x": [
+        "Stage at X",
+        60.5964,
+        "mm"
+    ],
+    "ap_actualkv": [
+        "EHT",
+        5.0,
+        "kV"
+    ],
+    "ap_stage_at_t": [
+        "Stage at T",
+        0.0,
+        "\u00b0"
+    ],
+    "ap_sample_at_y": [
+        "Sample at Y",
+        0.0
+    ],
+    "ap_stage_at_r": [
+        "Stage at R",
+        17.7,
+        "\u00b0"
+    ],
+    "ap_sample_at_x": [
+        "Sample at X",
+        0.0
+    ],
+    "ap_time": [
+        "Time",
+        "9:56:16"
+    ],
+    "ap_date": [
+        "Date",
+        "8 Jan 2021"
+    ],
+    "sv_version": [
+        "Version",
+        "V06.00.00.00 : 09-Jun-16"
+    ],
+    "sv_user_text": [
+        "User Text",
+        ""
+    ],
+    "sv_file_name": [
+        "File Name",
+        "ADB1_28.tif"
+    ],
+    "sv_image_path": [
+        "Images",
+        "d:\\users\\quentin vo\\adb1\\"
+    ],
+    "sv_user_name": [
+        "User Name",
+        "SYSTEM"
+    ],
+    "sv_sample_id": [
+        "Sample ID",
+        ""
+    ],
+    "sv_serial_number": [
+        "Serial No.",
+        "Auriga-45-25"
+    ],
+    "sv_operator": [
+        "Operator",
+        ""
+    ]
+}
