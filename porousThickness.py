@@ -20,14 +20,19 @@ import json
 from semimage import SEMImage 
 
 #Load example file
+
+example_files = glob.glob(r"./examples/*.tif")
+
 #example_file = glob.glob(r"./examples/WF67_1_06.tif")[0]
 #example_file = glob.glob(r"./examples/UB19_14.tif")[0]
 #example_file = glob.glob(r"./examples/ADB1_28.tif")[0]
 #example_file = glob.glob(r"./examples/WF56_1_20.tif")[0]
-example_file = glob.glob(r"./examples/ADB1_44.tif")[0]
+#example_file = glob.glob(r"./examples/ADB1_44.tif")[0]
 
-a = SEMImage(example_file, debug=True)
-print(a.lineCount)
+for example_file in example_files:
+    a = SEMImage(example_file, debug=False)
+    print(a.lineCount)
+    b = SEMImage(example_file, debug=True)
 """
 #reading the file
 #image = io.imread(example_file, as_gray=True)

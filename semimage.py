@@ -5,6 +5,7 @@ import json
 import numpy as np
 from tifffile import TiffFile as tf
 from matplotlib import pyplot as plt
+from pathlib import Path
 
 
 from matplotlib import cm
@@ -24,18 +25,19 @@ class SEMImage(object):
 
     Keyword arguments:
     filePath: a path to a file name (default: None, returns an error)
-    debug: a flag to write the metadata to a file and plot the image
+    debug: a flag to write the metadata to a file and plot the image (default: False)
     """
     def __init__(self, filePath = None, debug = False):
         try:
             with tf(filePath) as image:
+                self.imageName = Path(filePath).name
                 if not hasattr(image, 'sem_metadata'):
                     raise Exception("Image is not a Zeiss image")
                 for page in image.pages:
                     self.image = page.asarray()
                 self.metaDataFull = image.sem_metadata
                 self.parse_metadata()
-                self.mask()
+                self.mask(debug=debug)
                 if debug:
                     #print all the metadata in a file
                     metadataFile = open(f"{filePath}_meta.txt", "w")
@@ -63,7 +65,7 @@ class SEMImage(object):
         """Plots the image in a new window, without any treatment.
 
         Keyword arguments:
-        statistics: a flag to show line-by-line statistics
+        statistics: a flag to show line-by-line statistics (default: True)
         """
         fig, ax = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True, gridspec_kw={'width_ratios': [1024, 255]})
         ax[0].imshow(self.image, cmap=cm.gray)
@@ -77,36 +79,39 @@ class SEMImage(object):
         ax[1].set_title('Statistics')
         plt.show()
 
-    def mask_image(self):
+    def mask(self, debug = False):
         """Creates a masked image for the bottom portion where no scanning was done.
         If a banner is present, it will be masked.
 
+        Keyword arguments:
+        debug: shows the picture of the masked image (default: False)
         """
-        minThreshold = 0
-        maxThreshold = 253
-        meanThresholdLow = 147
-        meanThresholdHigh = 178
-        medianThresholdLow = 150
-        medianThresholdHigh = 210
+        lineBanner = 676
 
-        line_zeiss_logo = 592
+        lineMask_min = self.image.min(axis=1)
+        lineMask_max = self.image.max(axis=1)
+        maskLines = np.zeros(lineMask_min.shape, dtype=bool)
+        maskFirstLine = self.lineCount
+        if lineMask_min[lineBanner] == 0 and lineMask_max[lineBanner+1] == 255:
+            print(f"Image {self.imageName} has banner")
+            maskFirstLine = min(lineBanner, maskFirstLine)
+        
+        maskLines[maskFirstLine:] = True
+        mask = np.tile(maskLines,[self.image.shape[1],1]).T
+        self.maskedImage = self.image.copy()
+        self.maskedImage[mask] = 0
+        if debug:
+            plt.figure()
+            plt.imshow(self.maskedImage, cmap=cm.gray)
 
-        lineMask_min = image.min(axis=1)
-        lineMask_max = image.max(axis=1)
-        lineMask_mean = image.mean(axis=1)
-        lineMask_median = np.median(image,axis=1)
+    def canny(self, debug = False):
+        """Creates a canny edge filter for the masked image.
 
-        mask_lines = ((lineMask_min == minThreshold) * (lineMask_max > maxThreshold) * 
-                    (lineMask_mean > meanThresholdLow) * (lineMask_mean < meanThresholdHigh) * 
-                    (lineMask_median > medianThresholdLow) * (lineMask_median < medianThresholdHigh))
-                    
+        Keyword arguments:
+        debug: overlays the edges in red on the image (default: False)
+        """
+        pass
 
-        first_mask_line = np.argmax(mask_lines)
-        if first_mask_line == 0:
-            first_mask_line = line_zeiss_logo
-        mask_lines[first_mask_line:] = True
-        mask = np.tile(mask_lines,[image.shape[1],1]).T
-        return mask
 """
 mask_noise = mask_noise(image)
 image_original = image.copy()
