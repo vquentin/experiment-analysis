@@ -38,8 +38,8 @@ class SEMImage(object):
                 self.metaDataFull = image.sem_metadata
                 self.parse_metadata()
                 self.mask()
-                self.canny(debug=debug)
-                self.lines_h_all(debug=debug)
+                self.canny(debug=True)
+                self.lines_h_all(debug=True)
                 if debug:
                     #print all the metadata in a file
                     metadataFile = open(f"{filePath}_meta.txt", "w")
@@ -96,7 +96,6 @@ class SEMImage(object):
         maskLines = np.ones(lineMask_min.shape, dtype=bool)
         maskFirstLine = self.lineCount
         if lineMask_min[lineBanner] == 0 and lineMask_max[lineBanner+1] == 255:
-            print(f"Image {self.imageName} has banner")
             maskFirstLine = min(lineBanner, maskFirstLine)
         
         maskLines[maskFirstLine:] = False
@@ -104,6 +103,7 @@ class SEMImage(object):
         self.maskedImage = self.image.copy()
         self.maskedImage[~self.mask] = 0
         if debug:
+            print(f"Image {self.imageName} has banner")
             plt.figure()
             plt.imshow(self.maskedImage, cmap=cm.gray)
             plt.title('Masked image')
@@ -117,12 +117,10 @@ class SEMImage(object):
         """
         self.edges = canny(self.image,sigma=1.0, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
         if debug:
-            fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True)
-            ax = axes.ravel()
-            ax[0].imshow(self.image, cmap=cm.gray)
-            ax[0].set_title('Original image')
-            ax[1].imshow(self.edges, cmap=cm.gray)
-            ax[1].set_title('Detected edges')
+            plt.figure()
+            plt.imshow(self.image, cmap=cm.gray)
+            plt.imshow(np.stack([self.edges,np.zeros(self.edges.shape),np.zeros(self.edges.shape),np.ones(self.edges.shape)*0.5], axis=2))
+            plt.title('Detected edges')
             plt.tight_layout()
 
     def lines_h_all(self, debug = False):
@@ -136,6 +134,34 @@ class SEMImage(object):
         dAngle = 10 # delta around which to search
         angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), 500)
         h, thetas, d = hough_line(self.edges, theta=angles)
+        accum, self.lines_h_all_angles, self.lines_h_all_dists = hough_line_peaks(h, thetas, d)
+
+        if debug:
+            plt.figure()
+            plt.imshow(self.image, cmap=cm.gray)
+             
+            origin = np.array((0, self.image.shape[1]))
+            for _, theta, dist in zip(accum, self.lines_h_all_angles, self.lines_h_all_dists):
+                y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
+                plt.plot(origin, (y0, y1), '-r')
+            plt.xlim(origin)
+            plt.ylim((self.image.shape[0], 0))
+            plt.title('Detected lines')
+            plt.tight_layout()
+
+    def silicon_baseline(self, debug = False):
+        """Detect the silicon interface from which we will perform calculations
+
+        Keyword arguments:
+        debug: overlay original image and line found (default: False)
+        """
+        #hough transform
+        angle = 90 # 90 degrees = horizontal line
+        dAngle = 10 # delta around which to search
+        angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), 500)
+        h, thetas, d = hough_line(self.edges, theta=angles)
+
+
 
         if debug:
             plt.figure()
