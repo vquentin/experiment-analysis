@@ -38,6 +38,7 @@ class SEMImage(object):
                 self.metaDataFull = image.sem_metadata
                 self.parse_metadata()
                 self.mask(debug=debug)
+                self.canny(debug=debug)
                 if debug:
                     #print all the metadata in a file
                     metadataFile = open(f"{filePath}_meta.txt", "w")
@@ -45,6 +46,7 @@ class SEMImage(object):
                     metadataFile.close()
                     #plot stuff
                     self.plot_image_raw()
+                plt.show()
         except Exception as e:
             print(f"An error occurred while trying to load {filePath}")
             print(e)
@@ -60,14 +62,14 @@ class SEMImage(object):
         self.stageX = self.metaDataFull["ap_stage_at_x"][1]
         self.stageY = self.metaDataFull["ap_stage_at_y"][1]
 
-
     def plot_image_raw(self, statistics=True):
         """Plots the image in a new window, without any treatment.
 
         Keyword arguments:
         statistics: a flag to show line-by-line statistics (default: True)
         """
-        fig, ax = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True, gridspec_kw={'width_ratios': [1024, 255]})
+        fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True, gridspec_kw={'width_ratios': [1024, 255]})
+        ax = axes.ravel()
         ax[0].imshow(self.image, cmap=cm.gray)
         ax[0].set_title('Original image')
         rows = np.arange(0, self.image.shape[0])
@@ -77,11 +79,11 @@ class SEMImage(object):
         ax[1].plot(np.median(self.image,axis=1), rows, '-k', label='Median')
         ax[1].legend()
         ax[1].set_title('Statistics')
-        plt.show()
+        plt.tight_layout()
 
     def mask(self, debug = False):
-        """Creates a masked image for the bottom portion where no scanning was done.
-        If a banner is present, it will be masked.
+        """Creates a mask and a masked image for the bottom portion where no scanning was done.
+        If a banner is present, the banner and lines below will be masked.
 
         Keyword arguments:
         debug: shows the picture of the masked image (default: False)
@@ -90,19 +92,21 @@ class SEMImage(object):
 
         lineMask_min = self.image.min(axis=1)
         lineMask_max = self.image.max(axis=1)
-        maskLines = np.zeros(lineMask_min.shape, dtype=bool)
+        maskLines = np.ones(lineMask_min.shape, dtype=bool)
         maskFirstLine = self.lineCount
         if lineMask_min[lineBanner] == 0 and lineMask_max[lineBanner+1] == 255:
             print(f"Image {self.imageName} has banner")
             maskFirstLine = min(lineBanner, maskFirstLine)
         
-        maskLines[maskFirstLine:] = True
-        mask = np.tile(maskLines,[self.image.shape[1],1]).T
+        maskLines[maskFirstLine:] = False
+        self.mask = np.tile(maskLines,[self.image.shape[1],1]).T
         self.maskedImage = self.image.copy()
-        self.maskedImage[mask] = 0
+        self.maskedImage[~self.mask] = 0
         if debug:
             plt.figure()
             plt.imshow(self.maskedImage, cmap=cm.gray)
+            plt.title('Masked image')
+            plt.tight_layout()
 
     def canny(self, debug = False):
         """Creates a canny edge filter for the masked image.
@@ -110,23 +114,19 @@ class SEMImage(object):
         Keyword arguments:
         debug: overlays the edges in red on the image (default: False)
         """
-        pass
+        self.edges = canny(self.image,sigma=1.0, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
+        if debug:
+            fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True)
+            ax = axes.ravel()
+            ax[0].imshow(self.image, cmap=cm.gray)
+            ax[0].set_title('Original image')
+            ax[1].imshow(self.edges, cmap=cm.gray)
+            ax[1].set_title('Detected edges')
+            plt.tight_layout()
+
+
 
 """
-mask_noise = mask_noise(image)
-image_original = image.copy()
-
-image[mask_noise] = 255
-#remove Zeiss banner
-#image = crop(image, ((0, 95), (0, 0)), copy=False)
-#TODO remove noisy parts of image
-#scan rows until it's random?
-
-
-
-#edge detection
-edges = canny(image,sigma=1.0, low_threshold=None, high_threshold=None, mask=None, use_quantiles=False)
-
 #hough transform
 tested_angles = np.linspace(80*(np.pi / 180), 100*(np.pi / 180), 360)
 h, theta, d = hough_line(edges, theta=tested_angles)
