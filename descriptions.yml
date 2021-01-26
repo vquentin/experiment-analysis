@@ -1,0 +1,9 @@
+# Copyright (c) 2021, Quentin Van Overmeere
+# Licensed under MIT License
+
+ADB1:
+    Name: ADB1
+    Resistivity: 0.005 #Ohm cm
+    Thickness: 381 #um
+    Mask: {Material: SiN, Type: XFab2}
+    TypeSEM: [uniformity_anisotropic, cavity_anisotropic]
