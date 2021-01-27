@@ -35,7 +35,7 @@ class SEMImage(object):
                 raise Exception("Image is likely not from a Zeiss scanning electron microscope")
             self.image = image.pages[0].asarray()
             self.parse_metadata(metaData = image.sem_metadata, debug = False)
-            self.mask
+            self.mask(debug = True)
         if debug:
             #plot stuff
             self.plot_image_raw()
@@ -91,7 +91,7 @@ class SEMImage(object):
         plt.tight_layout()
 
     def mask(self, debug = False):
-        """Creates a mask and a masked image for the bottom portion where no scanning was done.
+        """Creates a mask for the bottom portion where no scanning was done.
         If a banner is present, the banner and lines below will be masked.
 
         Keyword arguments:
@@ -102,19 +102,25 @@ class SEMImage(object):
         lineMask_min = self.image.min(axis=1)
         lineMask_max = self.image.max(axis=1)
         maskLines = np.ones(lineMask_min.shape, dtype=bool)
+        if not hasattr(self, 'lineCount'):
+            raise Exception("This function requires meta data")
         maskFirstLine = self.lineCount
+        hasBanner = False
         if lineMask_min[lineBanner] == 0 and lineMask_max[lineBanner+1] == 255:
+            hasBanner = True 
             maskFirstLine = min(lineBanner, maskFirstLine)
-        
         maskLines[maskFirstLine:] = False
         self.mask = np.tile(maskLines,[self.image.shape[1],1]).T
-        self.maskedImage = self.image.copy()
-        self.maskedImage[~self.mask] = 0
+
         if debug:
-            print(f"Image {self.imageName} has banner")
-            plt.figure()
-            plt.imshow(self.maskedImage, cmap=cm.gray)
-            plt.title('Masked image')
+            maskedImage = self.image.copy()
+            maskedImage[~self.mask] = 0
+            fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True)
+            ax = axes.ravel()
+            ax[0].imshow(self.image, cmap=cm.gray)
+            ax[0].set_title(f"Original image (banner: {hasBanner})")
+            ax[1].imshow(maskedImage, cmap=cm.gray)
+            ax[1].set_title('Masked image')
             plt.tight_layout()
 
     def canny(self, debug = False, sigma = 1.0):
