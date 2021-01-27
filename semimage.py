@@ -39,7 +39,7 @@ class SEMImage(object):
         if debug:
             #plot stuff
             self.plot_image_raw()
-        #self.canny(debug=False)
+        self.canny(debug=True, sigma = 10.0)
         #self.lines_h_all(debug=False)
         #self.lines_h(debug=True)
         #self.silicon_baseline(debug=True)
@@ -125,19 +125,20 @@ class SEMImage(object):
             plt.tight_layout()
 
     def canny(self, debug = False, sigma = 1.0):
-        """Creates a canny edge filter for the masked image.
+        """Return a canny edge filter for the masked image.
 
         Keyword arguments:
         debug: compares the edges and the original image (default: False)
+        sigma: override the default sigma value in the canny filter
         """
-        self.edgesSoft = canny(self.image,sigma=1.0, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
-        self.edgesHard = canny(self.image,sigma=6.0, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
+        edges = canny(self.image,sigma=sigma, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
         if debug:
             plt.figure()
             plt.imshow(self.image, cmap=cm.gray)
-            plt.imshow(np.stack([self.edgesSoft,np.zeros(self.edgesSoft.shape),np.zeros(self.edgesSoft.shape),np.ones(self.edgesSoft.shape)*0.5], axis=2))
-            plt.title('Detected edges')
+            plt.imshow(np.stack([edges,np.zeros(edges.shape),np.zeros(edges.shape),np.ones(edges.shape)*0.5], axis=2))
+            plt.title(f"Detected edges with sigma = {sigma}")
             plt.tight_layout()
+        return edges
 
     def lines_h_all(self, debug = False):
         """Detect all horizontal lines in the image
