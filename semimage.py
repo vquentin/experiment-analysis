@@ -35,11 +35,10 @@ class SEMImage(object):
                 raise Exception("Image is likely not from a Zeiss scanning electron microscope")
             self.image = image.pages[0].asarray()
             self.parse_metadata(metaData = image.sem_metadata, debug = False)
-            self.mask(debug = True)
+            self.mask(debug = False)
         if debug:
             #plot stuff
             self.plot_image_raw()
-        #self.mask()
         #self.canny(debug=False)
         #self.lines_h_all(debug=False)
         #self.lines_h(debug=True)
@@ -69,13 +68,10 @@ class SEMImage(object):
             print(f"Failed to read image metadata")
             print(e)
 
-    def plot_image_raw(self, statistics=True):
+    def plot_image_raw(self):
         """Plots the image in a new window, without any treatment and show basic diagnostics.
-
-        Keyword arguments:
-        statistics: a flag to show line-by-line statistics (default: True)
         """
-        fig, axes = plt.subplots(nrows = 1, ncols = 3, figsize=(12,5), sharey=True, gridspec_kw={'width_ratios': [1024, 256, 256]})
+        fig, axes = plt.subplots(nrows = 1, ncols = 3, figsize=(12,5), gridspec_kw={'width_ratios': [1024, 256, 256]})
         ax = axes.ravel()
         ax[0].imshow(self.image, cmap=cm.gray)
         ax[0].set_title('Original image')
@@ -86,8 +82,13 @@ class SEMImage(object):
         ax[1].plot(np.median(self.image,axis=1), rows, '-k', label='Median')
         ax[1].legend()
         ax[1].set_title('Statistics')
-        ax[2].hist(self.image.ravel(), bins = 256)
-        plt.show()
+        ax[1].sharey(ax[0])
+        if hasattr(self, 'mask'):
+            ax[2].hist(self.image[self.mask].ravel(), bins = 256)
+            ax[2].set_title('Histogram (mask applied)')
+        else:
+            ax[2].hist(self.image.ravel(), bins = 256)
+            ax[2].set_title('Histogram (no mask)')
         plt.tight_layout()
 
     def mask(self, debug = False):
