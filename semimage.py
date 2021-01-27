@@ -34,7 +34,7 @@ class SEMImage(object):
             if not hasattr(image, 'sem_metadata'):
                 raise Exception("Image is likely not from a Zeiss scanning electron microscope")
             self.image = image.pages[0].asarray()
-            self.parse_metadata(metaData = image.sem_metadata, debug = False)
+            self.__parse_metadata(metaData = image.sem_metadata, debug = False)
             self.mask(debug = False)
         if debug:
             #plot stuff
@@ -45,7 +45,7 @@ class SEMImage(object):
         #self.silicon_baseline(debug=True)
         plt.show()
 
-    def parse_metadata(self, metaData = None, debug = False):
+    def __parse_metadata(self, metaData = None, debug = False):
         """Makes the useful metadata accessible directly in the instance of the object
         
         Keyword arguments: 
@@ -135,10 +135,18 @@ class SEMImage(object):
         if debug:
             plt.figure()
             plt.imshow(self.image, cmap=cm.gray)
-            plt.imshow(np.stack([edges,np.zeros_like(edges),np.zeros_like(edges),1.0*edges], axis=2))
+            plt.imshow(self.__overlay(edges))
             plt.title(f"Detected edges with sigma = {sigma}")
             plt.tight_layout()
         return edges
+
+    def __overlay(self, edges):
+        """Use to overlay binary values (e.g. as returned by canny) in red on an image
+        
+        Inputs:
+        edges: an array of 1,0 values
+        """
+        return np.stack([edges,np.zeros_like(edges),np.zeros_like(edges),1.0*edges], axis=2)
 
     def lines_h_all(self, debug = False):
         """Detect all horizontal lines in the image
@@ -229,7 +237,7 @@ class SEMImage(object):
         if debug:
             plt.figure()
             plt.imshow(self.image, cmap=cm.gray)
-            plt.imshow(np.stack([edges,np.zeros_like(edges),np.zeros_like(edges),np.ones_like(edges)*0.5], axis=2))
+            plt.imshow(plt.imshow(self.__overlay(edges)))
             origin = np.array((0, self.image.shape[1]))
             for _, theta, dist in zip(*lines_h_all_hough_peaks):
                 y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
