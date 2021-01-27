@@ -39,7 +39,7 @@ class SEMImage(object):
         if debug:
             #plot stuff
             self.plot_image_raw()
-        self.canny(debug=True, sigma = 10.0)
+        self.canny(debug=True, sigma = 1.0)
         #self.lines_h_all(debug=False)
         #self.lines_h(debug=True)
         #self.silicon_baseline(debug=True)
@@ -135,7 +135,7 @@ class SEMImage(object):
         if debug:
             plt.figure()
             plt.imshow(self.image, cmap=cm.gray)
-            plt.imshow(np.stack([edges,np.zeros(edges.shape),np.zeros(edges.shape),np.ones(edges.shape)*0.5], axis=2))
+            plt.imshow(np.stack([edges,np.zeros_like(edges),np.zeros_like(edges),1.0*edges], axis=2))
             plt.title(f"Detected edges with sigma = {sigma}")
             plt.tight_layout()
         return edges
@@ -229,7 +229,7 @@ class SEMImage(object):
         if debug:
             plt.figure()
             plt.imshow(self.image, cmap=cm.gray)
-            plt.imshow(np.stack([edges,np.zeros(edges.shape),np.zeros(edges.shape),np.ones(edges.shape)*0.5], axis=2))
+            plt.imshow(np.stack([edges,np.zeros_like(edges),np.zeros_like(edges),np.ones_like(edges)*0.5], axis=2))
             origin = np.array((0, self.image.shape[1]))
             for _, theta, dist in zip(*lines_h_all_hough_peaks):
                 y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
