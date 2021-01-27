@@ -12,8 +12,9 @@ example_files = glob.glob(r"./examples/*.tif")
 #example_file = glob.glob(r"./examples/ADB1_44.tif")[0]
 """
 
-example_files = glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\ADB1\*.tif")
+#example_files = glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\ADB1\*.tif")
+example_files = glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\ADB1\ADB1_01.tif")
 
 for example_file in example_files:
-    a = SEMImage(example_file)
+    a = SEMImage(filePath=example_file, debug=True)
     

@@ -21,57 +21,61 @@ from mpl_toolkits.axes_grid1 import AxesGrid
 
 class SEMImage(object):
     """This class instanciates an image and loads the metadata. 
-    Intended for Zeiss Scanning Electron Microscopes.
+    Intended for images generated with Zeiss Scanning Electron Microscopes.
 
     Keyword arguments:
     filePath: a path to a file name (default: None, returns an error)
     debug: a flag to write the metadata to a file and plot the image (default: False)
     """
     def __init__(self, filePath = None, debug = False):
-        try:
-            with tf(filePath) as image:
-                self.imageName = Path(filePath).name
-                if not hasattr(image, 'sem_metadata'):
-                    raise Exception("Image is not a Zeiss image")
-                for page in image.pages:
-                    self.image = page.asarray()
-                self.metaDataFull = image.sem_metadata
-                if debug:
-                    #print all the metadata in a file
-                    metadataFile = open(f"{filePath}_meta.txt", "w")
-                    print(json.dumps(self.metaDataFull, indent = 4), file=metadataFile)
-                    metadataFile.close()
-                    #plot stuff
-                    self.plot_image_raw()
-        except Exception as e:
-            print(f"An error occurred while trying to load {filePath}")
-            print(e)
-        self.parse_metadata()
-        self.mask()
-        self.canny(debug=False)
-        self.lines_h_all(debug=False)
-        self.lines_h(debug=True)
-        self.silicon_baseline(debug=True)
+        self.imagePath = Path(filePath)
+        with tf(self.imagePath) as image:
+            self.imageName = self.imagePath.stem
+            if not hasattr(image, 'sem_metadata'):
+                raise Exception("Image is likely not from a Zeiss scanning electron microscope")
+            self.image = image.pages[0].asarray()
+            self.parse_metadata(metaData = image.sem_metadata, debug = False)
+            self.mask
+        if debug:
+            #plot stuff
+            self.plot_image_raw()
+        #self.mask()
+        #self.canny(debug=False)
+        #self.lines_h_all(debug=False)
+        #self.lines_h(debug=True)
+        #self.silicon_baseline(debug=True)
         plt.show()
 
-    def parse_metadata(self):
-        """Makes the metadata accessible directly in the instance of the object        
-        """
-        self.lineCount = self.metaDataFull["ap_line_counter"][1]
-        self.pixelSize = self.metaDataFull["ap_image_pixel_size"][1]
+    def parse_metadata(self, metaData = None, debug = False):
+        """Makes the useful metadata accessible directly in the instance of the object
         
-        self.beamXOffset = self.metaDataFull["ap_beam_offset_x"][1]
-        self.beamYOffset = self.metaDataFull["ap_beam_offset_y"][1]
-        self.stageX = self.metaDataFull["ap_stage_at_x"][1]
-        self.stageY = self.metaDataFull["ap_stage_at_y"][1]
+        Keyword arguments: 
+        metaData: the metadata from the Zeiss image (default: None)
+        debug: flag to write the metadata in json format in the same directory than the file
+        """
+        if debug:
+            #print all the metadata in a file
+            f = self.imagePath.parent.joinpath(self.imagePath.stem + '_meta.txt')
+            with open(f, mode='w') as fid:
+                print(json.dumps(metaData, indent = 4), file=fid)
+        try:
+            self.lineCount = metaData["ap_line_counter"][1]
+            self.pixelSize = metaData["ap_image_pixel_size"][1]
+            self.beamXOffset = metaData["ap_beam_offset_x"][1]
+            self.beamYOffset = metaData["ap_beam_offset_y"][1]
+            self.stageX = metaData["ap_stage_at_x"][1]
+            self.stageY = metaData["ap_stage_at_y"][1]
+        except Exception as e:
+            print(f"Failed to read image metadata")
+            print(e)
 
     def plot_image_raw(self, statistics=True):
-        """Plots the image in a new window, without any treatment.
+        """Plots the image in a new window, without any treatment and show basic diagnostics.
 
         Keyword arguments:
         statistics: a flag to show line-by-line statistics (default: True)
         """
-        fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True, gridspec_kw={'width_ratios': [1024, 255]})
+        fig, axes = plt.subplots(nrows = 1, ncols = 3, figsize=(12,5), sharey=True, gridspec_kw={'width_ratios': [1024, 256, 256]})
         ax = axes.ravel()
         ax[0].imshow(self.image, cmap=cm.gray)
         ax[0].set_title('Original image')
@@ -82,6 +86,8 @@ class SEMImage(object):
         ax[1].plot(np.median(self.image,axis=1), rows, '-k', label='Median')
         ax[1].legend()
         ax[1].set_title('Statistics')
+        ax[2].hist(self.image.ravel(), bins = 256)
+        plt.show()
         plt.tight_layout()
 
     def mask(self, debug = False):
@@ -224,3 +230,12 @@ class SEMImage(object):
             plt.ylim((self.image.shape[0], 0))
             plt.title(f"With sigma = {optimalSigma}")
             plt.tight_layout()
+
+    def analyze(self, analyses = None):
+        """Analyze the image.
+
+        Keyword arguments: 
+        analyses: a list of analysis to perform on an individual image. Each analysis can 
+        be one of 'cavity_xy', 'cavity_y', 'thickness_xy', "thickness_y' (default: None).
+        """
+        pass

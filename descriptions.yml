@@ -7,3 +7,4 @@ ADB1:
     Thickness: 381 #um
     Mask: {Material: SiN, Type: XFab2}
     TypeSEM: [uniformity_anisotropic, cavity_anisotropic]
+    SEMPath: "C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\ADB1\*.tif"
