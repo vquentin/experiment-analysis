@@ -197,7 +197,7 @@ class SEMImage(object):
         skeleton1 = morphology.skeletonize(closed1)
         closed2 = morphology.area_closing(skeleton1, area_threshold=1000, connectivity=1, parent=None, tree_traverser=None)
         skeleton2 = morphology.skeletonize(closed2)
-        noise_reduced = morphology.remove_small_objects(skeleton2, min_size=100, connectivity=1)
+        noise_reduced = np.array(morphology.remove_small_objects(label(skeleton2), min_size=100,), dtype=bool)
 
         if debug:
             fig, axes = plt.subplots(nrows = 2, ncols = 4, sharex=True, sharey=True, figsize=(15,8))
@@ -206,8 +206,7 @@ class SEMImage(object):
             ax[0].set_title('Original image')
             self.__plt_imshow_overlay(skeleton1, axes=ax[1], title='Skeleton after closing')
             self.__plt_imshow_overlay(skeleton2, axes=ax[2], title='Skeleton after area closing')
-            ax[3].imshow(noise_reduced, cmap=cm.gray)
-            #self.__plt_imshow_overlay(noise_reduced, axes=ax[3], title='Small object removal')
+            self.__plt_imshow_overlay(noise_reduced, axes=ax[3], title='Small object removal')
             self.__plt_imshow_overlay(edges, axes=ax[4], title='Canny')
             self.__plt_imshow_overlay(np.logical_xor(edges,closed1), axes=ax[5], title='Dismissed closing')
             self.__plt_imshow_overlay(np.logical_xor(skeleton1,closed2), axes=ax[6], title='Dismissed area closing')
@@ -291,38 +290,27 @@ class SEMImage(object):
         if edges is None:
             edges = self.canny_closing_skeleton(debug=True)
 
-        edgesExtremes = np.zeros_like(edges,dtype = bool)
-
+        edgesExtremesUp = np.zeros_like(edges,dtype = bool)
         I = np.arange(edges.shape[1])[np.newaxis,:]
-        #weights = np.tile(np.arange(edges.shape[1],0,-1), (edges.shape[0],1))
-        weights = np.ones_like(edges)
-        print(weights.shape)
+        weights = np.tile(np.arange(edges.shape[0],0,-1)[:, np.newaxis], (1,edges.shape[1]))
         edgesWeighted = edges*weights
         plt.figure()
-        plt.plot(np.argmax(edgesWeighted, axis=0))
-        plt.figure()
-        plt.plot(edges[:,328])
-        edgesExtremes[np.argmax(edgesWeighted, axis=0),I] = True
-        
-        #edgesExtremes[] = True
-        
-        #print(list(zip(np.argmax(edges, axis=0),range(edges.shape[0]))))
-        
-        #edgesExtremes[:,edgesExtremes.shape[0]-np.argmax(np.flip(edges, axis=1), axis=1)] = True
+        plt.imshow(edgesWeighted, cmap=cm.gray)
+        edgesExtremesUp[np.argmax(edgesWeighted, axis=0),I] = True
         
         #hough transform
         angle = 90 # 90 degrees = horizontal line
         dAngle = 10 # delta around which to search
         resAngle = 0.05 #smallest resolvable angle
         angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), round(2*dAngle/resAngle))
-        h, thetas, d = hough_line(edgesExtremes, theta=angles)
-        lines_h_all_hough_peaks = hough_line_peaks(h, thetas, d, num_peaks=1)
+        h, thetas, d = hough_line(edgesExtremesUp, theta=angles)
+        lines_h_all_hough_peaks = hough_line_peaks(h, thetas, d, num_peaks=3)
         
         if debug:
             fig, axes = plt.subplots(nrows = 1, ncols = 3, sharex=True, sharey=True, figsize=(15,8))
             ax = axes.ravel()
             self.__plt_imshow_overlay(edges, axes=ax[0],title="Edges")
-            self.__plt_imshow_overlay(edgesExtremes, axes=ax[1], title='Extreme edges')
+            self.__plt_imshow_overlay(edgesExtremesUp, axes=ax[1], title='Extreme edges')
             ax[2].imshow(self.image, cmap=cm.gray)
             ax[2].set_title(f"Detected lines ({lines_h_all_hough_peaks[0].shape[0]} lines)")
 
