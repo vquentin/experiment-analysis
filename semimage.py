@@ -41,10 +41,9 @@ class SEMImage(object):
         if debug:
             self.plot_image_raw()
         #self.canny(debug=True, sigma = 1.0)
-        self.canny_closing_skeleton(debug=True)
+        #self.canny_closing_skeleton(debug=True)
         #self.classifier(debug=True)
-        #self.lines_h_all(debug=False)
-        #self.lines_h(debug=True)
+        self.lines_h(debug=True)
         #self.silicon_baseline(debug=True)
         plt.show()
 
@@ -177,7 +176,6 @@ class SEMImage(object):
 
     def canny_closing_skeleton(self, debug = False):
         edges = self.canny(sigma = 1.1)
-        #closed1 = diameter_closing(img,100,connectivity=10)
         closed1 = morphology.closing(edges)
         skeleton1 = morphology.skeletonize(closed1)
         closed2 = morphology.area_closing(skeleton1, area_threshold=1000, connectivity=1, parent=None, tree_traverser=None)
@@ -266,30 +264,33 @@ class SEMImage(object):
         ax[1].set_title('Segmentation')
         fig.tight_layout()"""
 
-    def lines_h_all(self, debug = False):
+    def lines_h(self, edges = None, debug = False):
         """Detect all horizontal lines in the image
 
         Keyword arguments:
+        edges: a binary image from edge detection algorithm (default: will apply self.canny_closing_skeleton())
         debug: overlay original image and lines found (default: False)
         """
+        if edges is None:
+            edges = self.canny_closing_skeleton()
+
         #hough transform
         angle = 90 # 90 degrees = horizontal line
         dAngle = 10 # delta around which to search
-        angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), 500)
-        h, thetas, d = hough_line(self.edgesHard, theta=angles)
-        self.lines_h_all_hough_peaks = hough_line_peaks(h, thetas, d, num_peaks=3)
-
+        resAngle = 0.05 #smallest resolvable angle
+        angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), round(2*dAngle/resAngle))
+        h, thetas, d = hough_line(edges, theta=angles)
+        lines_h_all_hough_peaks = hough_line_peaks(h, thetas, d, num_peaks=3)
+        
         if debug:
             plt.figure()
-            plt.imshow(self.image, cmap=cm.gray)
-             
+            self.__plt_imshow_overlay(edges, title=f"Detected lines ({lines_h_all_hough_peaks[0].shape[0]} lines)")
             origin = np.array((0, self.image.shape[1]))
-            for _, theta, dist in zip(*self.lines_h_all_hough_peaks):
+            for _, theta, dist in zip(*lines_h_all_hough_peaks):
                 y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
                 plt.plot(origin, (y0, y1), '-r')
             plt.xlim(origin)
             plt.ylim((self.image.shape[0], 0))
-            plt.title('Detected lines')
             plt.tight_layout()
 
     def silicon_baseline(self, debug = False):
@@ -325,43 +326,7 @@ class SEMImage(object):
             plt.title('Detected lines')
             plt.tight_layout()
 
-    def lines_h(self, debug = False, number = 2):
-        """Detect horizontal lines
 
-        Keyword arguments:
-        debug: overlay original image and lines found (default: False)
-        number: the number of horizontal lines to detect
-        """
-        angle = 90 # 90 degrees = horizontal line
-        dAngle = 10 # delta around which to search
-        angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), 500)
-
-        sigmas = np.geomspace(20,0.1,50)
-        print(sigmas)
-        optimalSigma = 6.0
-        for sigma in sigmas:
-            edges = canny(self.image,sigma=sigma, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
-            #hough transform
-            h, thetas, d = hough_line(edges, theta=angles)
-            lines_h_all_hough_peaks = hough_line_peaks(h, thetas, d)
-            print(len(lines_h_all_hough_peaks[0]))
-            if(len(lines_h_all_hough_peaks[0])>=number):
-                optimalSigma=sigma
-                break
-        edges = canny(self.image,sigma=optimalSigma, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
-        h, thetas, d = hough_line(edges, theta=angles)
-        lines_h_all_hough_peaks = hough_line_peaks(h, thetas, d,num_peaks=number)
-
-        if debug:
-            plt.figure()
-            self.__plt_imshow_overlay(edges, title = f"With sigma = {optimalSigma}")
-            origin = np.array((0, self.image.shape[1]))
-            for _, theta, dist in zip(*lines_h_all_hough_peaks):
-                y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
-                plt.plot(origin, (y0, y1), '-r')
-            plt.xlim(origin)
-            plt.ylim((self.image.shape[0], 0))
-            plt.tight_layout()
 
     def analyze(self, analyses = None):
         """Analyze the image.
