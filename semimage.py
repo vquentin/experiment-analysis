@@ -9,6 +9,7 @@ from pathlib import Path
 
 
 from matplotlib import cm
+from matplotlib.colors import ListedColormap
 
 from skimage import data, io, filters
 from skimage.feature import blob_dog, blob_log, blob_doh, canny
@@ -152,27 +153,43 @@ class SEMImage(object):
         """
         return np.stack([edges,np.zeros_like(edges),np.zeros_like(edges),1.0*edges], axis=2)
 
-    def __plt_imshow_overlay(self, features, image=None, axes=None, title=None):
+    def __plt_imshow_overlay(self, *args, image=None, axes=None, title=None):
         """Use to overlay an image and features
 
         Inputs:
-        features: ndarray representing the edges to overlay in red
+        *args: ndarray representing the edges to overlay
         image: ndarray representing the image to show in gray scale (default: the instance's self.image)
         axes: a mathplotlib axes object to pass when using subplots (default: None, plots in a new window)
         title: a title for the plot
         """
         if image is None:
             image = self.image
+        # Colormap with alpha
+        cmap = plt.cm.Set1
+        cmapAlpha = cmap(np.arange(cmap.N))
+        # Set alpha
+        cmapAlpha[:,-1] = np.linspace(0, 1, cmap.N)
+        # Create new colormap
+        cmapAlpha = ListedColormap(cmapAlpha)
+        featureSum = np.zeros_like(args[0], dtype=int)
+        #featureSum = np.matmul(args, np.arange(len(args)))
+        for num, features in enumerate(args, start=1):
+            featureSum += features*num
+        
         if axes is None:
-            plt.imshow(image, cmap=cm.gray)
-            plt.imshow(self.__overlay(features))
-            if title is not None:
-                plt.title(title)
+            for features in args:
+                plt.imshow(image, cmap=cm.gray)
+                #plt.imshow(featureSum, cmap=cmapAlpha)
+                plt.imshow(self.__overlay(args[0]))
+                if title is not None:
+                    plt.title(title)
         else:
-            axes.imshow(image, cmap=cm.gray)
-            axes.imshow(self.__overlay(features))
-            if title is not None:
-                axes.set_title(title)
+            for features in args:
+                axes.imshow(image, cmap=cm.gray)
+                #axes.imshow(featureSum, cmap=cmapAlpha)
+                axes.imshow(self.__overlay(args[0]))
+                if title is not None:
+                    axes.set_title(title)
 
     def canny_closing_skeleton(self, debug = False):
         edges = self.canny(sigma = 1.1)
@@ -180,7 +197,7 @@ class SEMImage(object):
         skeleton1 = morphology.skeletonize(closed1)
         closed2 = morphology.area_closing(skeleton1, area_threshold=1000, connectivity=1, parent=None, tree_traverser=None)
         skeleton2 = morphology.skeletonize(closed2)
-        noise_reduced = morphology.remove_small_objects(label(skeleton2), 100,)
+        noise_reduced = morphology.remove_small_objects(skeleton2, min_size=100, connectivity=1)
 
         if debug:
             fig, axes = plt.subplots(nrows = 2, ncols = 4, sharex=True, sharey=True, figsize=(15,8))
@@ -189,14 +206,14 @@ class SEMImage(object):
             ax[0].set_title('Original image')
             self.__plt_imshow_overlay(skeleton1, axes=ax[1], title='Skeleton after closing')
             self.__plt_imshow_overlay(skeleton2, axes=ax[2], title='Skeleton after area closing')
-            self.__plt_imshow_overlay(noise_reduced, axes=ax[3], title='Small object removal')
+            ax[3].imshow(noise_reduced, cmap=cm.gray)
+            #self.__plt_imshow_overlay(noise_reduced, axes=ax[3], title='Small object removal')
             self.__plt_imshow_overlay(edges, axes=ax[4], title='Canny')
             self.__plt_imshow_overlay(np.logical_xor(edges,closed1), axes=ax[5], title='Dismissed closing')
             self.__plt_imshow_overlay(np.logical_xor(skeleton1,closed2), axes=ax[6], title='Dismissed area closing')
             self.__plt_imshow_overlay(np.logical_xor(skeleton2,noise_reduced), axes=ax[7], title='Dismissed small object')
         return noise_reduced
             
-
     def classifier(self, debug = False):
         img = np.reshape(self.image[self.mask],(-1,self.image.shape[1]))
 
@@ -272,25 +289,49 @@ class SEMImage(object):
         debug: overlay original image and lines found (default: False)
         """
         if edges is None:
-            edges = self.canny_closing_skeleton()
+            edges = self.canny_closing_skeleton(debug=True)
 
+        edgesExtremes = np.zeros_like(edges,dtype = bool)
+
+        I = np.arange(edges.shape[1])[np.newaxis,:]
+        #weights = np.tile(np.arange(edges.shape[1],0,-1), (edges.shape[0],1))
+        weights = np.ones_like(edges)
+        print(weights.shape)
+        edgesWeighted = edges*weights
+        plt.figure()
+        plt.plot(np.argmax(edgesWeighted, axis=0))
+        plt.figure()
+        plt.plot(edges[:,328])
+        edgesExtremes[np.argmax(edgesWeighted, axis=0),I] = True
+        
+        #edgesExtremes[] = True
+        
+        #print(list(zip(np.argmax(edges, axis=0),range(edges.shape[0]))))
+        
+        #edgesExtremes[:,edgesExtremes.shape[0]-np.argmax(np.flip(edges, axis=1), axis=1)] = True
+        
         #hough transform
         angle = 90 # 90 degrees = horizontal line
         dAngle = 10 # delta around which to search
         resAngle = 0.05 #smallest resolvable angle
         angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), round(2*dAngle/resAngle))
-        h, thetas, d = hough_line(edges, theta=angles)
-        lines_h_all_hough_peaks = hough_line_peaks(h, thetas, d, num_peaks=3)
+        h, thetas, d = hough_line(edgesExtremes, theta=angles)
+        lines_h_all_hough_peaks = hough_line_peaks(h, thetas, d, num_peaks=1)
         
         if debug:
-            plt.figure()
-            self.__plt_imshow_overlay(edges, title=f"Detected lines ({lines_h_all_hough_peaks[0].shape[0]} lines)")
+            fig, axes = plt.subplots(nrows = 1, ncols = 3, sharex=True, sharey=True, figsize=(15,8))
+            ax = axes.ravel()
+            self.__plt_imshow_overlay(edges, axes=ax[0],title="Edges")
+            self.__plt_imshow_overlay(edgesExtremes, axes=ax[1], title='Extreme edges')
+            ax[2].imshow(self.image, cmap=cm.gray)
+            ax[2].set_title(f"Detected lines ({lines_h_all_hough_peaks[0].shape[0]} lines)")
+
             origin = np.array((0, self.image.shape[1]))
             for _, theta, dist in zip(*lines_h_all_hough_peaks):
                 y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
-                plt.plot(origin, (y0, y1), '-r')
-            plt.xlim(origin)
-            plt.ylim((self.image.shape[0], 0))
+                ax[2].plot(origin, (y0, y1), '-r')
+            ax[2].set_xlim(origin)
+            ax[2].set_ylim((self.image.shape[0], 0))
             plt.tight_layout()
 
     def silicon_baseline(self, debug = False):
