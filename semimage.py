@@ -9,13 +9,15 @@ from pathlib import Path
 
 
 from matplotlib import cm
-from statistics import mean, median
 
 from skimage import data, io, filters
 from skimage.feature import blob_dog, blob_log, blob_doh, canny
 from skimage.color import rgb2gray
 from skimage.transform import probabilistic_hough_line, hough_line, hough_line_peaks
-from skimage.util import crop
+from skimage import segmentation, feature, future, morphology
+from skimage.measure import label
+from sklearn.ensemble import RandomForestClassifier
+from functools import partial
 
 from mpl_toolkits.axes_grid1 import AxesGrid
 
@@ -37,9 +39,10 @@ class SEMImage(object):
             self.__parse_metadata(metaData = image.sem_metadata, debug = False)
             self.mask(debug = False)
         if debug:
-            #plot stuff
             self.plot_image_raw()
-        self.canny(debug=True, sigma = 1.0)
+        #self.canny(debug=True, sigma = 1.0)
+        self.canny_closing_skeleton(debug=True)
+        #self.classifier(debug=True)
         #self.lines_h_all(debug=False)
         #self.lines_h(debug=True)
         #self.silicon_baseline(debug=True)
@@ -124,19 +127,21 @@ class SEMImage(object):
             ax[1].set_title('Masked image')
             plt.tight_layout()
 
-    def canny(self, debug = False, sigma = 1.0):
+    def canny(self, image = None, debug = False, sigma = 1.0):
         """Return a canny edge filter for the masked image.
 
         Keyword arguments:
-        debug: compares the edges and the original image (default: False)
+        image: the image as an ndarray on which to apply the canny filter (default: the 
+            instance's self.image). The instance mask is used even if image is specified.
+        debug: show a graph overlaying the edges with the original image (default: False)
         sigma: override the default sigma value in the canny filter
         """
-        edges = canny(self.image,sigma=sigma, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
+        if image is None:
+            image = self.image
+        edges = canny(image,sigma=sigma, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
         if debug:
             plt.figure()
-            plt.imshow(self.image, cmap=cm.gray)
-            plt.imshow(self.__overlay(edges))
-            plt.title(f"Detected edges with sigma = {sigma}")
+            self.__plt_imshow_overlay(edges, title = f"Detected edges with sigma = {sigma}")
             plt.tight_layout()
         return edges
 
@@ -147,6 +152,119 @@ class SEMImage(object):
         edges: an array of 1,0 values
         """
         return np.stack([edges,np.zeros_like(edges),np.zeros_like(edges),1.0*edges], axis=2)
+
+    def __plt_imshow_overlay(self, features, image=None, axes=None, title=None):
+        """Use to overlay an image and features
+
+        Inputs:
+        features: ndarray representing the edges to overlay in red
+        image: ndarray representing the image to show in gray scale (default: the instance's self.image)
+        axes: a mathplotlib axes object to pass when using subplots (default: None, plots in a new window)
+        title: a title for the plot
+        """
+        if image is None:
+            image = self.image
+        if axes is None:
+            plt.imshow(image, cmap=cm.gray)
+            plt.imshow(self.__overlay(features))
+            if title is not None:
+                plt.title(title)
+        else:
+            axes.imshow(image, cmap=cm.gray)
+            axes.imshow(self.__overlay(features))
+            if title is not None:
+                axes.set_title(title)
+
+    def canny_closing_skeleton(self, debug = False):
+        edges = self.canny(sigma = 1.1)
+        #closed1 = diameter_closing(img,100,connectivity=10)
+        closed1 = morphology.closing(edges)
+        skeleton1 = morphology.skeletonize(closed1)
+        closed2 = morphology.area_closing(skeleton1, area_threshold=1000, connectivity=1, parent=None, tree_traverser=None)
+        skeleton2 = morphology.skeletonize(closed2)
+        noise_reduced = morphology.remove_small_objects(label(skeleton2), 100,)
+
+        if debug:
+            fig, axes = plt.subplots(nrows = 2, ncols = 4, sharex=True, sharey=True, figsize=(15,8))
+            ax = axes.ravel()
+            ax[0].imshow(self.image, cmap=cm.gray)
+            ax[0].set_title('Original image')
+            self.__plt_imshow_overlay(skeleton1, axes=ax[1], title='Skeleton after closing')
+            self.__plt_imshow_overlay(skeleton2, axes=ax[2], title='Skeleton after area closing')
+            self.__plt_imshow_overlay(noise_reduced, axes=ax[3], title='Small object removal')
+            self.__plt_imshow_overlay(edges, axes=ax[4], title='Canny')
+            self.__plt_imshow_overlay(np.logical_xor(edges,closed1), axes=ax[5], title='Dismissed closing')
+            self.__plt_imshow_overlay(np.logical_xor(skeleton1,closed2), axes=ax[6], title='Dismissed area closing')
+            self.__plt_imshow_overlay(np.logical_xor(skeleton2,noise_reduced), axes=ax[7], title='Dismissed small object')
+        return noise_reduced
+            
+
+    def classifier(self, debug = False):
+        img = np.reshape(self.image[self.mask],(-1,self.image.shape[1]))
+
+
+        # Build an array of labels for training the segmentation.
+        # Here we use rectangles but visualization libraries such as plotly
+        # (and napari?) can be used to draw a mask on the image.
+        training_labels = np.zeros_like(img, dtype=np.uint8)
+        training_labels[:32] = 1
+        #training_labels[:170, :400] = 1
+        training_labels[90:250, 125:860] = 2
+        training_labels[300:550, 380:630] = 2
+        training_labels[660:] = 3
+        #training_labels[150:200, 720:860] = 4
+
+        sigma_min = 0.1
+        sigma_max = 100
+        features_func = partial(feature.multiscale_basic_features,
+                                intensity=True, edges=True, texture=True,
+                                sigma_min=sigma_min, sigma_max=sigma_max, num_sigma=20,
+                                multichannel=False, num_workers=None)
+        #features = features_func(img)
+        #selem = disk(10)
+        #eroded = erosion(img, selem)
+        #features = diameter_closing(img,100,connectivity=10)
+        edges = canny(self.image, sigma=0.9, mask=self.mask)
+
+        #features = morphology.area_closing(edges, area_threshold=1000, connectivity=1, parent=None, tree_traverser=None)
+        features = morphology.closing(edges)
+        skeleton = morphology.skeletonize(features)
+        features2 = morphology.area_closing(skeleton, area_threshold=1000)
+        skeleton2 = morphology.skeletonize(features2)
+
+        print(features.shape)
+        plt.figure()
+        plt.imshow(edges, cmap=cm.gray)
+        plt.title('Canny')
+        plt.figure()
+        plt.imshow(np.logical_not(np.logical_xor(edges,features)), cmap=cm.gray)
+        plt.title('Dismissed with closing')
+        plt.figure()
+        plt.imshow(features, cmap=cm.gray)
+        plt.title('Canny-closing')
+        plt.figure()
+        plt.imshow(skeleton, cmap=cm.gray)
+        plt.title("Skeleton")
+        plt.figure()
+        plt.imshow(features2, cmap=cm.gray)
+        plt.title("Closing2")
+        plt.figure()
+        self.__plt_imshow_overlay(skeleton2, title='Skeleton2')
+
+
+        """
+        clf = RandomForestClassifier(n_estimators=50, n_jobs=-1,
+                                    max_depth=10, max_samples=0.05)
+        clf = future.fit_segmenter(training_labels, features, clf)
+        result = future.predict_segmenter(features, clf)
+
+        fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(9, 4))
+        ax[0].imshow(segmentation.mark_boundaries(img, result, mode='thick'))
+        ax[0].contour(training_labels)
+        ax[0].set_title('Image, mask and segmentation boundaries')
+        ax[1].imshow(result)
+        ax[1].set_title('Segmentation')
+        fig.tight_layout()"""
 
     def lines_h_all(self, debug = False):
         """Detect all horizontal lines in the image
@@ -236,15 +354,13 @@ class SEMImage(object):
 
         if debug:
             plt.figure()
-            plt.imshow(self.image, cmap=cm.gray)
-            plt.imshow(plt.imshow(self.__overlay(edges)))
+            self.__plt_imshow_overlay(edges, title = f"With sigma = {optimalSigma}")
             origin = np.array((0, self.image.shape[1]))
             for _, theta, dist in zip(*lines_h_all_hough_peaks):
                 y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
                 plt.plot(origin, (y0, y1), '-r')
             plt.xlim(origin)
             plt.ylim((self.image.shape[0], 0))
-            plt.title(f"With sigma = {optimalSigma}")
             plt.tight_layout()
 
     def analyze(self, analyses = None):
