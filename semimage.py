@@ -145,13 +145,24 @@ class SEMImage(object):
             plt.tight_layout()
         return edges
 
-    def __overlay(self, edges):
-        """Use to overlay binary values (e.g. as returned by canny) in red on an image
+    def __overlay(self, *args):
+        """Returns an array overlaying binary values (e.g. as returned by canny) with alpha channel
         
         Inputs:
-        edges: an array of 1,0 values
+        *args: a sequence of arrays of True, False values
         """
-        return np.stack([edges,np.zeros_like(edges),np.zeros_like(edges),1.0*edges], axis=2)
+        #Colors through which to cycle (R, G, B)
+        colors = ((214, 39, 40), (31, 119, 180), (255, 127, 14), (44, 160, 44), (148, 103, 189), (227, 119, 194), (188, 189, 34), (23, 190, 207))
+        R = np.zeros_like(np.squeeze(args[0]), dtype=int)
+        G = R.copy()
+        B = R.copy()
+
+        for i, features in enumerate(args, start=0):
+            print(features.shape)
+            R += features*colors[i%(len(colors))][0]
+            G += features*colors[i%(len(colors))][1]
+            B += features*colors[i%(len(colors))][2]
+        return np.stack([R, G, B, 255*np.logical_or.reduce(args)], axis=2)
 
     def __plt_imshow_overlay(self, *args, image=None, axes=None, title=None):
         """Use to overlay an image and features
@@ -164,32 +175,16 @@ class SEMImage(object):
         """
         if image is None:
             image = self.image
-        # Colormap with alpha
-        cmap = plt.cm.Set1
-        cmapAlpha = cmap(np.arange(cmap.N))
-        # Set alpha
-        cmapAlpha[:,-1] = np.linspace(0, 1, cmap.N)
-        # Create new colormap
-        cmapAlpha = ListedColormap(cmapAlpha)
-        featureSum = np.zeros_like(args[0], dtype=int)
-        #featureSum = np.matmul(args, np.arange(len(args)))
-        for num, features in enumerate(args, start=1):
-            featureSum += features*num
-        
         if axes is None:
-            for features in args:
-                plt.imshow(image, cmap=cm.gray)
-                #plt.imshow(featureSum, cmap=cmapAlpha)
-                plt.imshow(self.__overlay(args[0]))
-                if title is not None:
-                    plt.title(title)
+            plt.imshow(image, cmap=cm.gray)
+            plt.imshow(self.__overlay(*args))
+            if title is not None:
+                plt.title(title)
         else:
-            for features in args:
-                axes.imshow(image, cmap=cm.gray)
-                #axes.imshow(featureSum, cmap=cmapAlpha)
-                axes.imshow(self.__overlay(args[0]))
-                if title is not None:
-                    axes.set_title(title)
+            axes.imshow(image, cmap=cm.gray)
+            axes.imshow(self.__overlay(*args))
+            if title is not None:
+                axes.set_title(title)
 
     def canny_closing_skeleton(self, debug = False):
         edges = self.canny(sigma = 1.1)
@@ -289,7 +284,7 @@ class SEMImage(object):
         orientation: the orientation of the image (default: Horizontal, accepted values are Horizontal, Vertical, Oblique)
         """
         if edges is None:
-            edges = self.canny_closing_skeleton(debug=False)
+            edges = self.canny_closing_skeleton(debug=True)
 
         #TODO a function that returns the image orientation based on edges
         #goal: avoid hardcoding "orientation = 'Horizontal'"
