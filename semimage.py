@@ -149,8 +149,12 @@ class SEMImage(object):
         """Returns an array overlaying binary values (e.g. as returned by canny) with alpha channel
         
         Inputs:
-        *args: a sequence of arrays of True, False values
+        *args: a sequence of 2-D arrays of bool, or a 3-D array of bool (images stacked along last dimension)
         """
+        if np.squeeze(args[0]).ndim is 3:
+            args = args[0].transpose(2,0,1)
+            print(args[0].shape)
+    
         #Colors through which to cycle (R, G, B)
         colors = ((214, 39, 40), (31, 119, 180), (255, 127, 14), (44, 160, 44), (148, 103, 189), (227, 119, 194), (188, 189, 34), (23, 190, 207))
         R = np.zeros_like(np.squeeze(args[0]), dtype=int)
@@ -158,7 +162,6 @@ class SEMImage(object):
         B = R.copy()
 
         for i, features in enumerate(args, start=0):
-            print(features.shape)
             R += features*colors[i%(len(colors))][0]
             G += features*colors[i%(len(colors))][1]
             B += features*colors[i%(len(colors))][2]
@@ -295,14 +298,14 @@ class SEMImage(object):
         weightMatrix = np.tile(np.arange(1,edges.shape[0]+1,1)[:, np.newaxis], (1,edges.shape[1])) 
         weights = np.stack((weightMatrix, np.flipud(weightMatrix)), axis = -1)
         
-        #hough transform
+        #for each side
         for i in range(weights.shape[-1]):
-            plt.figure()
-            plt.imshow(weights[...,i], cmap=cm.gray)
             edgesOnSides[np.argmax(edges*weights[...,i], axis=0),I,i] = True
-            plt.figure()
-            plt.imshow(edgesOnSides[...,i])
+        
+        plt.figure()
+        self.__plt_imshow_overlay(edgesOnSides)
         plt.show()
+
         #orientations = {'Horizontal': 90, 'Vertical': 0, 'Oblique': 45}
         #angle = choices.get(orientation, 'Horizontal')
         angle = 90 # 90 degrees = horizontal line
