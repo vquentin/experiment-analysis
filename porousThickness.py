@@ -1,5 +1,5 @@
 import glob
-from semimage import SEMImage 
+from semimage.semimage import SEMImage 
 
 
 #Load example file

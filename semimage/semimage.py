@@ -5,20 +5,18 @@ import json
 import numpy as np
 from tifffile import TiffFile as tf
 from matplotlib import pyplot as plt
+from matplotlib import cm
 from pathlib import Path
 
-
-from matplotlib import cm
-from matplotlib.colors import ListedColormap
-
-from skimage import data, io, filters
-from skimage.feature import blob_dog, blob_log, blob_doh, canny
-from skimage.color import rgb2gray
-from skimage.transform import probabilistic_hough_line, hough_line, hough_line_peaks
+from skimage.feature import canny
+from skimage.transform import hough_line, hough_line_peaks
 from skimage import segmentation, feature, future, morphology
 from skimage.measure import label
 from sklearn.ensemble import RandomForestClassifier
 from functools import partial
+
+import semimage.lines
+import semimage.config as config
 
 from mpl_toolkits.axes_grid1 import AxesGrid
 
@@ -155,16 +153,14 @@ class SEMImage(object):
             args = args[0].transpose(2,0,1)
             print(args[0].shape)
     
-        #Colors through which to cycle (R, G, B)
-        colors = ((214, 39, 40), (31, 119, 180), (255, 127, 14), (44, 160, 44), (148, 103, 189), (227, 119, 194), (188, 189, 34), (23, 190, 207))
         R = np.zeros_like(np.squeeze(args[0]), dtype=int)
         G = R.copy()
         B = R.copy()
 
         for i, features in enumerate(args, start=0):
-            R += features*colors[i%(len(colors))][0]
-            G += features*colors[i%(len(colors))][1]
-            B += features*colors[i%(len(colors))][2]
+            R += features*config.colors[i%(len(config.colors))][0]
+            G += features*config.colors[i%(len(config.colors))][1]
+            B += features*config.colors[i%(len(config.colors))][2]
         return np.stack([R, G, B, 255*np.logical_or.reduce(args)], axis=2)
 
     def __plt_imshow_overlay(self, *args, image=None, axes=None, title=None):
@@ -211,73 +207,6 @@ class SEMImage(object):
             self.__plt_imshow_overlay(np.logical_xor(skeleton2,noise_reduced), axes=ax[7], title='Dismissed small object')
         return noise_reduced
             
-    def classifier(self, debug = False):
-        img = np.reshape(self.image[self.mask],(-1,self.image.shape[1]))
-
-
-        # Build an array of labels for training the segmentation.
-        # Here we use rectangles but visualization libraries such as plotly
-        # (and napari?) can be used to draw a mask on the image.
-        training_labels = np.zeros_like(img, dtype=np.uint8)
-        training_labels[:32] = 1
-        #training_labels[:170, :400] = 1
-        training_labels[90:250, 125:860] = 2
-        training_labels[300:550, 380:630] = 2
-        training_labels[660:] = 3
-        #training_labels[150:200, 720:860] = 4
-
-        sigma_min = 0.1
-        sigma_max = 100
-        features_func = partial(feature.multiscale_basic_features,
-                                intensity=True, edges=True, texture=True,
-                                sigma_min=sigma_min, sigma_max=sigma_max, num_sigma=20,
-                                multichannel=False, num_workers=None)
-        #features = features_func(img)
-        #selem = disk(10)
-        #eroded = erosion(img, selem)
-        #features = diameter_closing(img,100,connectivity=10)
-        edges = canny(self.image, sigma=0.9, mask=self.mask)
-
-        #features = morphology.area_closing(edges, area_threshold=1000, connectivity=1, parent=None, tree_traverser=None)
-        features = morphology.closing(edges)
-        skeleton = morphology.skeletonize(features)
-        features2 = morphology.area_closing(skeleton, area_threshold=1000)
-        skeleton2 = morphology.skeletonize(features2)
-
-        print(features.shape)
-        plt.figure()
-        plt.imshow(edges, cmap=cm.gray)
-        plt.title('Canny')
-        plt.figure()
-        plt.imshow(np.logical_not(np.logical_xor(edges,features)), cmap=cm.gray)
-        plt.title('Dismissed with closing')
-        plt.figure()
-        plt.imshow(features, cmap=cm.gray)
-        plt.title('Canny-closing')
-        plt.figure()
-        plt.imshow(skeleton, cmap=cm.gray)
-        plt.title("Skeleton")
-        plt.figure()
-        plt.imshow(features2, cmap=cm.gray)
-        plt.title("Closing2")
-        plt.figure()
-        self.__plt_imshow_overlay(skeleton2, title='Skeleton2')
-
-
-        """
-        clf = RandomForestClassifier(n_estimators=50, n_jobs=-1,
-                                    max_depth=10, max_samples=0.05)
-        clf = future.fit_segmenter(training_labels, features, clf)
-        result = future.predict_segmenter(features, clf)
-
-        fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(9, 4))
-        ax[0].imshow(segmentation.mark_boundaries(img, result, mode='thick'))
-        ax[0].contour(training_labels)
-        ax[0].set_title('Image, mask and segmentation boundaries')
-        ax[1].imshow(result)
-        ax[1].set_title('Segmentation')
-        fig.tight_layout()"""
-
     def lines(self, edges = None, debug = False):
         """Returns at most two and two lines, respectively from each side of the image.
 
@@ -298,37 +227,34 @@ class SEMImage(object):
         weightMatrix = np.tile(np.arange(1,edges.shape[0]+1,1)[:, np.newaxis], (1,edges.shape[1])) 
         weights = np.stack((weightMatrix, np.flipud(weightMatrix)), axis = -1)
         
+        lines=[]
+
+        if debug:
+            fig, axes = plt.subplots(nrows = 1, ncols = 2, sharex=True, sharey=True, figsize=(15,8))
+            ax = axes.ravel()
+        
         #for each side
         for i in range(weights.shape[-1]):
             edgesOnSides[np.argmax(edges*weights[...,i], axis=0),I,i] = True
-        
-        plt.figure()
-        self.__plt_imshow_overlay(edgesOnSides)
-        plt.show()
+            
+            #TODO replace with orientation insensitive code
+            #angle = choices.get(orientation, 'Horizontal')
+            theta = 90 # 90 degrees = horizontal line
+            dTheta = 10 # delta around which to search
+            resTheta = 0.05 #smallest resolvable angle
+            thetas = np.linspace((theta-dTheta)*(np.pi / 180), (theta+dTheta)*(np.pi / 180), round(2*dTheta/resTheta))
+            accum, angles, dists = hough_line_peaks(*hough_line(edgesOnSides[...,i], theta=thetas), num_peaks=2)
+            c = np.arange(0, self.image.shape[1])
 
-        #orientations = {'Horizontal': 90, 'Vertical': 0, 'Oblique': 45}
-        #angle = choices.get(orientation, 'Horizontal')
-        angle = 90 # 90 degrees = horizontal line
-        dAngle = 10 # delta around which to search
-        resAngle = 0.05 #smallest resolvable angle
-        angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), round(2*dAngle/resAngle))
-        h, thetas, d = hough_line(edgesSide1, theta=angles)
-        linesSide1 = hough_line_peaks(h, thetas, d, num_peaks=2)
-        
+            #for each line
+            for _, angle, dist in zip(accum, angles, dists):
+                y = (dist - c * np.cos(angle)) / np.sin(angle)
+                if debug:
+                    ax[1].imshow(self.image, cmap=cm.gray)
+                    ax[1].plot((c[0],c[-1]), np.array((y[0], y[-1])).astype(int), '-', c=np.array(config.colors[i])/255)
+            
         if debug:
-            fig, axes = plt.subplots(nrows = 1, ncols = 3, sharex=True, sharey=True, figsize=(15,8))
-            ax = axes.ravel()
-            self.__plt_imshow_overlay(edges, axes=ax[0],title="Edges")
-            self.__plt_imshow_overlay(edgesSide1, axes=ax[1], title='Extreme edges')
-            ax[2].imshow(self.image, cmap=cm.gray)
-            ax[2].set_title(f"Detected lines ({linesSide1[0].shape[0]} lines)")
-
-            origin = np.array((0, self.image.shape[1]))
-            for _, theta, dist in zip(*linesSide1):
-                y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
-                ax[2].plot(origin, (y0, y1), '-r')
-            ax[2].set_xlim(origin)
-            ax[2].set_ylim((self.image.shape[0], 0))
+            self.__plt_imshow_overlay(edgesOnSides, axes=ax[0], title="Edges on sides")
             plt.tight_layout()
 
     def silicon_baseline(self, debug = False):
