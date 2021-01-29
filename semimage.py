@@ -44,7 +44,7 @@ class SEMImage(object):
         #self.canny(debug=True, sigma = 1.0)
         #self.canny_closing_skeleton(debug=True)
         #self.classifier(debug=True)
-        self.lines_h(debug=True)
+        self.lines(debug=True)
         #self.silicon_baseline(debug=True)
         plt.show()
 
@@ -280,42 +280,53 @@ class SEMImage(object):
         ax[1].set_title('Segmentation')
         fig.tight_layout()"""
 
-    def lines_h(self, edges = None, debug = False):
-        """Detect all horizontal lines in the image
+    def lines(self, edges = None, debug = False):
+        """Returns at most two and two lines, respectively from each side of the image.
 
         Keyword arguments:
         edges: a binary image from edge detection algorithm (default: will apply self.canny_closing_skeleton())
         debug: overlay original image and lines found (default: False)
+        orientation: the orientation of the image (default: Horizontal, accepted values are Horizontal, Vertical, Oblique)
         """
         if edges is None:
-            edges = self.canny_closing_skeleton(debug=True)
+            edges = self.canny_closing_skeleton(debug=False)
 
-        edgesExtremesUp = np.zeros_like(edges,dtype = bool)
+        #TODO a function that returns the image orientation based on edges
+        #goal: avoid hardcoding "orientation = 'Horizontal'"
+        #TODO implement a version of this that is orientation independent by rotating the edge image
+
+        edgesOnSides = np.zeros(edges.shape+(2,),dtype = bool) # array that will contain the edges from both sides of interest
         I = np.arange(edges.shape[1])[np.newaxis,:]
-        weights = np.tile(np.arange(edges.shape[0],0,-1)[:, np.newaxis], (1,edges.shape[1]))
-        edgesWeighted = edges*weights
-        plt.figure()
-        plt.imshow(edgesWeighted, cmap=cm.gray)
-        edgesExtremesUp[np.argmax(edgesWeighted, axis=0),I] = True
+        weightMatrix = np.tile(np.arange(1,edges.shape[0]+1,1)[:, np.newaxis], (1,edges.shape[1])) 
+        weights = np.stack((weightMatrix, np.flipud(weightMatrix)), axis = -1)
         
         #hough transform
+        for i in range(weights.shape[-1]):
+            plt.figure()
+            plt.imshow(weights[...,i], cmap=cm.gray)
+            edgesOnSides[np.argmax(edges*weights[...,i], axis=0),I,i] = True
+            plt.figure()
+            plt.imshow(edgesOnSides[...,i])
+        plt.show()
+        #orientations = {'Horizontal': 90, 'Vertical': 0, 'Oblique': 45}
+        #angle = choices.get(orientation, 'Horizontal')
         angle = 90 # 90 degrees = horizontal line
         dAngle = 10 # delta around which to search
         resAngle = 0.05 #smallest resolvable angle
         angles = np.linspace((angle-dAngle)*(np.pi / 180), (angle+dAngle)*(np.pi / 180), round(2*dAngle/resAngle))
-        h, thetas, d = hough_line(edgesExtremesUp, theta=angles)
-        lines_h_all_hough_peaks = hough_line_peaks(h, thetas, d, num_peaks=3)
+        h, thetas, d = hough_line(edgesSide1, theta=angles)
+        linesSide1 = hough_line_peaks(h, thetas, d, num_peaks=2)
         
         if debug:
             fig, axes = plt.subplots(nrows = 1, ncols = 3, sharex=True, sharey=True, figsize=(15,8))
             ax = axes.ravel()
             self.__plt_imshow_overlay(edges, axes=ax[0],title="Edges")
-            self.__plt_imshow_overlay(edgesExtremesUp, axes=ax[1], title='Extreme edges')
+            self.__plt_imshow_overlay(edgesSide1, axes=ax[1], title='Extreme edges')
             ax[2].imshow(self.image, cmap=cm.gray)
-            ax[2].set_title(f"Detected lines ({lines_h_all_hough_peaks[0].shape[0]} lines)")
+            ax[2].set_title(f"Detected lines ({linesSide1[0].shape[0]} lines)")
 
             origin = np.array((0, self.image.shape[1]))
-            for _, theta, dist in zip(*lines_h_all_hough_peaks):
+            for _, theta, dist in zip(*linesSide1):
                 y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
                 ax[2].plot(origin, (y0, y1), '-r')
             ax[2].set_xlim(origin)
