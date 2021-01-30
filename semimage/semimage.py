@@ -15,7 +15,7 @@ from skimage.measure import label
 from sklearn.ensemble import RandomForestClassifier
 from functools import partial
 
-import semimage.lines
+from semimage.lines import Line
 import semimage.config as config
 
 from mpl_toolkits.axes_grid1 import AxesGrid
@@ -151,13 +151,12 @@ class SEMImage(object):
         """
         if np.squeeze(args[0]).ndim is 3:
             args = args[0].transpose(2,0,1)
-            print(args[0].shape)
     
         R = np.zeros_like(np.squeeze(args[0]), dtype=int)
         G = R.copy()
         B = R.copy()
 
-        for i, features in enumerate(args, start=0):
+        for i, features in enumerate(args):
             R += features*config.colors[i%(len(config.colors))][0]
             G += features*config.colors[i%(len(config.colors))][1]
             B += features*config.colors[i%(len(config.colors))][2]
@@ -216,7 +215,7 @@ class SEMImage(object):
         orientation: the orientation of the image (default: Horizontal, accepted values are Horizontal, Vertical, Oblique)
         """
         if edges is None:
-            edges = self.canny_closing_skeleton(debug=True)
+            edges = self.canny_closing_skeleton(debug = False)
 
         #TODO a function that returns the image orientation based on edges
         #goal: avoid hardcoding "orientation = 'Horizontal'"
@@ -229,10 +228,6 @@ class SEMImage(object):
         
         lines=[]
 
-        if debug:
-            fig, axes = plt.subplots(nrows = 1, ncols = 2, sharex=True, sharey=True, figsize=(15,8))
-            ax = axes.ravel()
-        
         #for each side
         for i in range(weights.shape[-1]):
             edgesOnSides[np.argmax(edges*weights[...,i], axis=0),I,i] = True
@@ -244,17 +239,20 @@ class SEMImage(object):
             resTheta = 0.05 #smallest resolvable angle
             thetas = np.linspace((theta-dTheta)*(np.pi / 180), (theta+dTheta)*(np.pi / 180), round(2*dTheta/resTheta))
             accum, angles, dists = hough_line_peaks(*hough_line(edgesOnSides[...,i], theta=thetas), num_peaks=2)
-            c = np.arange(0, self.image.shape[1])
-
             #for each line
             for _, angle, dist in zip(accum, angles, dists):
-                y = (dist - c * np.cos(angle)) / np.sin(angle)
-                if debug:
-                    ax[1].imshow(self.image, cmap=cm.gray)
-                    ax[1].plot((c[0],c[-1]), np.array((y[0], y[-1])).astype(int), '-', c=np.array(config.colors[i])/255)
+                lines.append(Line(side=i, angle=angle, dist=dist, image=self.image))
             
         if debug:
+            fig, axes = plt.subplots(nrows = 1, ncols = 2, sharex=True, sharey=True, figsize=(15,8))
+            ax = axes.ravel()
             self.__plt_imshow_overlay(edgesOnSides, axes=ax[0], title="Edges on sides")
+            ax[1].imshow(self.image, cmap=cm.gray)
+            for i, line in enumerate(lines):
+                ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[i])/255)
+            a = Line(side=3, angle=1, dist=5, image=self.image)
+            ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[line.side])/255)
+            ax[1].plot(*a.plot_points, '-', c=np.array(config.colors[a.side])/255)
             plt.tight_layout()
 
     def silicon_baseline(self, debug = False):
