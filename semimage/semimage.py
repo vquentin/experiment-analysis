@@ -223,7 +223,7 @@ class SEMImage(object):
 
         edgesOnSides = np.zeros(edges.shape+(2,),dtype = bool) # array that will contain the edges from both sides of interest
         I = np.arange(edges.shape[1])[np.newaxis,:]
-        weightMatrix = np.tile(np.arange(1,edges.shape[0]+1,1)[:, np.newaxis], (1,edges.shape[1])) 
+        weightMatrix = np.tile(np.arange(1,edges.shape[0]+1,1)[:, np.newaxis], (1,edges.shape[1])) #defined such that side 0 = bottom, side 1 = top
         weights = np.stack((weightMatrix, np.flipud(weightMatrix)), axis = -1)
         
         lines=[]
@@ -249,10 +249,11 @@ class SEMImage(object):
             self.__plt_imshow_overlay(edgesOnSides, axes=ax[0], title="Edges on sides")
             ax[1].imshow(self.image, cmap=cm.gray)
             for i, line in enumerate(lines):
-                ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[i])/255)
-            a = Line(side=3, angle=1, dist=5, image=self.image)
-            ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[line.side])/255)
-            ax[1].plot(*a.plot_points, '-', c=np.array(config.colors[a.side])/255)
+                ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[line.side])/255)
+                line.isCavity(debug=True)
+            ax[1].set_title("Lines detected")
+            #a = Line(side=3, angle=1, dist=5, image=self.image)
+            #ax[1].plot(*a.plot_points, '-', c=np.array(config.colors[a.side])/255)
             plt.tight_layout()
 
     def silicon_baseline(self, debug = False):
