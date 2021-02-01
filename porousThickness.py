@@ -1,6 +1,9 @@
 import glob
 from semimage.semimage import SEMImage 
 
+import logging
+
+logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s:%(message)s')
 
 #Load example file
 example_files1 = glob.glob(r"./examples/*.tif")
