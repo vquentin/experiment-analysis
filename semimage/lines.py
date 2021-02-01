@@ -52,8 +52,9 @@ class Line(object):
         """
         nSeg = 3
         relativeError = 0.2
-        absoluteError = 170
-        R2min = 0.9 #threshold to apply a 3-piece linear fit
+        absoluteError = 5
+        R2min = 0.97 #threshold to apply a 3-piece linear fit
+        straigthSlopeThreshold = 23.62
         
         lineMinus, linePlus = self.linesOffset(distance=3)
         #perform piece-wise fit of intensity
@@ -61,43 +62,45 @@ class Line(object):
         x2 = linePlus.col
         y1 = np.cumsum(lineMinus.intensity)
         y2 = np.cumsum(linePlus.intensity)
-        pwlfLinePlus = pwlf.PiecewiseLinFit(x1, y1)
-        pwlfLineMinus = pwlf.PiecewiseLinFit(x2, y2)
-        straigth1 = LinearRegression().fit(x1,y1)
-        straigth2 = LinearRegression().fit(x2,y2)
 
         # fit the data
-        line1IsStraight = True
-        line2IsStraight = True
-        
-        if straigth1.score(x1, y1) < R2min:
-            res1 = pwlfLinePlus.fit(nSeg)
-            line1IsStraight = False
-        
-        if straigth2.score(x1, y1) < R2min:
-            res2 = pwlfLineMinus.fit(nSeg)
-            line2IsStraight = False
-
-
-#TODO: need to account for different libs for straight and 3-piece segments below here.... Going to bed now
+        pwlfLinePlus = pwlf.PiecewiseLinFit(x1, y1)
+        pwlfLineMinus = pwlf.PiecewiseLinFit(x2, y2)
+        res1 = pwlfLinePlus.fit(nSeg)
+        res2 = pwlfLineMinus.fit(nSeg)
+        straigth1 = LinearRegression(fit_intercept=False).fit(x1.reshape((-1, 1)),y1)
+        straigth2 = LinearRegression(fit_intercept=False).fit(x2.reshape((-1, 1)),y2)
         slope1 = pwlfLinePlus.calc_slopes()
         slope2 = pwlfLineMinus.calc_slopes()
+        slope1s = straigth1.coef_
+        slope2s = straigth2.coef_
 
         #check if cavity likely
-        
+        line1IsStraight = True
+        line2IsStraight = True
         isCavity = False
         side = -1
+        print(f"R2 value line 1: {straigth1.score(x1.reshape((-1, 1)), y1)}, slope: {slope1s}")
+        print(f"R2 value line 2: {straigth2.score(x2.reshape((-1, 1)), y2)}, slope: {slope2s}")
+        
+        if straigth1.score(x1.reshape((-1, 1)), y1) < R2min and slope1s > straigthSlopeThreshold:
+            line1IsStraight = False
+            print("Line 1 is not straight")
+        if straigth2.score(x2.reshape((-1, 1)), y2) < R2min and slope2s > straigthSlopeThreshold:
+            line2IsStraight = False
+            print("Line 2 is not straight")
+        
         if line1IsStraight:
             line2Symetrical = math.isclose(slope2[0], slope2[2], rel_tol = relativeError, abs_tol = absoluteError)
             if line2Symetrical:
-                line2cavity = math.isclose(slope2[1], statistics.mean([slope1[0], slope1[1], slope1[2]]), rel_tol = relativeError, abs_tol = absoluteError)
+                line2cavity = math.isclose(slope2[1], slope1s, rel_tol = relativeError, abs_tol = straigthSlopeThreshold)
                 if line2cavity:
                     isCavity = True
                     side = math.floor(self.side/2)*2+1
         elif line2IsStraight:
-            line1Symetrical = math.isclose(slope1[0], slope1[2], rel_tol = relativeError)
+            line1Symetrical = math.isclose(slope1[0], slope1[2], rel_tol = relativeError, abs_tol = absoluteError)
             if line1Symetrical:
-                line1cavity = math.isclose(slope1[1], statistics.mean([slope2[0], slope2[1], slope2[2]]), rel_tol = relativeError, abs_tol = absoluteError)
+                line1cavity = math.isclose(slope1[1], slope2s, rel_tol = relativeError, abs_tol = straigthSlopeThreshold)
                 if line1cavity:
                     isCavity = True
                     side = math.floor(self.side/2)*2
