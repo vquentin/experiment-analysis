@@ -249,11 +249,9 @@ class SEMImage(object):
             self.__plt_imshow_overlay(edgesOnSides, axes=ax[0], title="Edges on sides")
             ax[1].imshow(self.image, cmap=cm.gray)
             for i, line in enumerate(lines):
-                ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[line.side])/255)
-                line.isCavity(debug=True)
-            ax[1].set_title("Lines detected")
-            #a = Line(side=3, angle=1, dist=5, image=self.image)
-            #ax[1].plot(*a.plot_points, '-', c=np.array(config.colors[a.side])/255)
+                if line.classify(debug=True)['isCavity']:
+                    ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[i])/255)
+            ax[1].set_title("Cavities detected")
             plt.tight_layout()
 
     def silicon_baseline(self, debug = False):
