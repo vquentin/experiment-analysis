@@ -215,7 +215,7 @@ class SEMImage(object):
         orientation: the orientation of the image (default: Horizontal, accepted values are Horizontal, Vertical, Oblique)
         """
         if edges is None:
-            edges = self.canny_closing_skeleton(debug = False)
+            edges = self.canny_closing_skeleton(debug = True)
 
         #TODO a function that returns the image orientation based on edges
         #goal: avoid hardcoding "orientation = 'Horizontal'"
@@ -253,7 +253,7 @@ class SEMImage(object):
             for k, line in enumerate(lines):
                 if line.classify(debug=True)['isCavity']:
                     ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[k])/255)
-                    line.distToEdge(edgesOnSides[...,i], debug=True)
+                    line.distToEdge(edgesOnSides[...,line.side], debug=True)
 
 
     def silicon_baseline(self, debug = False):

@@ -52,7 +52,7 @@ class FeatureFit(object):
         self.edgeTooClose = False
         lineMinus, linePlus = line.linesOffset(distance=distance)
 
-        if lineMinus.col.size is not 0 and linePlus.col.size is not 0:
+        if lineMinus.col.size != 0 and linePlus.col.size != 0:
             # construct intensity vs. line length
             xMinus = lineMinus.col
             xPlus = linePlus.col

@@ -83,13 +83,16 @@ class Line(object):
         dist=[]
         for i, val in np.ndenumerate(self.col):
             orthoLine = Line(side = self.side, angle = self._angle-math.pi/2, dist = val-self.row[i]/math.tan(self._angle), image = edge)
-            """if debug and (i[0] == 750):
+            if debug and (i[0] == 750):
                 plt.figure()
                 plt.imshow(edge)
                 plt.plot(*orthoLine.plot_points, '-r')
-                plt.title(f"line for i={i}")"""
+                plt.title(f"line for i={i}")
             idx=np.argmax(orthoLine.intensity)
-            dist.append(math.sqrt(abs(val-orthoLine.col[idx])**2 + abs(self.row[i]-orthoLine.row[idx])**2))
+            print(idx)
+            print(orthoLine.intensity[idx])
+            if idx != 0:
+                dist.append(math.sqrt(abs(val-orthoLine.col[idx])**2 + abs(self.row[i]-orthoLine.row[idx])**2))
         if debug:
             plt.figure()
             plt.plot(self.col, dist, '-k')
