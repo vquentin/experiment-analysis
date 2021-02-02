@@ -58,17 +58,16 @@ class FeatureFit(object):
             yPlus = np.cumsum(linePlus.intensity)
 
             # fit with a straight line
-            lineMinus_oneSegment = LinearRegression(fit_intercept=False).fit(xMinus.reshape((-1, 1)), yMinus)
-            linePlus_oneSegment = LinearRegression(fit_intercept=False).fit(xPlus.reshape((-1, 1)), yPlus)
+            lineMinus_oneSegment = LinearRegression(fit_intercept=False).fit(xMinus.reshape((-1, 1)).astype(np.float32), yMinus)
+            linePlus_oneSegment = LinearRegression(fit_intercept=False).fit(xPlus.reshape((-1, 1)).astype(np.float32), yPlus)
             self.slopes_oneSegment = [lineMinus_oneSegment.coef_, linePlus_oneSegment.coef_]
             self.R2_oneSegment = [lineMinus_oneSegment.score(xMinus.reshape((-1, 1)), yMinus), linePlus_oneSegment.score(xPlus.reshape((-1, 1)), yPlus)]
 
             # fit with a piece-wise line
-            pwlfLinePlus = pwlf.PiecewiseLinFit(xMinus, yMinus)
-            pwlfLineMinus = pwlf.PiecewiseLinFit(xPlus, yPlus)
-            pwlfLinePlus.fit(cavityTestNSeg)
-            pwlfLineMinus.fit(cavityTestNSeg)
-            self.slopes_threeSegment = [pwlfLinePlus.calc_slopes(), pwlfLineMinus.calc_slopes()]
+            pwlfLineMinus = pwlf.PiecewiseLinFit(xMinus, yMinus)
+            pwlfLinePlus = pwlf.PiecewiseLinFit(xPlus, yPlus)
+            self.breaks_threeSegment = [pwlfLineMinus.fit(cavityTestNSeg), pwlfLinePlus.fit(cavityTestNSeg)]
+            self.slopes_threeSegment = [pwlfLineMinus.calc_slopes(), pwlfLinePlus.calc_slopes()]
             self.sides = [lineMinus.side, linePlus.side]
             log.debug((f"Fit results \n"
                         f"\tSides: {self.sides} \n"
