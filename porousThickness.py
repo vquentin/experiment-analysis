@@ -20,3 +20,4 @@ example_files = example_files1 + glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL
 for example_file in example_files:
     a = SEMImage(filePath=example_file)
     
+#a = SEMImage(filePath=example_files[10])

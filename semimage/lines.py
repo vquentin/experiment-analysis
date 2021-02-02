@@ -2,6 +2,7 @@ import numpy as np
 import math
 from skimage import draw
 from semimage.feature_test import FeatureTest
+from matplotlib import pyplot as plt
 
 class Line(object):
     def __init__(self, side=None, angle=None, dist=None, image=None):
@@ -70,3 +71,27 @@ class Line(object):
         cavity = feature.assessCavity(debug=False)
                     
         return {'isCavity': cavity}
+
+    def distToEdge(self, edge, debug=False):
+        """Return x,y coordinates of distance to edge.
+
+        Keyword arguments:
+        debug: a flag to show diagnostics
+
+        Returns a tuple of numpy arrays with distance to edge along the line.
+        """
+        dist=[]
+        for i, val in np.ndenumerate(self.col):
+            orthoLine = Line(side = self.side, angle = self._angle-math.pi/2, dist = val-self.row[i]/math.tan(self._angle), image = edge)
+            """if debug and (i[0] == 750):
+                plt.figure()
+                plt.imshow(edge)
+                plt.plot(*orthoLine.plot_points, '-r')
+                plt.title(f"line for i={i}")"""
+            idx=np.argmax(orthoLine.intensity)
+            dist.append(math.sqrt(abs(val-orthoLine.col[idx])**2 + abs(self.row[i]-orthoLine.row[idx])**2))
+        if debug:
+            plt.figure()
+            plt.plot(self.col, dist, '-k')
+        return (self.col, dist)
+
