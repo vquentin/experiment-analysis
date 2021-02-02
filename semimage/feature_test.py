@@ -19,7 +19,7 @@ class FeatureTest(object):
         cavityTestDistance = 3 # all cavity features should be within 3 pixels from current line
 
         #perform the fits
-        self.cavityFits = FeatureFit(line, cavityTestDistance, multiSeg=True)
+        self.cavityFits = FeatureFit(line, cavityTestDistance, multiSeg=True, debug = True)
 
     def assessCavity(self, debug=False):
         """Guess if the current line is representative of a cavity.
@@ -46,7 +46,7 @@ class FeatureTest(object):
         return (not self.isNotCavity)
             
 class FeatureFit(object):
-    def __init__(self, line, distance, multiSeg=True):
+    def __init__(self, line, distance, multiSeg=True, debug=False):
         cavityTestNSeg = 3
 
         self.edgeTooClose = False
@@ -60,8 +60,8 @@ class FeatureFit(object):
             yPlus = np.cumsum(linePlus.intensity)
 
             # fit with a straight line
-            lineMinus_oneSegment = LinearRegression(fit_intercept=False).fit(xMinus.reshape((-1, 1)),yMinus)
-            linePlus_oneSegment = LinearRegression(fit_intercept=False).fit(xPlus.reshape((-1, 1)),yPlus)
+            lineMinus_oneSegment = LinearRegression(fit_intercept=False).fit(xMinus.reshape((-1, 1)), yMinus)
+            linePlus_oneSegment = LinearRegression(fit_intercept=False).fit(xPlus.reshape((-1, 1)), yPlus)
             self.slopes_oneSegment = [lineMinus_oneSegment.coef_, linePlus_oneSegment.coef_]
             self.R2_oneSegment = [lineMinus_oneSegment.score(xMinus.reshape((-1, 1)), yMinus), linePlus_oneSegment.score(xPlus.reshape((-1, 1)), yPlus)]
 
@@ -79,12 +79,23 @@ class FeatureFit(object):
                         f"\t{cavityTestNSeg} segment lines: \n"
                         f"\t\tSlopes: {self.slopes_threeSegment}\n"
                         f"\t\tBreakpoints: {self.breaks_threeSegment}"))
+            if debug:
+                plt.figure(figsize = (4,3))
+                xMinusHat = np.arange(xMinus[0], xMinus[-1])
+                yminusHat = pwlfLineMinus.predict(xMinusHat)
+                xPlusHat = np.arange(xPlus[0], xPlus[-1])
+                yPlusHat = pwlfLinePlus.predict(xPlusHat)
+                plt.plot(xMinus, yMinus, 'b,', label=f'Side {lineMinus.side}')
+                plt.plot(xPlus, yPlus, 'r,', label=f'Side {linePlus.side}')
+                plt.plot(xMinusHat, yminusHat, 'b--')
+                plt.plot(xPlusHat, yPlusHat, 'r--')
+                plt.legend()
         else:
             self.edgeTooClose = True
 
     def isLineStraight(self, mainSide=None, side=None):
         R2min = 0.99 #threshold to say line is straight
-        straigthSlopeThreshold = 36.82
+        straigthSlopeThreshold = 15
 
         i = self._side(mainSide, side)
         isStraight = self.R2_oneSegment[i] > R2min or self.slopes_oneSegment[i] < straigthSlopeThreshold
@@ -96,19 +107,20 @@ class FeatureFit(object):
         #hard coded parameters
         maxSep = 150 #number of pixels max between breakpoints due to artifact
         relativeError = 0.2
-        absoluteError = 5
+        absoluteError = 12
 
         breakSep = self.breaks_threeSegment[i][2]-self.breaks_threeSegment[i][1]
         slopesAreClose = math.isclose(self.slopes_threeSegment[i][0], self.slopes_threeSegment[i][2], rel_tol = relativeError, abs_tol = absoluteError)
         if breakSep < maxSep and slopesAreClose:
             self.slopes_oneSegment[i] = np.mean([self.slopes_threeSegment[i][0], self.slopes_threeSegment[i][2]])
+            log.debug(f"Line on side {i} had artifact recognized.")
             return True
         else:
             return False
 
     def isLineSym(self, mainSide=None, side=None):
         relativeError = 0.52
-        absoluteError = 5
+        absoluteError = 12
 
         i = self._side(mainSide, side)
         isSym = math.isclose(self.slopes_threeSegment[i][0], self.slopes_threeSegment[i][2], rel_tol = relativeError, abs_tol = absoluteError)
