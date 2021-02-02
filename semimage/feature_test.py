@@ -8,8 +8,6 @@ from sklearn.linear_model import LinearRegression
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-np.set_printoptions(precision=2)
-
 class FeatureTest(object):
     def __init__(self, line):
         self.line = line
@@ -66,10 +64,11 @@ class FeatureFit(object):
             self.R2_oneSegment = [lineMinus_oneSegment.score(xMinus.reshape((-1, 1)), yMinus), linePlus_oneSegment.score(xPlus.reshape((-1, 1)), yPlus)]
 
             # fit with a piece-wise line
-            pwlfLineMinus = pwlf.PiecewiseLinFit(xMinus, yMinus)
-            pwlfLinePlus = pwlf.PiecewiseLinFit(xPlus, yPlus)
-            self.breaks_threeSegment = [pwlfLineMinus.fit(cavityTestNSeg), pwlfLinePlus.fit(cavityTestNSeg)]
-            self.slopes_threeSegment = [pwlfLineMinus.calc_slopes(), pwlfLinePlus.calc_slopes()]
+            pwlfLinePlus = pwlf.PiecewiseLinFit(xMinus, yMinus)
+            pwlfLineMinus = pwlf.PiecewiseLinFit(xPlus, yPlus)
+            pwlfLinePlus.fit(cavityTestNSeg)
+            pwlfLineMinus.fit(cavityTestNSeg)
+            self.slopes_threeSegment = [pwlfLinePlus.calc_slopes(), pwlfLineMinus.calc_slopes()]
             self.sides = [lineMinus.side, linePlus.side]
             log.debug((f"Fit results \n"
                         f"\tSides: {self.sides} \n"
@@ -90,6 +89,10 @@ class FeatureFit(object):
                 plt.plot(xMinusHat, yminusHat, 'b--')
                 plt.plot(xPlusHat, yPlusHat, 'r--')
                 plt.legend()
+            log.debug((f"Sides: {self.sides} \n"
+                        f"Slopes of one segment lines: {self.slopes_oneSegment} \n"
+                        f"R2: {self.R2_oneSegment}\n"
+                        f"Slopes of multi-segment lines: {self.slopes_threeSegment}"))
         else:
             self.edgeTooClose = True
 
@@ -100,7 +103,7 @@ class FeatureFit(object):
         i = self._side(mainSide, side)
         isStraight = self.R2_oneSegment[i] > R2min or self.slopes_oneSegment[i] < straigthSlopeThreshold
         #TODO add code to remove a bump in the data
-        isStraightNoisy = self.cleanNoisy(i)
+        isStraightNoisy = False
         return isStraight or isStraightNoisy
 
     def cleanNoisy(self, i):
