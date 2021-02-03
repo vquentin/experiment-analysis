@@ -309,10 +309,13 @@ class SEMImage(object):
         width_nm = (breaks[4]-breaks[1])*self.pixelSize
         width_nm_unc = (se[8]**2+se[5]**2)**0.5*self.pixelSize
 
-        
+        rangeThickness = np.logical_and(x > breaks[1], x < breaks[4])
+        thickness_nm = np.median(y[rangeThickness])*self.pixelSize
+        thickness_nm_unc = np.std(y[rangeThickness])*self.pixelSize
         
         if debug:
             log.debug(f"Cavity width: {width_nm} +- {width_nm_unc} nm")
+            log.debug(f"Cavity thickness: {thickness_nm} +- {thickness_nm_unc} nm")
             plt.figure()
             xHat = np.arange(min(x), max(x))
             yHat = pwlfCavity.predict(xHat)
