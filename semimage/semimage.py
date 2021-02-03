@@ -303,10 +303,16 @@ class SEMImage(object):
         
         pwlfCavity = pwlf.PiecewiseLinFit(x, y)
         breaks = pwlfCavity.fit(5)
+        _ = pwlfCavity.p_values(method='non-linear', step_size=1e-4)
+        se = pwlfCavity.se  # standard errors
+
         width_nm = (breaks[4]-breaks[1])*self.pixelSize
+        width_nm_unc = (se[8]**2+se[5]**2)**0.5*self.pixelSize
+
+        
         
         if debug:
-            log.debug(f"Cavity width: {width_nm} nm")
+            log.debug(f"Cavity width: {width_nm} +- {width_nm_unc} nm")
             plt.figure()
             xHat = np.arange(min(x), max(x))
             yHat = pwlfCavity.predict(xHat)

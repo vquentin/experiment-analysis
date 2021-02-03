@@ -92,15 +92,21 @@ class Line(object):
         """
         #TODO: current implementation is slow. Alternative would be to rotate the edge image and search along each column. Also use np
         dist=np.full_like(self.col, np.nan, dtype=np.float64)
-        edgeRotated = transform.rotate(edge, -(90-math.degrees(self._angle))
+        lineImage = np.zeros_like(self.image, dtype=bool)
+        lineImage[self.row, self.col] = True
+        lineImageRotated = transform.rotate(lineImage, -(90-math.degrees(self._angle)), resize=True, center=(0,0))
+        rowsLine = np.argmax(lineImageRotated, axis=0)
+        maskLine = rowsLine==0
 
-
-        for i, val in np.ndenumerate(self.col):
-            orthoLine = Line(side = self.side, angle = self._angle-math.pi/2, dist = val-self.row[i]/math.tan(self._angle), image = edge)
-            idx=np.argmax(orthoLine.intensity)
-            if idx != 0:
-                dist[i] = math.sqrt(abs(val-orthoLine.col[idx])**2 + abs(self.row[i]-orthoLine.row[idx])**2)
+        edgeRotated = transform.rotate(edge, -(90-math.degrees(self._angle)), resize=True, center=(0,0))
+        rowsEdge = np.argmax(edgeRotated, axis=0)
+        maskEdge = rowsEdge==0
+        dist = rowsEdge-rowsLine
+        mask = np.logical_or(maskLine, maskEdge)
+        print(mask.shape)
+        print(dist.shape)
+        dist = dist[~mask]
         if debug:
             plt.figure()
             plt.plot(self.col, dist, '-k')
-        return (self.col[~np.isnan(dist)], dist[~np.isnan(dist)])
+        return (np.arange(0, dist.shape[0]), dist)
