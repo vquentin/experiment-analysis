@@ -6,7 +6,11 @@ import numpy as np
 from tifffile import TiffFile as tf
 from matplotlib import pyplot as plt
 from matplotlib import cm
+from mpl_toolkits.axes_grid1 import AxesGrid
+
 from pathlib import Path
+import pwlf
+import logging
 
 from skimage.feature import canny
 from skimage.transform import hough_line, hough_line_peaks
@@ -18,7 +22,8 @@ from functools import partial
 from semimage.lines import Line
 import semimage.config as config
 
-from mpl_toolkits.axes_grid1 import AxesGrid
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 class SEMImage(object):
     """This class instanciates an image and loads the metadata. 
@@ -41,9 +46,9 @@ class SEMImage(object):
             self.plot_image_raw()
         #self.canny(debug=True, sigma = 1.0)
         #self.canny_closing_skeleton(debug=True)
-        #self.classifier(debug=True)
-        self.lines(debug=True)
-        #self.silicon_baseline(debug=True)
+        self._lines = self.lines(debug=True)
+        self._classLines = self.classify(self._lines)
+        self.analyzeCavity()
         plt.show()
 
     def __parse_metadata(self, metaData = None, debug = False):
@@ -81,7 +86,7 @@ class SEMImage(object):
         ax[1].set_title('Statistics')
         ax[1].sharey(ax[0])
         if hasattr(self, 'mask'):
-            ax[2].hist(self.image[self.mask_].ravel(), bins = 256)
+            ax[2].hist(self.image[self._mask].ravel(), bins = 256)
             ax[2].set_title('Histogram (mask applied)')
         else:
             ax[2].hist(self.image.ravel(), bins = 256)
@@ -108,11 +113,11 @@ class SEMImage(object):
             hasBanner = True 
             maskFirstLine = min(lineBanner, maskFirstLine)
         maskLines[maskFirstLine:] = False
-        self.mask_ = np.tile(maskLines,[self.image.shape[1],1]).T
+        self._mask = np.tile(maskLines,[self.image.shape[1],1]).T
 
         if debug:
             maskedImage = self.image.copy()
-            maskedImage[~self.mask_] = 0
+            maskedImage[~self._mask] = 0
             _, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True)
             ax = axes.ravel()
             ax[0].imshow(self.image, cmap=cm.gray)
@@ -132,7 +137,7 @@ class SEMImage(object):
         """
         if image is None:
             image = self.image
-        edges = canny(image,sigma=sigma, low_threshold=None, high_threshold=None, mask=self.mask_, use_quantiles=False)
+        edges = canny(image,sigma=sigma, low_threshold=None, high_threshold=None, mask=self._mask, use_quantiles=False)
         if debug:
             plt.figure()
             self.__plt_imshow_overlay(edges, title = f"Detected edges with sigma = {sigma}")
@@ -204,6 +209,7 @@ class SEMImage(object):
             
     def lines(self, edges = None, debug = False):
         """Returns at most two and two lines, respectively from each side of the image.
+        Starting point to classify these lines as cavities or interface.
 
         Keyword arguments:
         edges: a binary image from edge detection algorithm (default: will apply self.canny_closing_skeleton())
@@ -213,8 +219,6 @@ class SEMImage(object):
         if edges is None:
             edges = self.canny_closing_skeleton(debug = False)
 
-        #TODO a function that returns the image orientation based on edges
-        #goal: avoid hardcoding "orientation = 'Horizontal'"
         #TODO implement a version of this that is orientation independent by rotating the edge image
 
         edgesOnSides = np.zeros(edges.shape+(2,),dtype = bool) # array that will contain the edges from both sides of interest
@@ -229,10 +233,9 @@ class SEMImage(object):
         for i in range(weights.shape[-1]):
             edgesOnSides[np.argmax(edges*weights[...,i], axis=0),I,i] = True
         edgesOnSides[mask, :] = False
-        #field3d_mask[...] = (field2d > 0.3)[np.newaxis, ...]
+        self._edgesOnSides = edgesOnSides
         for i in range(weights.shape[-1]):    
             #TODO replace with orientation insensitive code
-            #angle = choices.get(orientation, 'Horizontal')
             theta = 90 # 90 degrees = horizontal line
             dTheta = 10 # delta around which to search
             resTheta = 0.05 #smallest resolvable angle
@@ -241,19 +244,40 @@ class SEMImage(object):
             #for each line
             for _, angle, dist in zip(accum, angles, dists):
                 lines.append(Line(side=i, angle=angle, dist=dist, image=self.image))
-            
         if debug:
             _, axes = plt.subplots(nrows = 1, ncols = 2, sharex=True, sharey=True, figsize=(15,8))
             ax = axes.ravel()
             self.__plt_imshow_overlay(edgesOnSides, axes=ax[0], title="Edges on sides")
             ax[1].imshow(self.image, cmap=cm.gray)
-            ax[1].set_title("Cavities detected")
+            ax[1].set_title("Lines detected")
             plt.tight_layout()
             for k, line in enumerate(lines):
-                if line.classify(debug=True)['isCavity']:
-                    ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[k])/255)
-                    line.distToEdge(edgesOnSides[...,line.side], debug=True)
+                ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[k])/255)
+        return lines
 
+    def classify(self, lines=None, debug=False):
+        """Return a list of dictionnary items consisting in the line and its classification
+
+        Keyword arguments:
+        lines: a list of lines, (default: self._lines)
+        debug: a flag to plot the lines detected
+        """
+        if lines is None:
+            lines = self._lines
+        classLines = []
+        for line in lines:
+            classLines.append({
+                'Type': line.classify(debug=False),
+                'Line': line
+            })
+
+        if debug:
+            plt.figure()
+            plt.title("Line classification")
+            for line in classLines:
+                if line['Type'] is 'isCavity':
+                    plt.plot(*line['Line'].plot_points, '-', c=np.array(config.colors[1])/255)
+        return classLines
     
     def analyze(self, analyses = None):
         """Analyze the image.
@@ -263,3 +287,28 @@ class SEMImage(object):
         be one of 'cavity_xy', 'cavity_y', 'thickness_xy', "thickness_y' (default: None).
         """
         pass
+
+    def analyzeCavity(self, edges=None, lines=None):
+
+        if lines is None:
+            lines = self._classLines
+        if edges is None:
+            edges = self._edgesOnSides
+        for line in lines:
+            if line['Type'] is 'isCavity':
+                x, y =line['Line'].distToEdge(edges[...,line['Line'].side], debug=False)
+                self.fitCavity(x, y, debug=True)
+
+    def fitCavity(self, x, y, debug=False):
+        
+        pwlfCavity = pwlf.PiecewiseLinFit(x, y)
+        breaks = pwlfCavity.fit(5)
+        width_nm = (breaks[4]-breaks[1])*self.pixelSize
+        
+        if debug:
+            log.debug(f"Cavity width: {width_nm} nm")
+            plt.figure()
+            xHat = np.arange(min(x), max(x))
+            yHat = pwlfCavity.predict(xHat)
+            plt.plot(x, y, 'ko')
+            plt.plot(xHat,yHat,'k-')

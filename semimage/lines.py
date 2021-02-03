@@ -2,6 +2,7 @@ import numpy as np
 import math
 import logging
 from skimage import draw
+from skimage import transform
 from semimage.feature_test import FeatureTest
 from matplotlib import pyplot as plt
 
@@ -66,37 +67,40 @@ class Line(object):
                 Line(side=math.floor(self.side/2)*2, angle=self._angle, dist=self._dist+distance, image=self.image))
 
     def classify(self, debug=False):
-        """Guess if the current line is representative of a characteristic feature, such as a cavity, or a straight interface.
+        """Return a string guessing the line type based on its features.
+        Currently supports isCavity, isNothing, TODO: support for a straight interface.
         
         Keyword arguments:
-        debug: a flag to show diagnostics.
+        debug: a flag to show diagnostics (passed down).
 
         Returns a dictionary describing the cavity
         """
         #initilize classification
         feature = FeatureTest(self)
-        cavity = feature.assessCavity(debug=False)
-                    
-        return {'isCavity': cavity}
+        if (feature.assessCavity(debug=False)):
+            return 'isCavity'
+        else:
+            return 'isNothing'
 
     def distToEdge(self, edge, debug=False):
-        """Return x,y coordinates of distance to edge.
+        """Return distance to edge vs position along the line.
         
         Keyword arguments:
         debug: a flag to show diagnostics
         
-        Returns a tuple of numpy arrays with distance to edge along the line.
+        Returns a tuple of numpy arrays with distance to edge along the line, without NaN values.
         """
-        dist=[]
+        #TODO: current implementation is slow. Alternative would be to rotate the edge image and search along each column. Also use np
+        dist=np.full_like(self.col, np.nan, dtype=np.float64)
+        edgeRotated = transform.rotate(edge, -(90-math.degrees(self._angle))
+
+
         for i, val in np.ndenumerate(self.col):
             orthoLine = Line(side = self.side, angle = self._angle-math.pi/2, dist = val-self.row[i]/math.tan(self._angle), image = edge)
             idx=np.argmax(orthoLine.intensity)
             if idx != 0:
-                dist.append(math.sqrt(abs(val-orthoLine.col[idx])**2 + abs(self.row[i]-orthoLine.row[idx])**2))
-            else:
-                dist.append(np.nan)
+                dist[i] = math.sqrt(abs(val-orthoLine.col[idx])**2 + abs(self.row[i]-orthoLine.row[idx])**2)
         if debug:
             plt.figure()
             plt.plot(self.col, dist, '-k')
-        return (self.col, dist)
-
+        return (self.col[~np.isnan(dist)], dist[~np.isnan(dist)])
