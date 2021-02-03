@@ -1,8 +1,14 @@
 import numpy as np
 import math
+import logging
 from skimage import draw
 from semimage.feature_test import FeatureTest
 from matplotlib import pyplot as plt
+
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+
 
 class Line(object):
     def __init__(self, side=None, angle=None, dist=None, image=None):
@@ -30,6 +36,7 @@ class Line(object):
             c1 = self.image.shape[1]
         except Exception as e:
             #handle the special case of vertical line
+            log.dbug(e)
             r0 = 0
             c0 = dist
             r1 = self.image.shape[0]
@@ -51,12 +58,12 @@ class Line(object):
 
     def linesOffset(self, distance = 0):
         """Return two lines at distance from the current line. side attribute corresponds to side conventions relative to the current line.
-                
+        
         Keyword arguments:
         distance: the distance from the line in pixels
         """
-        return (Line(side = math.floor(self.side/2)*2+1, angle = self._angle, dist = self._dist-distance, image = self.image),
-                Line(side = math.floor(self.side/2)*2, angle = self._angle, dist = self._dist+distance, image = self.image))
+        return (Line(side=math.floor(self.side/2)*2+1, angle=self._angle, dist=self._dist-distance, image=self.image),
+                Line(side=math.floor(self.side/2)*2, angle=self._angle, dist=self._dist+distance, image=self.image))
 
     def classify(self, debug=False):
         """Guess if the current line is representative of a characteristic feature, such as a cavity, or a straight interface.
@@ -74,25 +81,20 @@ class Line(object):
 
     def distToEdge(self, edge, debug=False):
         """Return x,y coordinates of distance to edge.
-
+        
         Keyword arguments:
         debug: a flag to show diagnostics
-
+        
         Returns a tuple of numpy arrays with distance to edge along the line.
         """
         dist=[]
         for i, val in np.ndenumerate(self.col):
             orthoLine = Line(side = self.side, angle = self._angle-math.pi/2, dist = val-self.row[i]/math.tan(self._angle), image = edge)
-            if debug and (i[0] == 750):
-                plt.figure()
-                plt.imshow(edge)
-                plt.plot(*orthoLine.plot_points, '-r')
-                plt.title(f"line for i={i}")
             idx=np.argmax(orthoLine.intensity)
-            print(idx)
-            print(orthoLine.intensity[idx])
             if idx != 0:
                 dist.append(math.sqrt(abs(val-orthoLine.col[idx])**2 + abs(self.row[i]-orthoLine.row[idx])**2))
+            else:
+                dist.append(np.nan)
         if debug:
             plt.figure()
             plt.plot(self.col, dist, '-k')

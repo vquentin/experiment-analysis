@@ -58,21 +58,17 @@ class SEMImage(object):
             f = self.imagePath.parent.joinpath(self.imagePath.stem + '_meta.txt')
             with open(f, mode='w') as fid:
                 print(json.dumps(metaData, indent = 4), file=fid)
-        try:
-            self.lineCount = metaData["ap_line_counter"][1]
-            self.pixelSize = metaData["ap_image_pixel_size"][1]
-            self.beamXOffset = metaData["ap_beam_offset_x"][1]
-            self.beamYOffset = metaData["ap_beam_offset_y"][1]
-            self.stageX = metaData["ap_stage_at_x"][1]
-            self.stageY = metaData["ap_stage_at_y"][1]
-        except Exception as e:
-            print(f"Failed to read image metadata")
-            print(e)
-
+        self.lineCount = metaData["ap_line_counter"][1]
+        self.pixelSize = metaData["ap_image_pixel_size"][1]
+        self.beamXOffset = metaData["ap_beam_offset_x"][1]
+        self.beamYOffset = metaData["ap_beam_offset_y"][1]
+        self.stageX = metaData["ap_stage_at_x"][1]
+        self.stageY = metaData["ap_stage_at_y"][1]
+    
     def plot_image_raw(self):
         """Plots the image in a new window, without any treatment and show basic diagnostics.
         """
-        fig, axes = plt.subplots(nrows = 1, ncols = 3, figsize=(12,5), gridspec_kw={'width_ratios': [1024, 256, 256]})
+        _, axes = plt.subplots(nrows = 1, ncols = 3, figsize=(12,5), gridspec_kw={'width_ratios': [1024, 256, 256]})
         ax = axes.ravel()
         ax[0].imshow(self.image, cmap=cm.gray)
         ax[0].set_title('Original image')
@@ -85,7 +81,7 @@ class SEMImage(object):
         ax[1].set_title('Statistics')
         ax[1].sharey(ax[0])
         if hasattr(self, 'mask'):
-            ax[2].hist(self.image[self.mask].ravel(), bins = 256)
+            ax[2].hist(self.image[self.mask_].ravel(), bins = 256)
             ax[2].set_title('Histogram (mask applied)')
         else:
             ax[2].hist(self.image.ravel(), bins = 256)
@@ -112,12 +108,12 @@ class SEMImage(object):
             hasBanner = True 
             maskFirstLine = min(lineBanner, maskFirstLine)
         maskLines[maskFirstLine:] = False
-        self.mask = np.tile(maskLines,[self.image.shape[1],1]).T
+        self.mask_ = np.tile(maskLines,[self.image.shape[1],1]).T
 
         if debug:
             maskedImage = self.image.copy()
-            maskedImage[~self.mask] = 0
-            fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True)
+            maskedImage[~self.mask_] = 0
+            _, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(12,6), sharey=True)
             ax = axes.ravel()
             ax[0].imshow(self.image, cmap=cm.gray)
             ax[0].set_title(f"Original image (banner: {hasBanner})")
@@ -136,7 +132,7 @@ class SEMImage(object):
         """
         if image is None:
             image = self.image
-        edges = canny(image,sigma=sigma, low_threshold=None, high_threshold=None, mask=self.mask, use_quantiles=False)
+        edges = canny(image,sigma=sigma, low_threshold=None, high_threshold=None, mask=self.mask_, use_quantiles=False)
         if debug:
             plt.figure()
             self.__plt_imshow_overlay(edges, title = f"Detected edges with sigma = {sigma}")
@@ -193,7 +189,7 @@ class SEMImage(object):
         noise_reduced = np.array(morphology.remove_small_objects(label(skeleton2), min_size=100,), dtype=bool)
 
         if debug:
-            fig, axes = plt.subplots(nrows = 2, ncols = 4, sharex=True, sharey=True, figsize=(15,8))
+            _, axes = plt.subplots(nrows = 2, ncols = 4, sharex=True, sharey=True, figsize=(15,8))
             ax = axes.ravel()
             ax[0].imshow(self.image, cmap=cm.gray)
             ax[0].set_title('Original image')
@@ -215,7 +211,7 @@ class SEMImage(object):
         orientation: the orientation of the image (default: Horizontal, accepted values are Horizontal, Vertical, Oblique)
         """
         if edges is None:
-            edges = self.canny_closing_skeleton(debug = True)
+            edges = self.canny_closing_skeleton(debug = False)
 
         #TODO a function that returns the image orientation based on edges
         #goal: avoid hardcoding "orientation = 'Horizontal'"
@@ -227,11 +223,14 @@ class SEMImage(object):
         weights = np.stack((weightMatrix, np.flipud(weightMatrix)), axis = -1)
         
         lines=[]
+        mask = edges == 0
 
         #for each side
         for i in range(weights.shape[-1]):
             edgesOnSides[np.argmax(edges*weights[...,i], axis=0),I,i] = True
-            
+        edgesOnSides[mask, :] = False
+        #field3d_mask[...] = (field2d > 0.3)[np.newaxis, ...]
+        for i in range(weights.shape[-1]):    
             #TODO replace with orientation insensitive code
             #angle = choices.get(orientation, 'Horizontal')
             theta = 90 # 90 degrees = horizontal line
@@ -244,7 +243,7 @@ class SEMImage(object):
                 lines.append(Line(side=i, angle=angle, dist=dist, image=self.image))
             
         if debug:
-            fig, axes = plt.subplots(nrows = 1, ncols = 2, sharex=True, sharey=True, figsize=(15,8))
+            _, axes = plt.subplots(nrows = 1, ncols = 2, sharex=True, sharey=True, figsize=(15,8))
             ax = axes.ravel()
             self.__plt_imshow_overlay(edgesOnSides, axes=ax[0], title="Edges on sides")
             ax[1].imshow(self.image, cmap=cm.gray)
@@ -255,42 +254,7 @@ class SEMImage(object):
                     ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[k])/255)
                     line.distToEdge(edgesOnSides[...,line.side], debug=True)
 
-
-    def silicon_baseline(self, debug = False):
-        """Detect the silicon interface from which we will perform calculations
-
-        Keyword arguments:
-        debug: overlay original image and line found (default: False)
-        """
-        offset = 10 #the distance in pixels from the line to calculate the score
-        origin = np.array((0, self.image.shape[1]))
-        x=np.arange(0,self.image.shape[1])
-        scorePlus = []
-        scoreMinus = []
-        for _, theta, dist in zip(*self.lines_h_all_hough_peaks):
-            y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
-            #checking for bounds
-            yPlus = np.minimum(np.around(y1+(y1-y0)/(origin[1]-origin[0])*(x-origin[1])).astype(int)+offset,self.image.shape[0])
-            yMinus = np.maximum(np.around(y1+(y1-y0)/(origin[1]-origin[0])*(x-origin[1])).astype(int)-offset,0)
-            scorePlus.append(np.mean(self.image[yPlus, x]))
-            scoreMinus.append(np.mean(self.image[yMinus, x]))
-                
-        print(f"Score plus is {scorePlus} and Score minus is {scoreMinus}")
-        if debug:
-            plt.figure()
-            plt.imshow(self.image, cmap=cm.gray)
-             
-            origin = np.array((0, self.image.shape[1]))
-            for _, theta, dist in zip(*self.lines_h_all_hough_peaks):
-                y0, y1 = (dist - origin * np.cos(theta)) / np.sin(theta)
-                plt.plot(origin, (y0, y1), '-r')
-            plt.xlim(origin)
-            plt.ylim((self.image.shape[0], 0))
-            plt.title('Detected lines')
-            plt.tight_layout()
-
-
-
+    
     def analyze(self, analyses = None):
         """Analyze the image.
 

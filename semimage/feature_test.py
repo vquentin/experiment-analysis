@@ -7,7 +7,6 @@ from sklearn.linear_model import LinearRegression
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-
 np.set_printoptions(precision=2)
 
 class FeatureTest(object):
