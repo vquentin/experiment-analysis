@@ -103,10 +103,9 @@ class Line(object):
         maskEdge = rowsEdge==0
         dist = rowsEdge-rowsLine
         mask = np.logical_or(maskLine, maskEdge)
-        print(mask.shape)
-        print(dist.shape)
+        newCols = np.arange(0, edgeRotated.shape[1])
         dist = dist[~mask]
         if debug:
             plt.figure()
-            plt.plot(self.col, dist, '-k')
-        return (np.arange(0, dist.shape[0]), dist)
+            plt.plot(newCols[~mask], dist, '-k')
+        return (newCols[~mask], dist)
