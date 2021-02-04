@@ -67,7 +67,7 @@ class FeatureFit(object):
             # fit with a piece-wise line
             pwlfLineMinus = pwlf.PiecewiseLinFit(xMinus, yMinus)
             pwlfLinePlus = pwlf.PiecewiseLinFit(xPlus, yPlus)
-            self.breaks_threeSegment = [pwlfLineMinus.fit(cavityTestNSeg), pwlfLinePlus.fit(cavityTestNSeg)]
+            self.breaks_threeSegment = [pwlfLineMinus.fitfast(cavityTestNSeg, pop=10), pwlfLinePlus.fitfast(cavityTestNSeg, pop=10)]
             self.slopes_threeSegment = [pwlfLineMinus.calc_slopes(), pwlfLinePlus.calc_slopes()]
             self.sides = [lineMinus.side, linePlus.side]
             log.debug((f"Fit results \n"

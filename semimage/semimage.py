@@ -49,7 +49,7 @@ class SEMImage(object):
             self.plot_image_raw()
         #self.canny(debug=True, sigma = 1.0)
         #self.canny_closing_skeleton(debug=True)
-        self._lines = self.lines(debug=True)
+        self._lines = self.lines(debug=False)
         self._classLines = self.classify(self._lines)
         self.analyzeCavity()
         self.analyzePorous()
@@ -301,7 +301,7 @@ class SEMImage(object):
         for line in lines:
             if line['Type'] is 'isCavity':
                 x, y =line['Line'].distToEdge(edges[...,line['Line'].side], debug=False)
-                self.cavity = self.fitCavity(x, y, debug=True)
+                self.cavity = self.fitCavity(x, y, debug=False)
 
     def fitCavity(self, x, y, debug=False):
         
@@ -338,7 +338,7 @@ class SEMImage(object):
                 side = line['Line'].side
                 otherSide = math.floor(side/2)*2+(side+1)%2
                 x, y =line['Line'].distToEdge(edges[...,otherSide], debug=False)
-                self.porous = self.fitPorous(x, y, debug=True)
+                self.porous = self.fitPorous(x, y, debug=False)
 
     def fitPorous(self, x, y, debug=False):
         baseline = np.isclose(y, [0], rtol=0.1, atol=2)
