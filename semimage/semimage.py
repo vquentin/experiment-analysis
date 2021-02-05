@@ -48,9 +48,9 @@ class SEMImage(object):
         if debug:
             self.plot_image_raw()
         #self.canny(debug=True, sigma = 1.0)
-        #self.canny_closing_skeleton(debug=True)
-        self._lines = self.lines(debug=False)
-        self._classLines = self.classify(self._lines)
+        self.edges = self.canny_closing_skeleton(debug=True)
+        self._lines = self.lines(edges = self.edges, debug=False)
+        self._classLines = self.classify(self._lines, debug=True)
         self.analyzeCavity()
         self.analyzePorous()
         plt.show()
@@ -256,7 +256,7 @@ class SEMImage(object):
             ax[1].set_title("Lines detected")
             plt.tight_layout()
             for k, line in enumerate(lines):
-                ax[1].plot(*line.plot_points, '-', c=np.array(config.colors[k])/255)
+                ax[1].plot(*line.plotPoints, '-', c=np.array(config.colors[k])/255)
         return lines
 
     def classify(self, lines=None, debug=False):
@@ -271,16 +271,23 @@ class SEMImage(object):
         classLines = []
         for line in lines:
             classLines.append({
-                'Type': line.classify(debug=False),
+                'Type': line.classify(debug=debug),
                 'Line': line
             })
 
         if debug:
-            plt.figure()
-            plt.title("Line classification")
-            for line in classLines:
+            _, axes = plt.subplots(nrows = 1, ncols = 3, figsize=(12,5), sharex=True, sharey=True)
+            ax = axes.ravel()
+            self.__plt_imshow_overlay(self.edges, axes=ax[0], title="Edges")
+            ax[1].imshow(self.image, cmap=cm.gray)
+            ax[2].imshow(self.image, cmap=cm.gray)
+            for i, line in enumerate(classLines):
+                ax[1].plot(*line['Line'].plotPoints, '-', c=np.array(config.colors[i])/255)
                 if line['Type'] is 'isCavity':
-                    plt.plot(*line['Line'].plot_points, '-', c=np.array(config.colors[1])/255)
+                    ax[2].plot(*line['Line'].plotPoints, '-', c=np.array(config.colors[1])/255)
+            ax[2].set_title("Detected lines")
+            ax[2].set_title("Line classification (blue=cavity)")
+
         return classLines
     
     def analyze(self, analyses = None):
@@ -300,8 +307,8 @@ class SEMImage(object):
             edges = self._edgesOnSides
         for line in lines:
             if line['Type'] is 'isCavity':
-                x, y =line['Line'].distToEdge(edges[...,line['Line'].side], debug=False)
-                self.cavity = self.fitCavity(x, y, debug=False)
+                x, y =line['Line'].distToEdge(edges[...,line['Line'].side], debug=True)
+                self.cavity = self.fitCavity(x, y, debug=True)
 
     def fitCavity(self, x, y, debug=False):
         
@@ -337,8 +344,8 @@ class SEMImage(object):
             if line['Type'] is 'isCavity':
                 side = line['Line'].side
                 otherSide = math.floor(side/2)*2+(side+1)%2
-                x, y =line['Line'].distToEdge(edges[...,otherSide], debug=False)
-                self.porous = self.fitPorous(x, y, debug=False)
+                x, y =line['Line'].distToEdge(edges[...,otherSide], debug=True)
+                self.porous = self.fitPorous(x, y, debug=True)
 
     def fitPorous(self, x, y, debug=False):
         baseline = np.isclose(y, [0], rtol=0.1, atol=2)
@@ -357,7 +364,7 @@ class SEMImage(object):
         if  R2 > 0.94:
             #porous shape is same as cavity-shape (3 horizontal lines)
             pwlfPorous = pwlf.PiecewiseLinFit(x, y, degree=1)
-            breaks = pwlfTest.fit(5)
+            breaks = pwlfPorous.fit(5)
             _ = pwlfPorous.p_values(method='non-linear', step_size=1e-4)
             se = pwlfPorous.se  # standard errors
 

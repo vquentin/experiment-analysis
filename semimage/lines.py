@@ -22,7 +22,7 @@ class Line(object):
     def rowsColsFromHough(self, angle=None, dist=None):
         """ Returns the row, column pairs for the specified Hough line
 
-         Keyword arguments:
+        Keyword arguments:
         angle: angle in radians
         dist: distance in pixels
         """
@@ -36,7 +36,7 @@ class Line(object):
             r1 = int(round((dist-self.image.shape[1]*math.cos(angle))/math.sin(angle)))
             c1 = self.image.shape[1]
         except Exception as e:
-            #handle the special case of vertical line
+            #handle the edge case of vertical line
             log.dbug(e)
             r0 = 0
             c0 = dist
@@ -50,7 +50,7 @@ class Line(object):
             self.col = col[inImage]
 
     @property
-    def plot_points(self):
+    def plotPoints(self):
         return [self.col[0], self.col[-1]], [self.row[0], self.row[-1]]
 
     @property
@@ -75,37 +75,38 @@ class Line(object):
 
         Returns a dictionary describing the cavity
         """
-        #initilize classification
-        feature = FeatureTest(self)
-        if (feature.assessCavity(debug=False)):
+        #initialize classification
+        feature = FeatureTest(self, debug=debug)
+        if feature.assessCavity():
             return 'isCavity'
+        elif feature.assessLine():
+            return 'isLine'
         else:
             return 'isNothing'
 
     def distToEdge(self, edge, debug=False):
-        """Return distance to edge vs position along the line.
+        """Return euclidian distance to edge vs position along the line.
         
+        edge is a binary image array
         Keyword arguments:
         debug: a flag to show diagnostics
         
-        Returns a tuple of numpy arrays with distance to edge along the line, without NaN values.
+        Returns a tuple of numpy arrays with distance to edge along the line vs line pixel, without NaN values.
         """
-        #TODO: current implementation is slow. Alternative would be to rotate the edge image and search along each column. Also use np
-        dist=np.full_like(self.col, np.nan, dtype=np.float64)
+        #rotate line and edge images
+        angle = -(90-math.degrees(self._angle))
         lineImage = np.zeros_like(self.image, dtype=bool)
         lineImage[self.row, self.col] = True
-        lineImageRotated = transform.rotate(lineImage, -(90-math.degrees(self._angle)), resize=True, center=(0,0))
-        rowsLine = np.argmax(lineImageRotated, axis=0)
-        maskLine = rowsLine==0
-
-        edgeRotated = transform.rotate(edge, -(90-math.degrees(self._angle)), resize=True, center=(0,0))
-        rowsEdge = np.argmax(edgeRotated, axis=0)
-        maskEdge = rowsEdge==0
-        dist = rowsEdge-rowsLine
-        mask = np.logical_or(maskLine, maskEdge)
-        newCols = np.arange(0, edgeRotated.shape[1])
-        dist = dist[~mask]
+        lineImageRotated = transform.rotate(lineImage, angle, resize=False, center=(0,0))
+        edgeRotated = transform.rotate(edge, angle, resize=False, center=(0,0))
+        #assume no edge is found by default
+        dist=np.full_like(lineImageRotated[0,:], np.nan, dtype=np.float64)
+        rowLineR = np.mean(np.nonzero(lineImageRotated)[0])
+        rowsEdgeR = np.argmax(edgeRotated, axis=0)
+        mask = rowsEdgeR==0
+        dist = rowsEdgeR-rowLineR
+        colsR = np.arange(0, edgeRotated.shape[1])
         if debug:
             plt.figure()
-            plt.plot(newCols[~mask], dist, '-k')
-        return (newCols[~mask], dist)
+            plt.plot(colsR[~mask], dist[~mask], '-k')
+        return (colsR[~mask], dist[~mask])
