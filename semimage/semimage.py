@@ -52,7 +52,7 @@ class SEMImage(object):
         #self.canny(debug=True, sigma = 1.0)
         self.edges = self.canny_closing_skeleton(debug=False)
         self._lines = self.lines(edges = self.edges, debug=False)
-        self._classLines = self.classify(self._lines, debug=True)
+        self._classLines = self.classify(self._lines, debug=False)
         self.analyzeCavity()
         self.analyzePorous()
         plt.show()

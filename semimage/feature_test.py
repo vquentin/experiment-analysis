@@ -166,7 +166,7 @@ class FeatureFit(object):
             return False
 
     def isLineSym(self, mainSide=None, side=None):
-        relativeError = 0.52
+        relativeError = 0.2
         absoluteError = 5
 
         i = self._side(mainSide, side)
