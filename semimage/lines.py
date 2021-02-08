@@ -48,6 +48,10 @@ class Line(object):
             inImage = np.logical_and.reduce([row >= 0, row < self.image.shape[0], col >= 0, col < self.image.shape[1]])
             self.row = row[inImage]
             self.col = col[inImage]
+            if self.col.size != 0:
+                self.endPoints = np.array([[self.row[0], self.col[0]], [self.row[-1], self.col[-1]]])
+            else:
+                self.endPoints = np.empty(2, dtype=int)
 
     @property
     def plotPoints(self):
@@ -97,8 +101,8 @@ class Line(object):
         angle = -(90-math.degrees(self._angle))
         lineImage = np.zeros_like(self.image, dtype=bool)
         lineImage[self.row, self.col] = True
-        lineImageRotated = transform.rotate(lineImage, angle, resize=False, center=(0,0))
-        edgeRotated = transform.rotate(edge, angle, resize=False, center=(0,0))
+        lineImageRotated = transform.rotate(lineImage, angle, resize=True, center=(0,0))
+        edgeRotated = transform.rotate(edge, angle, resize=True, center=(0,0))
         #assume no edge is found by default
         dist=np.full_like(lineImageRotated[0,:], np.nan, dtype=np.float64)
         rowLineR = np.mean(np.nonzero(lineImageRotated)[0])
@@ -110,3 +114,34 @@ class Line(object):
             plt.figure()
             plt.plot(colsR[~mask], dist[~mask], '-k')
         return (colsR[~mask], dist[~mask])
+
+    def subtractIntensity(self, line):
+        """Return a tuple of intensity values subtracted from the line vs. position along the line
+
+        line is another Line object.
+        """
+        #rotate both lines and their associated images
+
+        #mask where the lines do not pass
+
+    def pointProjection(self, p):
+        """Return the projection of p on current line row, col
+
+        p is a numpy array of point coordinates (row, col)
+        Based on https://stackoverflow.com/a/61342198/13969506
+        """
+        ap = p - self.endPoints[0]
+        ab = self.endPoints[1] - self.endPoints[0]
+        t = np.dot(ap, ab) / np.dot(ab, ab)
+        # if you need the closest point belonging to the segment
+        t = max(0, min(1, t))
+        return np.round(self.endPoints[0] + t * ab).astype(int)
+
+    def lineProjection(self, line):
+        """Return the intensity along the largest line that can be projected on current line and given line.
+        Return a ndarray of intensity
+        """
+        p0 = self.pointProjection(line.endPoints[0])
+        p1 = self.pointProjection(line.endPoints[1])
+        row, col = draw.line(p0[0], p0[1], p1[0], p1[1])
+        return self.image[row,col]

@@ -10,7 +10,7 @@ logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s:%(message)s')
 
 
 #Load example file
-#example_files1 = glob.glob(r"./examples/*.tif")
+#example_files = glob.glob(r"./examples/*.tif")
 """
 #example_file = glob.glob(r"./examples/WF67_1_06.tif")[0]
 #example_file = glob.glob(r"./examples/UB19_14.tif")[0]
@@ -20,8 +20,10 @@ logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s:%(message)s')
 """
 
 #example_files = example_files1 + glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\ADB1\*.tif")
-#example_files = glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\ADB1\cavity\*.tif")
-example_files = glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF56\*.tif")
+#example_files = glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\ADB1\cavity\ADB1_37.tif")
+example_files = glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\ADB1\cavity\*.tif")
+#example_files = [glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF56\*.tif")[14]]
+#example_files = glob.glob(r"C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF56\*.tif")
 
 x = []
 y = []
@@ -56,6 +58,8 @@ cavity_thick = [sub['thick']/1000 for sub in cavity]
 cavity_thick_unc = [sub['thick_unc']/1000 for sub in cavity]
 porous_thick = [sub['thick']/1000 for sub in porous]
 porous_thick_unc = [sub['thick_unc']/1000 for sub in porous]
+
+print(f"Number of detected cavities: {len(cavity_thick)}")
 
 plt.figure()
 plt.errorbar(x, cavity_thick, yerr=cavity_thick_unc, fmt='o')

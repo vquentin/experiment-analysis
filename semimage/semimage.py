@@ -17,6 +17,7 @@ from skimage.feature import canny
 from skimage.transform import hough_line, hough_line_peaks
 from skimage import segmentation, feature, future, morphology
 from skimage.measure import label
+from skimage import transform
 from sklearn.ensemble import RandomForestClassifier
 from functools import partial
 
@@ -43,12 +44,13 @@ class SEMImage(object):
             if not hasattr(image, 'sem_metadata'):
                 raise Exception("Image is likely not from a Zeiss scanning electron microscope")
             self.image = image.pages[0].asarray()
+            log.debug(self.imageName)
             self.__parse_metadata(metaData = image.sem_metadata, debug = False)
             self.mask(debug = False)
         if debug:
             self.plot_image_raw()
         #self.canny(debug=True, sigma = 1.0)
-        self.edges = self.canny_closing_skeleton(debug=True)
+        self.edges = self.canny_closing_skeleton(debug=False)
         self._lines = self.lines(edges = self.edges, debug=False)
         self._classLines = self.classify(self._lines, debug=True)
         self.analyzeCavity()
@@ -271,7 +273,7 @@ class SEMImage(object):
         classLines = []
         for line in lines:
             classLines.append({
-                'Type': line.classify(debug=debug),
+                'Type': line.classify(debug=False),
                 'Line': line
             })
 
@@ -307,13 +309,14 @@ class SEMImage(object):
             edges = self._edgesOnSides
         for line in lines:
             if line['Type'] is 'isCavity':
-                x, y =line['Line'].distToEdge(edges[...,line['Line'].side], debug=True)
-                self.cavity = self.fitCavity(x, y, debug=True)
+                x, y =line['Line'].distToEdge(edges[...,line['Line'].side], debug=False)
+                self.cavity = self.fitCavity(x, y, debug=False)
 
     def fitCavity(self, x, y, debug=False):
         
         pwlfCavity = pwlf.PiecewiseLinFit(x, y)
         breaks = pwlfCavity.fit(5)
+        #TODO: handle singular matrix case
         _ = pwlfCavity.p_values(method='non-linear', step_size=1e-4)
         se = pwlfCavity.se  # standard errors
 
@@ -344,8 +347,8 @@ class SEMImage(object):
             if line['Type'] is 'isCavity':
                 side = line['Line'].side
                 otherSide = math.floor(side/2)*2+(side+1)%2
-                x, y =line['Line'].distToEdge(edges[...,otherSide], debug=True)
-                self.porous = self.fitPorous(x, y, debug=True)
+                x, y = line['Line'].distToEdge(edges[...,otherSide], debug=False)
+                self.porous = self.fitPorous(x, y, debug=False)
 
     def fitPorous(self, x, y, debug=False):
         baseline = np.isclose(y, [0], rtol=0.1, atol=2)
@@ -359,7 +362,7 @@ class SEMImage(object):
         xHat = np.arange(min(x), max(x), 0.1)
         yHat = f(xHat)
 
-        log.debug(f"R2-value is {R2}")
+        log.debug(f"R2-value for porous fit is {R2}")
         
         if  R2 > 0.94:
             #porous shape is same as cavity-shape (3 horizontal lines)
@@ -370,26 +373,26 @@ class SEMImage(object):
 
             width_nm = (breaks[4]-breaks[1])*self.pixelSize
             width_nm_unc = (se[8]**2+se[5]**2)**0.5*self.pixelSize
-
             rangeThickness = np.logical_and(x > breaks[1], x < breaks[4])
             thickness_nm = np.median(y[rangeThickness])*self.pixelSize
             thickness_nm_unc = np.std(y[rangeThickness])*self.pixelSize
+            log.debug(f"Porous width: {width_nm} +- {width_nm_unc} nm")
+            log.debug(f"Porous thickness: {thickness_nm} +- {thickness_nm_unc} nm")
+
 
         else:
             x1 = x[np.argmin(baseline)]
             xRev = x[::-1]
             x2 = xRev[np.argmin(baseline[::-1])]
-
             width_nm = ((x2-x1)*self.pixelSize - self.cavity['width'])*0.5
             width_nm_unc = (1*self.pixelSize**2 + self.cavity['width_unc']**2)*0.5
-            
             thickness_nm = (np.max(yHat)*self.pixelSize - self.cavity['thick'])
             thickness_nm_unc = (self.pixelSize**2 + self.cavity['thick_unc']**2)**0.5
+            log.debug(f"Porous width: {width_nm} +- {width_nm_unc} nm")
+            log.debug(f"Porous thickness: {thickness_nm} +- {thickness_nm_unc} nm")
         
         if debug:
             yHatTest = pwlfTest.predict(xHat)
-            log.debug(f"Porous width: {width_nm} +- {width_nm_unc} nm")
-            log.debug(f"Porous thickness: {thickness_nm} +- {thickness_nm_unc} nm")
             plt.figure()
             plt.plot(x, y, 'o', xHat,yHat,'-', xHat, yHatTest, '--')
         return {'width': width_nm, 'width_unc': width_nm_unc, 'thick': thickness_nm, 'thick_unc': thickness_nm_unc}

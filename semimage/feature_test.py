@@ -4,6 +4,7 @@ import pwlf
 import math
 import logging
 from sklearn.linear_model import LinearRegression
+import random
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -17,6 +18,7 @@ class FeatureTest(object):
         #perform the fits
         self.cavityFits = FeatureFit(line, featureTests='cavity', debug=debug)
         self.straightLineFits = FeatureFit(line, featureTests='line', debug=debug)
+        random.seed()
 
     def assessCavity(self):
         """Guess if the current line is representative of a cavity.
@@ -57,7 +59,11 @@ class FeatureFit(object):
         elif featureTests == 'line':
             dist = 10
 
+        self.id = random.randint(0,1000)
+
         lineMinus, linePlus = line.linesOffset(distance=dist)
+        self.lineMinus = lineMinus
+        self.linePlus = linePlus
         self.edgeTooClose = False
         if lineMinus.col.size == 0 or linePlus.col.size == 0:
             self.edgeTooClose = True
@@ -69,29 +75,35 @@ class FeatureFit(object):
             yMinus = np.cumsum(lineMinus.intensity)
             yPlus = np.cumsum(linePlus.intensity)
 
+            #construct line intensity difference
+            lineDiff = np.cumsum(self._diffLineIntensity(lineMinus, linePlus))
+
             # fit with a straight line
             lineMinus_oneSegment = LinearRegression(fit_intercept=False).fit(xMinus.reshape((-1, 1)).astype(np.float32), yMinus)
             linePlus_oneSegment = LinearRegression(fit_intercept=False).fit(xPlus.reshape((-1, 1)).astype(np.float32), yPlus)
             self.sides = [lineMinus.side, linePlus.side]
+            self.sideNames = [self._sideName(lineMinus.side, line.side), self._sideName(linePlus.side, line.side)]
             self.slopes_oneSegment = [lineMinus_oneSegment.coef_[0], linePlus_oneSegment.coef_[0]]
             self.R2_oneSegment = [lineMinus_oneSegment.score(xMinus.reshape((-1, 1)), yMinus), linePlus_oneSegment.score(xPlus.reshape((-1, 1)), yPlus)]
+            self.ssr_oneSegment = [np.sum((yMinus-lineMinus_oneSegment.predict(xMinus.reshape((-1, 1))))**2), np.sum((yPlus-linePlus_oneSegment.predict(xPlus.reshape((-1, 1))))**2)]
             if featureTests == 'line':
-                log.debug((f"Fit results \n"
-                        f"\tSides: {self.sides} \n"
+                log.debug((f"Fit results ID {self.id} ({featureTests})\n"
+                        f"\tSides: {self.sideNames} \n"
                             f"\tOne segment lines: \n"
                             f"\t\tSlope: {self.slopes_oneSegment} \n"
-                            f"\t\tR2: {self.R2_oneSegment}\n"))
+                            f"\t\tR2: {self.R2_oneSegment}\n"
+                            f"\t\tResiduals: {self.ssr_oneSegment}"))
                 if debug:
                     plt.figure(figsize = (4,3))
                     xMinusHat = np.arange(xMinus[0], xMinus[-1])
                     yminusHat = 0 #TODO change if fit needed
                     xPlusHat = np.arange(xPlus[0], xPlus[-1])
                     yPlusHat = 0 #TODO change if fit display needed
-                    plt.plot(xMinus, yMinus, 'b,', label=f'Side {lineMinus.side}')
-                    plt.plot(xPlus, yPlus, 'r,', label=f'Side {linePlus.side}')
+                    plt.plot(xMinus, yMinus, 'b,', label=f'Side {self.sideNames[0]}')
+                    plt.plot(xPlus, yPlus, 'r,', label=f'Side {self.sideNames[1]}')
                     #plt.plot(xMinus,np.cumsum(linePlus.intensity-lineMinus.intensity), 'k-', label="Difference")
                     plt.legend()
-                    plt.title(f"Feature test: {featureTests}")
+                    plt.title(f"Feature test ID {self.id} ({featureTests})")
 
             if featureTests == 'cavity':
                 cavityTestNSeg = 3
@@ -100,27 +112,30 @@ class FeatureFit(object):
                 pwlfLinePlus = pwlf.PiecewiseLinFit(xPlus, yPlus)
                 self.breaks_threeSegment = [pwlfLineMinus.fitfast(cavityTestNSeg, pop=10), pwlfLinePlus.fitfast(cavityTestNSeg, pop=10)]
                 self.slopes_threeSegment = [pwlfLineMinus.calc_slopes(), pwlfLinePlus.calc_slopes()]
-                log.debug((f"Fit results \n"
-                            f"\tSides: {self.sides} \n"
+                self.ssr_threeSegment = [pwlfLineMinus.ssr, pwlfLinePlus.ssr]
+                log.debug((f"Fit results ID {self.id} ({featureTests})\n"
+                            f"\tSides: {self.sideNames} \n"
                             f"\tOne segment lines: \n"
                             f"\t\tSlope: {self.slopes_oneSegment} \n"
                             f"\t\tR2: {self.R2_oneSegment}\n"
+                            f"\t\tResiduals: {self.ssr_oneSegment}\n"
                             f"\t{cavityTestNSeg} segment lines: \n"
                             f"\t\tSlopes: {self.slopes_threeSegment}\n"
-                            f"\t\tBreakpoints: {self.breaks_threeSegment}"))
+                            f"\t\tBreakpoints: {self.breaks_threeSegment}\n"
+                            f"\t\tResiduals: {self.ssr_threeSegment}"))
                 if debug:
                     plt.figure(figsize = (4,3))
                     xMinusHat = np.arange(xMinus[0], xMinus[-1])
                     yminusHat = pwlfLineMinus.predict(xMinusHat)
                     xPlusHat = np.arange(xPlus[0], xPlus[-1])
                     yPlusHat = pwlfLinePlus.predict(xPlusHat)
-                    plt.plot(xMinus, yMinus, 'b,', label=f'Side {lineMinus.side}')
-                    plt.plot(xPlus, yPlus, 'r,', label=f'Side {linePlus.side}')
+                    plt.plot(xMinus, yMinus, 'b,', label=f'Side {self.sideNames[0]}')
+                    plt.plot(xPlus, yPlus, 'r,', label=f'Side {self.sideNames[1]}')
                     plt.plot(xMinusHat, yminusHat, 'b-')
                     plt.plot(xPlusHat, yPlusHat, 'r-')
                     #plt.plot(xMinus,np.cumsum(linePlus.intensity-lineMinus.intensity), 'k-', label="Difference")
                     plt.legend()
-                    plt.title(f"Feature test: {featureTests}")
+                    plt.title(f"Feature test ID {self.id} ({featureTests})")
         
     def isLineStraight(self, mainSide=None, side=None):
         R2min = 0.99 #threshold to say line is straight
@@ -180,3 +195,11 @@ class FeatureFit(object):
             i = iOther
         return i
 
+    def _sideName(self, sideTest, mainSide):
+        if sideTest == mainSide:
+            return 'Same'
+        else:
+            return 'Other'
+
+    def _diffLineIntensity(self, lineMinus, linePlus):
+        return linePlus.lineProjection(lineMinus)-lineMinus.lineProjection(linePlus)
