@@ -76,7 +76,7 @@ class FeatureFit(object):
             yPlus = np.cumsum(linePlus.intensity)
 
             #construct line intensity difference
-            lineDiff = np.cumsum(self._diffLineIntensity(lineMinus, linePlus))
+            self.lineDiff = np.cumsum(self._diffLineIntensity(lineMinus, linePlus))
 
             # fit with a straight line
             lineMinus_oneSegment = LinearRegression(fit_intercept=False).fit(xMinus.reshape((-1, 1)).astype(np.float32), yMinus)
@@ -166,7 +166,7 @@ class FeatureFit(object):
             return False
 
     def isLineSym(self, mainSide=None, side=None):
-        relativeError = 0.2
+        relativeError = 0.52
         absoluteError = 5
 
         i = self._side(mainSide, side)
@@ -181,6 +181,11 @@ class FeatureFit(object):
         iSame = self._side(mainSide, 'Same')
 
         sameSlope = math.isclose(self.slopes_threeSegment[iOther][1], self.slopes_oneSegment[iSame], rel_tol = relativeError, abs_tol = absoluteError)
+        pwlfC = pwlf.PiecewiseLinFit(np.arange(0,self.lineDiff.shape[0], self.lineDiff))
+        pwlfCb = pwlfC.fitfast(3, pop=10)
+        pwlfCs = pwlfC.calc_slopes()
+        sameSlope = math.isclose(pwlfCs[1], 0, rel_tol=0.1, abs_tol=10)
+
         return sameSlope
 
     def _side(self, mainSide, side):
