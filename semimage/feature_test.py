@@ -30,7 +30,7 @@ class FeatureTest(object):
         """
         if not self.cavityFits.edgeTooClose:
             log.debug("PASS Cavity test 1/5: edge not too close")
-            if self.cavityFits.isLineStraight(mainSide = self.line.side, side='Same'):
+            if self.cavityFits.isVoid(mainSide = self.line.side, side='Same'):
                 log.debug("PASS Cavity test 2/5: Intensity on outer side is uniform")
                 if not self.cavityFits.isLineStraight(mainSide = self.line.side, side='Other'):
                     log.debug("PASS Cavity test 3/5: Intensity on inner side is not uniform")
@@ -76,11 +76,13 @@ class FeatureFit(object):
             yPlus = np.cumsum(linePlus.intensity)
 
             #construct line intensity difference
+            lineDiff = self._diffLineIntensity(lineMinus, linePlus)
             self.lineDiff = np.cumsum(self._diffLineIntensity(lineMinus, linePlus))
 
             # fit with a straight line
             lineMinus_oneSegment = LinearRegression(fit_intercept=False).fit(xMinus.reshape((-1, 1)).astype(np.float32), yMinus)
             linePlus_oneSegment = LinearRegression(fit_intercept=False).fit(xPlus.reshape((-1, 1)).astype(np.float32), yPlus)
+            self.lines = [lineMinus, linePlus]
             self.sides = [lineMinus.side, linePlus.side]
             self.sideNames = [self._sideName(lineMinus.side, line.side), self._sideName(linePlus.side, line.side)]
             self.slopes_oneSegment = [lineMinus_oneSegment.coef_[0], linePlus_oneSegment.coef_[0]]
@@ -136,7 +138,28 @@ class FeatureFit(object):
                     #plt.plot(xMinus,np.cumsum(linePlus.intensity-lineMinus.intensity), 'k-', label="Difference")
                     plt.legend()
                     plt.title(f"Feature test ID {self.id} ({featureTests})")
+
+                    plt.figure()
+                    plt.plot(lineDiff, '-k')
+                    plt.title(f"Diff line ID {self.id} ({featureTests})")
         
+    def isVoid(self, mainSide=None, side=None):
+        maxStdDev = 22 #threshold to say line is straight (UB19_14)
+        thresholdMin = 35
+        thresholdMax = 255-thresholdMin
+        thresholdSuperMin = 4
+        thresholdSuperMax = 255-thresholdSuperMin
+        
+        i = self._side(mainSide, side)
+        stdDev = np.std(self.lines[i].intensity)
+        avg = np.median(self.lines[i].intensity)
+        print(f"Hey stddev is {stdDev} and avg is {avg}")
+
+        isUniform = (avg < thresholdSuperMin or avg > thresholdSuperMax) or (stdDev < maxStdDev and (avg < thresholdMin or avg > thresholdMax))
+        #TODO add code to remove a bump in the data
+        
+        return isUniform
+    
     def isLineStraight(self, mainSide=None, side=None):
         R2min = 0.99 #threshold to say line is straight
         straigthSlopeThreshold = 30
@@ -181,7 +204,7 @@ class FeatureFit(object):
         iSame = self._side(mainSide, 'Same')
 
         sameSlope = math.isclose(self.slopes_threeSegment[iOther][1], self.slopes_oneSegment[iSame], rel_tol = relativeError, abs_tol = absoluteError)
-        pwlfC = pwlf.PiecewiseLinFit(np.arange(0,self.lineDiff.shape[0], self.lineDiff))
+        pwlfC = pwlf.PiecewiseLinFit(np.arange(0,self.lineDiff.shape[0]), self.lineDiff)
         pwlfCb = pwlfC.fitfast(3, pop=10)
         pwlfCs = pwlfC.calc_slopes()
         sameSlope = math.isclose(pwlfCs[1], 0, rel_tol=0.1, abs_tol=10)
@@ -207,4 +230,4 @@ class FeatureFit(object):
             return 'Other'
 
     def _diffLineIntensity(self, lineMinus, linePlus):
-        return linePlus.lineProjection(lineMinus)-lineMinus.lineProjection(linePlus)
+        return (linePlus.lineProjection(lineMinus)-lineMinus.lineProjection(linePlus))

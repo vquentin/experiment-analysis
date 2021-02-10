@@ -144,4 +144,5 @@ class Line(object):
         p0 = self.pointProjection(line.endPoints[0])
         p1 = self.pointProjection(line.endPoints[1])
         row, col = draw.line(p0[0], p0[1], p1[0], p1[1])
-        return self.image[row,col]
+        #type conversion to avoid issues when taking difference
+        return self.image[row,col].astype(np.int16)
