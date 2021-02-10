@@ -36,7 +36,7 @@ class Line(object):
             r1 = int(round((dist-self.image.shape[1]*math.cos(angle))/math.sin(angle)))
             c1 = self.image.shape[1]
         except Exception as e:
-            #handle the edge case of vertical line
+            # handle the edge case of vertical line
             log.dbug(e)
             r0 = 0
             c0 = dist
@@ -44,7 +44,7 @@ class Line(object):
             c1 = dist
         finally:
             row, col = draw.line(r0, c0, r1, c1)
-            #clip row, col to image bounds
+            # clip row, col to image bounds
             inImage = np.logical_and.reduce([row >= 0, row < self.image.shape[0], col >= 0, col < self.image.shape[1]])
             self.row = row[inImage]
             self.col = col[inImage]
@@ -61,9 +61,9 @@ class Line(object):
     def intensity(self):
         return self.image[self.row, self.col]
 
-    def linesOffset(self, distance = 0):
+    def linesOffset(self, distance=0):
         """Return two lines at distance from the current line. side attribute corresponds to side conventions relative to the current line.
-        
+
         Keyword arguments:
         distance: the distance from the line in pixels
         """
@@ -73,13 +73,13 @@ class Line(object):
     def classify(self, debug=False):
         """Return a string guessing the line type based on its features.
         Currently supports isCavity, isNothing, TODO: support for a straight interface.
-        
+
         Keyword arguments:
         debug: a flag to show diagnostics (passed down).
 
         Returns a dictionary describing the cavity
         """
-        #initialize classification
+        # initialize classification
         feature = FeatureTest(self, debug=debug)
         if feature.assessCavity():
             return 'isCavity'
@@ -90,24 +90,24 @@ class Line(object):
 
     def distToEdge(self, edge, debug=False):
         """Return euclidian distance to edge vs position along the line.
-        
+
         edge is a binary image array
         Keyword arguments:
         debug: a flag to show diagnostics
-        
+
         Returns a tuple of numpy arrays with distance to edge along the line vs line pixel, without NaN values.
         """
-        #rotate line and edge images
+        # rotate line and edge images
         angle = -(90-math.degrees(self._angle))
         lineImage = np.zeros_like(self.image, dtype=bool)
         lineImage[self.row, self.col] = True
-        lineImageRotated = transform.rotate(lineImage, angle, resize=True, center=(0,0))
-        edgeRotated = transform.rotate(edge, angle, resize=True, center=(0,0))
-        #assume no edge is found by default
-        dist=np.full_like(lineImageRotated[0,:], np.nan, dtype=np.float64)
+        lineImageRotated = transform.rotate(lineImage, angle, resize=True, center=(0, 0))
+        edgeRotated = transform.rotate(edge, angle, resize=True, center=(0, 0))
+        # assume no edge is found by default
+        dist = np.full_like(lineImageRotated[0, :], np.nan, dtype=np.float64)
         rowLineR = np.mean(np.nonzero(lineImageRotated)[0])
         rowsEdgeR = np.argmax(edgeRotated, axis=0)
-        mask = rowsEdgeR==0
+        mask = rowsEdgeR == 0
         dist = rowsEdgeR-rowLineR
         colsR = np.arange(0, edgeRotated.shape[1])
         if debug:
@@ -120,9 +120,9 @@ class Line(object):
 
         line is another Line object.
         """
-        #rotate both lines and their associated images
+        # rotate both lines and their associated images
 
-        #mask where the lines do not pass
+        # mask where the lines do not pass
 
     def pointProjection(self, p):
         """Return the projection of p on current line row, col
@@ -144,5 +144,5 @@ class Line(object):
         p0 = self.pointProjection(line.endPoints[0])
         p1 = self.pointProjection(line.endPoints[1])
         row, col = draw.line(p0[0], p0[1], p1[0], p1[1])
-        #type conversion to avoid issues when taking difference
-        return self.image[row,col].astype(np.int16)
+        # type conversion to avoid issues when taking difference
+        return self.image[row, col].astype(np.int16)
