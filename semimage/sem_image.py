@@ -1,7 +1,6 @@
 # Copyright (c) 2021, Quentin Van Overmeere
 # Licensed under MIT License
 
-import json
 import numpy as np
 from tifffile import TiffFile as tf
 from matplotlib import pyplot as plt
@@ -24,63 +23,37 @@ from functools import partial
 from scipy.interpolate import interp1d
 
 from semimage.lines import Line
+from semimage.sem_metadata import SEMZeissMetadata
 import semimage.config as config
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class SEMImage(object):
+class SEMZeissImage(object):
     """This class represents an image, and its associated properties.
     Upon instanciation, the image is loaded as a numpy array, and its metadata
-    is loaded.
+    is created.
     Intended for images generated with Zeiss Scanning Electron Microscopes.
 
-    Keyword arguments:
-    filePath: a path to a file name (default: None, returns an error)
-    debug: a flag to write the metadata to a file and plot the image (default: False)
+    Positional arguments:
+    file_path: a path to a file name (default: None, throws an error)
     """
-    def __init__(self, filePath=None, debug=False):
-        self.imagePath = Path(filePath)
-        with tf(self.imagePath) as image:
-            self.imageName = self.imagePath.stem
+    def __init__(self, file_path):
+        self.path = Path(file_path)
+        with tf(self.path) as image:
+            self.image_name = self.path.stem
             if not hasattr(image, 'sem_metadata'):
-                raise Exception("Image is likely not from a Zeiss scanning electron microscope")
+                raise TypeError("Image is likely not from a Zeiss scanning \
+                                 electron microscope")
             self.image = image.pages[0].asarray()
-            log.debug(self.imageName)
-            self.__parse_metadata(metaData=image.sem_metadata, debug=False)
-            self.mask(debug=False)
-        if debug:
-            self.plot_image_raw()
-        # self.canny(debug=True, sigma = 1.0)
-        self.edges = self.canny_closing_skeleton(debug=False)
-        self._lines = self.lines(edges=self.edges, debug=False)
-        self._classLines = self.classify(self._lines, debug=False)
-        self.analyzeCavity()
-        self.analyzePorous()
-        plt.show()
+            self.metadata = SEMZeissMetadata(image.sem_metadata, self.path)
+            self.__mask = self.__mask(self.metadata.line_count)
+        log.debug(f"Image {self.image_name} was loaded.")
 
-    def __parse_metadata(self, metaData=None, debug=False):
-        """Makes the useful metadata accessible directly in the instance of the object
-
-        Keyword arguments:
-        metaData: the metadata from the Zeiss image (default: None)
-        debug: flag to write the metadata in json format in the same directory than the file
-        """
-        if debug:
-            # print all the metadata in a file
-            f = self.imagePath.parent.joinpath(self.imagePath.stem + '_meta.txt')
-            with open(f, mode='w') as fid:
-                print(json.dumps(metaData, indent=4), file=fid)
-        self.lineCount = metaData["ap_line_counter"][1]
-        self.pixelSize = metaData["ap_image_pixel_size"][1]
-        self.beamXOffset = metaData["ap_beam_offset_x"][1]
-        self.beamYOffset = metaData["ap_beam_offset_y"][1]
-        self.stageX = metaData["ap_stage_at_x"][1]
-        self.stageY = metaData["ap_stage_at_y"][1]
-
-    def plot_image_raw(self):
-        """Plots the image in a new window, without any treatment and show basic diagnostics.
+    def show(self, diagnostics=False):
+        """Plots the image in a new window, without any treatment and show
+        line-by-line and statisticals diagnostics.
         """
         _, axes = plt.subplots(nrows=1, ncols=3, figsize=(12, 5), gridspec_kw={'width_ratios': [1024, 256, 256]})
         ax = axes.ravel()
@@ -102,38 +75,23 @@ class SEMImage(object):
             ax[2].set_title('Histogram (no mask)')
         plt.tight_layout()
 
-    def mask(self, debug=False):
+    def __mask(self):
         """Creates a mask for the bottom portion where no scanning was done.
         If a banner is present, the banner and lines below will be masked.
-
-        Keyword arguments:
-        debug: shows the picture of the masked image (default: False)
         """
-        lineBanner = 676
+        line_banner = 676
+        line_mask_min = self.image.min(axis=1)
+        line_mask_max = self.image.max(axis=1)
+        mask_lines = np.ones(line_mask_min.shape, dtype=bool)
+        mask_first_line = self.metadata.line_count
+        has_banner = False
+        if line_mask_min[line_banner] == 0 and line_mask_max[line_banner+1] == 255:
+            has_banner = True
+            mask_first_line = min(line_banner, mask_first_line)
+        mask_lines[mask_first_line:] = False
+        log.debug(f"Mask applied to image {self.image_name}. Banner {has_banner}.")
 
-        lineMask_min = self.image.min(axis=1)
-        lineMask_max = self.image.max(axis=1)
-        maskLines = np.ones(lineMask_min.shape, dtype=bool)
-        if not hasattr(self, 'lineCount'):
-            raise Exception("This function requires meta data")
-        maskFirstLine = self.lineCount
-        hasBanner = False
-        if lineMask_min[lineBanner] == 0 and lineMask_max[lineBanner+1] == 255:
-            hasBanner = True
-            maskFirstLine = min(lineBanner, maskFirstLine)
-        maskLines[maskFirstLine:] = False
-        self._mask = np.tile(maskLines, [self.image.shape[1], 1]).T
-
-        if debug:
-            maskedImage = self.image.copy()
-            maskedImage[~self._mask] = 0
-            _, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 6), sharey=True)
-            ax = axes.ravel()
-            ax[0].imshow(self.image, cmap=cm.gray)
-            ax[0].set_title(f"Original image (banner: {hasBanner})")
-            ax[1].imshow(maskedImage, cmap=cm.gray)
-            ax[1].set_title('Masked image')
-            plt.tight_layout()
+        return np.tile(mask_lines, [self.image.shape[1], 1]).T
 
     def canny(self, image=None, debug=False, sigma=1.0):
         """Return a canny edge filter for the masked image.
