@@ -31,7 +31,9 @@ log.setLevel(logging.DEBUG)
 
 
 class SEMImage(object):
-    """This class instanciates an image and loads the metadata.
+    """This class represents an image, and its associated properties.
+    Upon instanciation, the image is loaded as a numpy array, and its metadata
+    is loaded.
     Intended for images generated with Zeiss Scanning Electron Microscopes.
 
     Keyword arguments:

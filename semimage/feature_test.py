@@ -1,3 +1,6 @@
+# Copyright (c) 2021, Quentin Van Overmeere
+# Licensed under MIT License
+
 import numpy as np
 from matplotlib import pyplot as plt
 import pwlf
