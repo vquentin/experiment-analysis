@@ -48,7 +48,7 @@ class SEMZeissImage(object):
                                  electron microscope")
             self.image = image.pages[0].asarray()
             self.metadata = SEMZeissMetadata(image.sem_metadata, self.path)
-            self.__mask = self.__mask(self.metadata.line_count)
+            self.mask = self.__mask(self.metadata.line_count)
         log.debug(f"Image {self.image_name} was loaded.")
 
     def show(self, diagnostics=False):
@@ -75,23 +75,23 @@ class SEMZeissImage(object):
             ax[2].set_title('Histogram (no mask)')
         plt.tight_layout()
 
-    def __mask(self):
-        """Creates a mask for the bottom portion where no scanning was done.
+    def __mask(self, line_count):
+        """Returns a mask for the bottom portion where no scanning was done.
         If a banner is present, the banner and lines below will be masked.
         """
-        line_banner = 676
-        line_mask_min = self.image.min(axis=1)
-        line_mask_max = self.image.max(axis=1)
-        mask_lines = np.ones(line_mask_min.shape, dtype=bool)
-        mask_first_line = self.metadata.line_count
-        has_banner = False
-        if line_mask_min[line_banner] == 0 and line_mask_max[line_banner+1] == 255:
+        line_banner = 676  # valid for Zeiss microscope in Winfab
+        mask = np.ones(self.image.shape, dtype=bool)
+        if (np.amin(self.image[line_banner, :]) == 0
+                and np.amax(self.image[line_banner+1, :]) == 255):
             has_banner = True
-            mask_first_line = min(line_banner, mask_first_line)
-        mask_lines[mask_first_line:] = False
-        log.debug(f"Mask applied to image {self.image_name}. Banner {has_banner}.")
-
-        return np.tile(mask_lines, [self.image.shape[1], 1]).T
+            mask_first_line = min(line_banner, line_count)
+        else:
+            has_banner = False
+            mask_first_line = line_count
+        mask[mask_first_line:, :] = False
+        log.debug(f"Mask applied to image {self.image_name}. \
+                    Banner {has_banner}.")
+        return mask
 
     def canny(self, image=None, debug=False, sigma=1.0):
         """Return a canny edge filter for the masked image.
