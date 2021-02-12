@@ -35,7 +35,10 @@ class SEMZeissImage(object):
             self.mask = self.__mask(self.metadata.line_count)
         log.debug(f"Image {self.image_name} was loaded.")
 
-    def show(self):
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.path})"
+
+    def show_statistics(self):
         """Plots the image in a new window, without any treatment and show
         line-by-line and statisticals diagnostics.
         """
@@ -58,6 +61,13 @@ class SEMZeissImage(object):
         else:
             ax[2].hist(self.image.ravel(), bins=256)
             ax[2].set_title('Histogram (no mask)')
+        plt.tight_layout()
+
+    def show(self):
+        """Plots the image in a new window, without any treatment."""
+        plt.figure()
+        plt.imshow(self.image, cmap=cm.gray, vmin=0, vmax=255)
+        plt.title('Original image')
         plt.tight_layout()
 
     def __mask(self, line_count):
