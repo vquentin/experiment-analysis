@@ -83,7 +83,7 @@ class Line(object):
         axes.plot(*self.plot_points, '-',
                   c=np.array(config.colors[self.side]/255))
 
-    def pointProjection(self, p):
+    def point_projected(self, p):
         """Return the projection of p on current line row, col
 
         p is a numpy array of point coordinates (row, col)
@@ -96,14 +96,15 @@ class Line(object):
         t = max(0, min(1, t))
         return np.round(self.end_points[0] + t * ab).astype(int)
 
-    def lineProjection(self, line):
+    def line_projected(self, line):
         """Return the intensity along the largest line that can be projected
         on current line and given line.
+        Warning ! taking the difference can result in casting errors
 
         Return a ndarray of intensity
         """
-        p0 = self.pointProjection(line.end_points[0])
-        p1 = self.pointProjection(line.end_points[1])
+        p0 = self.point_projected(line.end_points[0])
+        p1 = self.point_projected(line.end_points[1])
         row, col = draw.line(p0[0], p0[1], p1[0], p1[1])
         # type conversion to avoid issues when taking difference
-        return self.__image[row, col].astype(np.int16)
+        return self.__image[row, col]
