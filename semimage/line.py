@@ -106,5 +106,4 @@ class Line(object):
         p0 = self.point_projected(line.end_points[0])
         p1 = self.point_projected(line.end_points[1])
         row, col = draw.line(p0[0], p0[1], p1[0], p1[1])
-        # type conversion to avoid issues when taking difference
         return self.__image[row, col]

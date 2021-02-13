@@ -1,5 +1,5 @@
 import glob
-from semimage.semimage import SEMImage
+from semimage.sem_image import SEMZeissImage
 
 from matplotlib import pyplot as plt
 import numpy as np

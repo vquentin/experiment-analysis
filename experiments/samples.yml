@@ -1,0 +1,31 @@
+# Copyright (c) 2021, Quentin Van Overmeere
+# Licensed under MIT License
+---
+sample:
+    - name: ADB1
+      silicon:
+        resistivity: 
+            value: 0.005
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+      mask:
+        material: SiN
+        geometry: XFab2
+      cavity:
+        method: RIE ICP
+      porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        electrolyte: HF/ethanol 3/1
+        light: No
+      experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\ADB1\cavity\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_01062021111847adb2.csv'
+            geometry: 2 pads
+        u-vs-t:
+            Path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_01062021114338adb1.csv'
