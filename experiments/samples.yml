@@ -29,3 +29,21 @@ ADB1:
             geometry: 2 pads
         u-vs-t:
             Path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_01062021114338adb1.csv'
+UB19:
+    name: UB19
+    silicon:
+        resistivity:
+            value: 0
+            units: Ohm cm
+        thickness:
+            value: 0
+            units: um
+    mask:
+        material: SiN
+        geometry: XFab2
+    cavity:
+        method: electropolishing
+    porosification: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\UB19\*.tif'

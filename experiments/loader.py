@@ -4,6 +4,10 @@
 from pathlib import Path
 import yaml
 import logging
+import glob
+from matplotlib import pyplot as plt
+from semimage.sem_image import SEMZeissImage
+import semimage.image_analysis as ia
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -36,22 +40,29 @@ class Experiment(object):
         raise NotImplementedError
 
     def get_path(self, *args):
-        return [samples_description[sample]['experiments'][self._type]['path'] for sample in args]
+        return ([samples_description[sample]['experiments']
+                [self._type]['path'] for sample in args])
 
 
 class UniformitySEMCS(Experiment):
 
     def __init__(self, *samples, **ignored_kwargs):
         super().__init__(UNIFORMITYSEMCS)
-        for sample in samples:
-            print(f"Sample {sample} uniformity plot generated")
-            print(self.get_path(sample))
+        self._sample_paths = [glob.glob(sample) 
+                              for sample in self.get_path(*samples)]
+        self._result = []
 
     def run(self):
-        pass
+        for sample_path in self._sample_paths:
+            for image_file in sample_path:
+                plt.show()
+                self._result.append(
+                    ia.get_porous_thickness(SEMZeissImage(image_file)))
 
     def plot(self):
-        print("plotted")
+        plt.figure()
+        plt.plot(self._result, 'o')
+        plt.show()
 
 
 class UvsT(Experiment):

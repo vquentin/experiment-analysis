@@ -9,7 +9,8 @@ logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s:%(message)s')
 
 if __name__ == '__main__':
     plot_type = 'uniformity-SEM-CS'
-    samples = ['ADB1', 'WF76']
+    #samples = ('ADB1',)
+    samples = ('UB19',)
     experiment = get_experiment(plot_type, *samples)
     experiment.run()
     experiment.plot()
