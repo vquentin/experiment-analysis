@@ -85,5 +85,6 @@ class SEMZeissImage(object):
             mask_first_line = line_count
         mask[mask_first_line:, :] = False
         log.debug(f"Mask applied to image {self.image_name}. "
-                  f"Banner {has_banner}.")
+                  f"Line {mask_first_line}. "
+                  f"Banner? {has_banner}.")
         return mask

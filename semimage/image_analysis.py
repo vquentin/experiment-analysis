@@ -23,24 +23,33 @@ from functools import partial
 from scipy.interpolate import interp1d
 
 from semimage.line import Line
+from semimage.sem_image import SEMZeissImage
 from semimage.sem_metadata import SEMZeissMetadata
 import semimage.config as config
 
 import random
 
+from skimage.segmentation import (morphological_chan_vese,
+                                  morphological_geodesic_active_contour,
+                                  inverse_gaussian_gradient,
+                                  checkerboard_level_set)
+
 
 def get_porous_thickness(sem_image):
-    edges = edges_filter(sem_image, show=True)
-    
+    edges = edges_filter(sem_image, show=False)
+    edges_sides = edges_on_side(edges, show=False, image=sem_image)
+    lines = find_lines(mask_center_h(edges_sides, 0.5),
+                       show=True, image=sem_image)
+    cavities = find_cavity(lines, show=True)
     return random.randint(0, 10)
 
 
 def __overlay(*args):
-    """Returns an array overlaying binary values (e.g. as returned by canny) 
+    """Returns an array overlaying binary values (e.g. as returned by canny)
     with alpha channel
 
     Inputs:
-    *args: a sequence of 2-D arrays of bool, or a 3-D array of bool (images 
+    *args: a sequence of 2-D arrays of bool, or a 3-D array of bool (images
     stacked along last dimension)
     """
     if np.squeeze(args[0]).ndim is 3:
@@ -62,113 +71,143 @@ def __plt_overlay(image, *args, axes=None, title=None):
 
     Inputs:
     *args: ndarray representing the edges to overlay
-    image: ndarray representing the image to show in gray scale 
+    image: ndarray representing the image to show in gray scale
         (default: the instance's self.image)
-    axes: a mathplotlib axes object to pass when using subplots 
+    axes: a mathplotlib axes object to pass when using subplots
         (default: None, plots in a new window)
     title: a title for the plot
     """
     if axes is None:
-        plt.imshow(image, cmap=cm.gray)
+        plt.imshow(image, cmap=cm.gray, vmin=0, vmax=255)
         plt.imshow(__overlay(*args))
         if title is not None:
             plt.title(title)
     else:
-        axes.imshow(image, cmap=cm.gray)
+        axes.imshow(image, cmap=cm.gray, vmin=0, vmax=255)
         axes.imshow(__overlay(*args))
         if title is not None:
             axes.set_title(title)
 
 
 def edges_filter(sem_image, show=False):
-    edges = canny(sem_image.image, sigma=1.0, low_threshold=None,
-                  high_threshold=None, mask=sem_image.mask,
-                  use_quantiles=False)
-    closed_pass1 = morphology.closing(edges)
-    skeleton1 = morphology.skeletonize(closed_pass1)
-    closed_pass2 = morphology.area_closing(
-        skeleton1, area_threshold=1000, connectivity=1, parent=None, 
-        tree_traverser=None)
-    skeleton2 = morphology.skeletonize(closed_pass2)
+    """Return edges detected in image sem_image."""
+    edges = canny(
+        sem_image.image, sigma=1.0, low_threshold=None, high_threshold=None,
+        mask=sem_image.mask, use_quantiles=False)
+    selem = morphology.rectangle(2, 5, dtype=bool)
+    closed = morphology.binary_closing(edges, selem=selem)
     noise_reduced = np.array(
         morphology.remove_small_objects(
-            label(skeleton2), min_size=100,)
-        , dtype=bool)
+                label(closed), min_size=100, connectivity=2),
+        dtype=bool)
 
     if show:
-        _, axes = plt.subplots(nrows=2, ncols=3, sharex=True, sharey=True, 
+        _, axes = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True,
                                figsize=(15, 8))
         ax = axes.ravel()
-        __plt_overlay(sem_image.image, edges, axes=ax[0], title='Canny filter')
-        __plt_overlay(sem_image.image, closed_pass1, axes=ax[1],
-                      title='After closing')
-        __plt_overlay(sem_image.image, skeleton1, axes=ax[2],
-                      title='Skeleton after closing')
-        __plt_overlay(sem_image.image, closed_pass2, axes=ax[3], 
-                      title='After area closing')
-        __plt_overlay(sem_image.image, skeleton2, axes=ax[4],
-                      title='Skeleton after closing')
-        __plt_overlay(sem_image.image, noise_reduced, axes=ax[5],
-                      title='Small object removal')
-        _, axes = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True, 
-                               figsize=(15, 8))
-        ax = axes.ravel()
-        __plt_overlay(sem_image.image, np.logical_xor(edges, closed_pass1),
-                      axes=ax[0], title='Dismissed closing')
-        __plt_overlay(sem_image.image, np.logical_xor(skeleton1, closed_pass2),
-                      axes=ax[1], title='Dismissed area closing')
-        __plt_overlay(sem_image.image, np.logical_xor(skeleton2, noise_reduced),
-                      axes=ax[2], title='Dismissed small object')
+        __plt_overlay(sem_image.image, edges, axes=ax[0],
+                      title=f"Canny filter on {sem_image.image_name}")
+        __plt_overlay(sem_image.image, closed, axes=ax[1],
+                      title='Binary closing')
+        __plt_overlay(sem_image.image, noise_reduced, axes=ax[2],
+                      title='Small objects removed')
     return noise_reduced
 
 
-def lines(self, edges=None, debug=False):
-    """Returns at most two and two lines, respectively from each side of the image.
-    Starting point to classify these lines as cavities or interface.
+def edges_on_side(edges, show=False, image=None):
+    """
+    Return edges detected on top and bottom side of binary image.
+
+    Positional arguments:
+    edges: a binary image
 
     Keyword arguments:
-    edges: a binary image from edge detection algorithm (default: will apply self.canny_closing_skeleton())
-    debug: overlay original image and lines found (default: False)
-    orientation: the orientation of the image (default: Horizontal, accepted values are Horizontal, Vertical, Oblique)
+    show: show diagnostics
+    image: a sem_image if we want to plot it with diagnostics
     """
-    if edges is None:
-        edges = self.canny_closing_skeleton(debug=False)
-
-    # TODO implement a version of this that is orientation independent by rotating the edge image
-
-    edgesOnSides = np.zeros(edges.shape+(2,), dtype=bool)  # array that will contain the edges from both sides of interest
+    # TODO implement a version of this that is orientation independent?
+    edges_on_sides = np.zeros(edges.shape+(2,), dtype=bool)
     idx = np.arange(edges.shape[1])[np.newaxis, :]
-    weightMatrix = np.tile(np.arange(1, edges.shape[0]+1, 1)[:, np.newaxis], (1, edges.shape[1]))  # defined such that side 0 = bottom, side 1 = top
-    weights = np.stack((weightMatrix, np.flipud(weightMatrix)), axis=-1)
-
-    lines = []
+    weight_matrix = np.tile(
+        np.arange(1, edges.shape[0]+1, 1)[:, np.newaxis],
+        (1, edges.shape[1]))  # defined such that side 0 = bottom, side 1 = top
+    weights = np.stack((weight_matrix, np.flipud(weight_matrix)), axis=-1)
     mask = edges == 0
 
     # for each side
     for i in range(weights.shape[-1]):
-        edgesOnSides[np.argmax(edges*weights[..., i], axis=0), idx, i] = True
-    edgesOnSides[mask, :] = False
-    self._edgesOnSides = edgesOnSides
-    for i in range(weights.shape[-1]):
-        # TODO replace with orientation insensitive code
-        theta = 90  # 90 degrees = horizontal line
-        dTheta = 10  # delta around which to search
-        resTheta = 0.05  # smallest resolvable angle
-        thetas = np.linspace((theta-dTheta)*(np.pi / 180), (theta+dTheta)*(np.pi / 180), round(2*dTheta/resTheta))
-        accum, angles, dists = hough_line_peaks(*hough_line(edgesOnSides[..., i], theta=thetas), num_peaks=2)
+        edges_on_sides[np.argmax(edges*weights[..., i], axis=0), idx, i] = True
+    edges_on_sides[mask, :] = False
+
+    if show:
+        if isinstance(image, SEMZeissImage):
+            image = image.image
+        else:
+            image = np.ones(edges.shape)
+        _, axes = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True,
+                               figsize=(15, 8))
+        ax = axes.ravel()
+        __plt_overlay(image, edges, axes=ax[0],
+                      title='Edges')
+        __plt_overlay(image, edges_on_sides, axes=ax[1],
+                      title='Edges on sides')
+    return edges_on_sides
+
+
+def mask_center_h(image, portion):
+    """Return the image with columns in center portion removed."""
+    ncols = int(round(image.shape[1]*portion/2))
+    image_c = image.copy()
+    image_c[:, ncols:-ncols] = 0
+    return image_c
+
+
+def find_lines(edges_sides, show=False, image=None):
+    """Returns two lines for each image in a stack.
+
+    Positional arguments:
+    edges_sides: a stack of binary images along the last dimension
+    Keyword arguments:
+    show: overlay original image and lines found (default: False)
+    image: a sem_image object
+    """
+    n_lines_max = 1
+    lines = []
+    # TODO replace with orientation insensitive code
+    theta = 90  # 90 degrees = horizontal line
+    dTheta = 10  # delta around which to search
+    resTheta = 0.05  # smallest resolvable angle
+    thetas = np.linspace(
+        (theta-dTheta)*(np.pi / 180), (theta+dTheta)*(np.pi / 180),
+        round(2*dTheta/resTheta))
+    for i in range(edges_sides.shape[-1]):
+        accum, angles, dists = hough_line_peaks(
+            *hough_line(edges_sides[..., i], theta=thetas),
+            num_peaks=n_lines_max)
         # for each line
         for _, angle, dist in zip(accum, angles, dists):
-            lines.append(Line(side=i, angle=angle, dist=dist, image=self.image))
-    if debug:
-        _, axes = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True, figsize=(15, 8))
+            lines.append(Line(side=i, angle=angle, dist=dist, image=image))
+
+    if show:
+        _, axes = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True,
+                               figsize=(15, 8))
         ax = axes.ravel()
-        self.__plt_overlay(edgesOnSides, axes=ax[0], title="Edges on sides")
-        ax[1].imshow(self.image, cmap=cm.gray)
-        ax[1].set_title("Lines detected")
+        __plt_overlay(image.image, edges_sides, axes=ax[0],
+                      title="Edges on sides")
+        ax[1].imshow(image.image, cmap=cm.gray, vmin=0, vmax=255)
+        for line in lines:
+            line.show(ax[1])
         plt.tight_layout()
-        for k, line in enumerate(lines):
-            ax[1].plot(*line.plotPoints, '-', c=np.array(config.colors[k])/255)
     return lines
+
+
+def find_cavity(lines, show=True):
+    """
+    Return a list of cavities from a starting set of lines
+    """
+    for line in lines:
+        print(f"Line has bgd on same side? {line.background_on_side()}")
+    return None
 
 
 def classify(self, lines=None, debug=False):

@@ -47,3 +47,8 @@ UB19:
     experiments:
         uniformity-SEM-CS:
             path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\UB19\*.tif'
+examples:
+    name: examples
+    experiments:
+        uniformity-SEM-CS:
+            path: 'D:\Quentin\Documents\PoSiSTAN\software\image-analysis\examples\*.tif'
