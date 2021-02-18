@@ -17,9 +17,12 @@ ADB1:
         method: RIE ICP
     porosification:
         current-density:
-            value: 10
+            value: 100
             units: mA/cm2
-        electrolyte: HF/ethanol 3/1
+        time:
+            value: 0
+            units: min
+        electrolyte: HF:ethanol 3:1
         light: No
     experiments:
         uniformity-SEM-CS:
@@ -29,24 +32,130 @@ ADB1:
             geometry: 2 pads
         u-vs-t:
             Path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_01062021114338adb1.csv'
+WF56:
+    name: WF56
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: SiN
+        geometry: XFab2
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF56\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_12232020112045wf56.csv'
+            geometry: 2 pads
+        u-vs-t:
+            Path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_12232020113219wf56.csv'
+WF66:
+    name: WF66
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Cr 5 nm / Au 450 nm
+        geometry: XFab2
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 100
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF66\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_12222020104956wf66.csv'
+            geometry: 2 pads
+        u-vs-t:
+            Path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_12222020110723wf66.csv'
+
+WF67:
+    name: WF67
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Cr 5 nm / Au 450 nm
+        geometry: XFab2
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF67\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_12222020163902wf67.csv'
+            geometry: 2 pads
+        u-vs-t:
+            Path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_12222020165213wf67.csv'
+
 UB19:
     name: UB19
     silicon:
         resistivity:
-            value: 0
+            value: 0.015
             units: Ohm cm
         thickness:
-            value: 0
+            value: 180
             units: um
     mask:
         material: SiN
         geometry: XFab2
     cavity:
         method: electropolishing
+        time:
+            value: 35
+            units: min
+        current-density:
+            value: 200
+            units: mA/cm2
+        electrolyte: HF:H20 2:15
     porosification: No
     experiments:
         uniformity-SEM-CS:
             path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\UB19\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_01072021124508ub19.csv'
+            geometry: 2 pads
+
 examples:
     name: examples
     experiments:

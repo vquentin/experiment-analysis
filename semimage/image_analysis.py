@@ -39,8 +39,8 @@ def get_porous_thickness(sem_image):
     edges = edges_filter(sem_image, show=False)
     edges_sides = edges_on_side(edges, show=False, image=sem_image)
     lines = find_lines(mask_center_h(edges_sides, 0.5),
-                       show=True, image=sem_image)
-    cavities = find_cavity(lines, show=True)
+                       show=False, image=sem_image)
+    features = classify_lines(lines, show=True, image=sem_image)
     return random.randint(0, 10)
 
 
@@ -186,7 +186,8 @@ def find_lines(edges_sides, show=False, image=None):
             num_peaks=n_lines_max)
         # for each line
         for _, angle, dist in zip(accum, angles, dists):
-            lines.append(Line(side=i, angle=angle, dist=dist, image=image))
+            lines.append(Line(side=i, angle=angle, dist=dist, image=image, 
+                              edges=edges_sides))
 
     if show:
         _, axes = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True,
@@ -201,13 +202,30 @@ def find_lines(edges_sides, show=False, image=None):
     return lines
 
 
-def find_cavity(lines, show=True):
+def classify_lines(lines, show=False, image=None):
     """
-    Return a list of cavities from a starting set of lines
+    Return a list of cavities and straight interfaces.
     """
+    features = {}
     for line in lines:
-        print(f"Line has bgd on same side? {line.background_on_side()}")
-    return None
+        bgd_on_side = line.background_on_side()
+        print(f"Line has bgd on same side? {bgd_on_side}")
+        if bgd_on_side:
+            features[line.classify(5)] = line
+    # TODO: add an if clause to reclassify porous_void as si_void if it's more than 100 um away from cavity
+    if show:
+        plt.figure()
+        plt.imshow(image.image, cmap=cm.gray, vmin=0, vmax=255)
+        cavity = features.get('Cavity')
+        si_void = features.get('Si/void interface')
+        porous_void = features.get('Porous Si/void interface')
+        if cavity is not None:
+            cavity.show2(c='r')
+        if si_void is not None:
+            si_void.show2(c='b')
+        if porous_void is not None:
+            porous_void.show2(c='g')
+    return features
 
 
 def classify(self, lines=None, debug=False):

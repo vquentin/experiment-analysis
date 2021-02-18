@@ -24,12 +24,15 @@ class Line(object):
     angle: the Hough angle (from Hough line detection)
     dist: the Hough dist (from Hough line detection)
     image: a sem_image object
+    edges: the edge matrix from which the line was detected
     """
-    def __init__(self, side=None, angle=None, dist=None, image=None):
+    def __init__(self, side=None, angle=None, dist=None, image=None,
+                 edges=None):
         self.side = side
         self.__image = image
         self.__angle = angle
         self.__dist = dist
+        self.__edges = edges
         self.rows, self.columns = self.__to_coordinates()
         self.end_points = np.array([[self.rows[-1], self.columns[-1]],
                                    [self.rows[0], self.columns[0]]])
@@ -49,7 +52,8 @@ class Line(object):
             r0 = int(round(self.__dist/math.sin(self.__angle)))
             c0 = 0
             r1 = int(round((
-                self.__dist - self.__image.image.shape[1]*math.cos(self.__angle))
+                self.__dist
+                - self.__image.image.shape[1]*math.cos(self.__angle))
                 / math.sin(self.__angle)))
             c1 = self.__image.image.shape[1]
         except ZeroDivisionError:
@@ -78,7 +82,7 @@ class Line(object):
 
     @property
     def intensity(self):
-        return self.__image.image[self.rows, self.columns]
+        return self.__image.image[self.rows, self.columns].astype(np.int16)
 
     def lines_at_offset(self, distance=0):
         """Return two lines at distance from the current line.
@@ -98,6 +102,10 @@ class Line(object):
         """Plot the line on the specified figure"""
         axes.plot(*self.plot_points, '-',
                   c=np.array(config.colors[self.side])/255)
+
+    def show2(self, **kwargs):
+        """Plot the line on the specified figure"""
+        plt.plot(*self.plot_points, '-', **kwargs)
 
     def point_projected(self, p):
         """Return the projection of p on current line row, col
@@ -173,3 +181,80 @@ class Line(object):
         image[~self.__image.mask] = np.nan
         image[mask] = np.nan
         return image
+
+    def intensity_difference_offset(self, distance):
+        """
+        Return the intensity difference between line at other side of current
+        line, and line at same side, separated by 2*distance.
+        """
+        line_minus, line_plus = self.lines_at_offset(distance=distance)
+        if self.side == 0:
+            return line_plus.intensity-line_minus.intensity
+        elif self.side == 1:
+            return line_minus.intensity - line_plus.intensity
+
+    def total_intensity_difference_offset(self, distance):
+        """
+        Return the sum of intensity differences for all lines up to distance.
+        """
+        return np.sum((self.intensity_difference_offset(dist) for dist
+                       in range(distance)))
+
+    def classify(self, distance):
+        """Return a string corresponding to a candidate line type."""
+        sum_intensity_diff = self.total_intensity_difference_offset(distance)
+        if self.cavity_score(sum_intensity_diff, distance):
+            log.debug('Line is a cavity')
+            return 'Cavity'
+        elif self.si_void_interface_score(sum_intensity_diff, distance):
+            log.debug('Line is Si/void interface')
+            return 'Si/void interface'
+        elif self.porous_void_interface_score(sum_intensity_diff, distance):
+            log.debug("Line is Porous Si/void interface")
+            return 'Porous Si/void interface'
+
+    def si_void_interface_score(self, sum_intensity_diff, distance):
+        """Return True if Si/void interface is likely."""
+        median_threshold = 100*distance
+        log.debug(f"Median sum of diffs: {abs(np.median(sum_intensity_diff))}")
+        return abs(np.median(sum_intensity_diff)) > median_threshold
+
+    def porous_void_interface_score(self, sum_intensity_diff, distance):
+        """Return True if porous Si/void interface is likely."""
+        median_threshold = 40*distance
+        return abs(np.median(sum_intensity_diff)) > median_threshold
+
+    def cavity_score(self, sum_intensity_diff, distance):
+        """
+        Return True if cavity is likely, based on equality of
+        intensities in center of line.
+        """
+        min_frac_cavity = 0.1
+        min_dist_border = 10
+        zero_treshold = 6*distance
+
+        close_to_zero = np.isclose(sum_intensity_diff, 0, rtol=0,
+                                   atol=zero_treshold)
+        a = np.diff(np.logical_and(np.roll(close_to_zero, -1, axis=0), 
+                                   close_to_zero).astype(np.int16))
+        consecutive_zeros_start_index = np.nonzero(a == 1)[0]
+        try:
+            consecutive_zeros_length = (np.nonzero(a == -1)[0] 
+                                    - consecutive_zeros_start_index)
+        except ValueError:
+            #raised if zeros at edges
+            return False
+        if consecutive_zeros_length.size == 0:
+            return False
+        longest_seq_idx = np.argmax(consecutive_zeros_length)
+        cons_zeros_is_long = (np.max(consecutive_zeros_length)
+                              > min_frac_cavity*self.__image.image.shape[1])
+        cons_zeros_not_at_edge = (self.__image.image.shape[1]-min_dist_border
+                                  > np.nonzero(a == -1)[0][longest_seq_idx] 
+                                  and consecutive_zeros_start_index[longest_seq_idx] 
+                                  > min_dist_border)
+        if cons_zeros_is_long and cons_zeros_not_at_edge:
+            return True
+
+    def distance_real_units(self, line):
+        pass
