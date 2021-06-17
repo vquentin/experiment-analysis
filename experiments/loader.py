@@ -6,6 +6,9 @@ import yaml
 import logging
 import glob
 from matplotlib import pyplot as plt
+import numpy as np
+import pandas as pd
+
 from semimage.sem_image import SEMZeissImage
 import semimage.image_analysis as ia
 import voltage.electrochemistry as ec
@@ -26,6 +29,7 @@ samples_description = yaml.safe_load(open(path.parent / 'samples.yml'))
 
 # constant variables for experiment types
 UNIFORMITYSEMCS = 'uniformity-SEM-CS'
+UNIFORMITYSEMCSNORMALIZE = 'uniformity-SEM-CS-normalize'
 UVST = 'u-vs-t'
 
 
@@ -82,14 +86,62 @@ class UniformitySEMCS(Experiment):
 
     def run(self):
         for sample_path in self._sample_paths:
-            for image_file in sample_path:
-                plt.show()
-                self._result.append(
-                    ia.get_porous_thickness(SEMZeissImage(image_file)))
+            path = Path(sample_path[0])
+            name = "result.csv"
+            file_candidate = path.parent / name
+            if file_candidate.exists():
+                self._result.append(pd.read_csv(file_candidate))
+            else:
+                result_image = np.zeros((len(sample_path), 4))
+                for i, image_file in enumerate(sample_path):
+                    plt.show()
+                    result_image[i, :] = ia.get_porous_thickness(SEMZeissImage(image_file))  # x, y, thickness, uncertainty
+                idx = np.argmin(result_image[:,0])
+                d = np.linalg.norm(result_image[:, 0:1] - result_image[idx, 0:1], axis=1)
+                d = d-np.min(d)
+                result = np.concatenate((result_image, d[:, np.newaxis]), axis=1)
+                result = result[result[:,0].argsort()]
+                df = pd.DataFrame(result, columns=['X [mm]', 'Y [mm]', 'Porous thickness [um]', 'Uncertainty [um]', 'Distance [mm]'])
+                self._result.append(df)
 
     def plot(self, legend):
-        plt.figure()
-        plt.plot(self._result, 'o')
+        fig = plt.figure()
+        for result in self._result:
+            #plt.errorbar(result[:,4], result[:,2], yerr=result[:,3])
+            result.plot(x='Distance [mm]', y='Porous thickness [um]', ax=fig.gca())
+        plt.legend(self.get_legend(legend_struct=legend))
+        plt.xlabel('Distance [mm]')
+        plt.ylabel('Porous Si thickness [um]')
+        plt.show()
+
+    def save(self):
+        for i, result in enumerate(self._result):
+            path = Path(self._sample_paths[i][0])
+            name = "result.csv"
+            result.to_csv(path.parent / name)
+
+
+class UniformitySEMCSNormalize(UniformitySEMCS):
+    def __init__(self, *samples, **ignored_kwargs):
+        super().__init__(*samples, **ignored_kwargs)
+
+    def run(self):
+        super().run()
+        for result in self._result:
+            # transform points to distance from edge and normalize thickness
+            distCenterCollector = 26500  # um
+            distFirstCavity = 6400  # um
+            result['Distance to collector [mm]'] = abs(abs((result['Distance [mm]']+distFirstCavity/1000)-(distCenterCollector/1000))-distCenterCollector/1000)
+            #TODO normalize thickness result['Ratio ']
+
+    def plot(self, legend):
+        fig = plt.figure()
+        for result in self._result:
+            #plt.errorbar(result[:,4], result[:,2], yerr=result[:,3])
+            result.plot(x='Distance to collector [mm]', y='Porous thickness [um]', ax=fig.gca())
+        plt.legend(self.get_legend(legend_struct=legend))
+        plt.xlabel('Distance from current collector [mm]')
+        plt.ylabel('Ratio porous Si thickness edge/center')
         plt.show()
 
 
@@ -118,6 +170,7 @@ class UvsT(Experiment):
 
 factory = {
         UNIFORMITYSEMCS: UniformitySEMCS,
+        UNIFORMITYSEMCSNORMALIZE: UniformitySEMCSNormalize,
         UVST: UvsT
     }
 

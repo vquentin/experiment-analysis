@@ -40,8 +40,13 @@ def get_porous_thickness(sem_image):
     edges_sides = edges_on_side(edges, show=False, image=sem_image)
     lines = find_lines(mask_center_h(edges_sides, 0.5),
                        show=False, image=sem_image)
-    features = classify_lines(lines, show=True, image=sem_image)
-    return random.randint(0, 10)
+    features = classify_lines(lines, show=False, image=sem_image)
+    porous_thickness = measure_porous_thickness(features, edges, edges_sides, show=False, image=sem_image)
+    if porous_thickness is not None:
+        print(*porous_thickness)
+        return np.array([sem_image.metadata.stage_x, sem_image.metadata.stage_y, *porous_thickness])
+    else:
+        return np.array([sem_image.metadata.stage_x, sem_image.metadata.stage_y, np.nan, np.nan])
 
 
 def __overlay(*args):
@@ -258,6 +263,41 @@ def classify(self, lines=None, debug=False):
         ax[2].set_title("Line classification (blue=cavity)")
 
     return classLines
+
+
+def measure_porous_thickness(features, edges, edges_sides, show=False, image=None):
+    "Returns the thickness of porous silicon and an uncertainty value."
+    if 'Cavity' in features:
+        return measure_porous_thickness_cavity(features['Cavity'], edges, edges_sides, show=show, image=image)
+    if 'Porous Si/void interface' in features:
+        return measure_porous_thickness_flat(features['Porous Si/void interface'], edges, edges_sides, show=show, image=image)
+    else:
+        return 0, 0
+
+
+def measure_porous_thickness_flat(interface, edges, edges_sides, show=False, image=None):
+    side = interface.side
+    otherSide = math.floor(side/2)*2+(side+1) % 2
+    y = interface.distance_to_edge_um(edges_sides[..., otherSide], show=False)
+    return y
+    #self.porous = self.fitPorous(x, y, debug=False)
+
+
+def measure_porous_thickness_cavity(cavity, edges, edges_sides, show=False, image=None):
+    side_cavity = cavity.side
+    side_porous = math.floor(side_cavity/2)*2+(side_cavity+1) % 2
+    cavity_depth = cavity.distance_to_edge_exclude_zero_um(edges_sides[..., side_cavity], show=False)
+    porous_depth = cavity.distance_to_edge_um(edges_sides[..., side_porous], show=False)
+    porous_thickness = porous_depth[0]-cavity_depth[0]
+    #unc = porous_thickness * ((porous_depth[1]/porous_depth[0])**2+(cavity_depth[1]/cavity_depth[0])**2)**0.5
+    unc = (porous_depth[1]**2+cavity_depth[1]**2)**0.5
+    return porous_thickness, unc
+
+
+
+
+
+
 
 
 def analyze(self, analyses=None):

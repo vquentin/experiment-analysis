@@ -137,7 +137,7 @@ class Line(object):
         Return True if image intensity on same side than line is likely to
         correspond to a uniform background.
         """
-        frac_bgd_threshold = 0.93
+        frac_bgd_threshold = 0.5
         dark_bgd_threshold = 181
         clear_bgd_threshold = 2.1e5
 
@@ -221,7 +221,7 @@ class Line(object):
 
     def porous_void_interface_score(self, sum_intensity_diff, distance):
         """Return True if porous Si/void interface is likely."""
-        median_threshold = 40*distance
+        median_threshold = 22*distance
         return abs(np.median(sum_intensity_diff)) > median_threshold
 
     def cavity_score(self, sum_intensity_diff, distance):
@@ -258,3 +258,35 @@ class Line(object):
 
     def distance_real_units(self, line):
         pass
+
+    def distance_to_edge_um(self, edge, show=False):
+        """Return the median and deviation of distances to line point by point."""
+        idx = np.column_stack(np.where(edge))
+        dist = self.distance_to_points(idx)*self.__image.metadata.pixel_size/1000
+        if show:
+            plt.figure()
+            plt.plot(dist)
+        return abs(np.median(dist)), np.std(dist)
+
+    def distance_to_points(self, p):
+        """
+        Return the Euclidian distance between p and the instance.
+        Based on https://stackoverflow.com/a/54442561/13969506 
+        """
+        # TODO for you: consider implementing @Eskapp's suggestions
+        a = self.end_points[0]
+        b = self.end_points[1]
+        if np.all(a == b):
+            return np.linalg.norm(p - a, axis=1)
+        d = np.divide(np.cross(b-a, p-a), np.linalg.norm(b-a))
+        return d
+
+    def distance_to_edge_exclude_zero_um(self, edge, show=False):
+        """Return the median and deviation of distances to line point by point, excluding zeros."""
+        idx = np.column_stack(np.where(edge))
+        dist = self.distance_to_points(idx)*self.__image.metadata.pixel_size/1000
+        dist_excl_zeros = dist[~np.isclose(dist, 0, rtol=0, atol=0.1)]
+        if show:
+            plt.figure()
+            plt.plot(dist)
+        return abs(np.median(dist_excl_zeros)), np.std(dist_excl_zeros)
