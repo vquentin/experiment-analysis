@@ -128,17 +128,18 @@ class UniformitySEMCSNormalize(UniformitySEMCS):
     def run(self):
         super().run()
         for result in self._result:
-            # transform points to distance from edge and normalize thickness
+            # transform points to distance from edge
             distCenterCollector = 26500  # um
             distFirstCavity = 6400  # um
             result['Distance to collector [mm]'] = abs(abs((result['Distance [mm]']+distFirstCavity/1000)-(distCenterCollector/1000))-distCenterCollector/1000)
             #TODO normalize thickness result['Ratio ']
+            result['Thickness Ratio Center [-]'] = result['Porous thickness [um]']/min(result['Porous thickness [um]'])
 
     def plot(self, legend):
         fig = plt.figure()
         for result in self._result:
             #plt.errorbar(result[:,4], result[:,2], yerr=result[:,3])
-            result.plot(x='Distance to collector [mm]', y='Porous thickness [um]', ax=fig.gca())
+            result.plot(x='Distance to collector [mm]', y='Thickness Ratio Center [-]', ax=fig.gca(), kind='scatter')
         plt.legend(self.get_legend(legend_struct=legend))
         plt.xlabel('Distance from current collector [mm]')
         plt.ylabel('Ratio porous Si thickness edge/center')
