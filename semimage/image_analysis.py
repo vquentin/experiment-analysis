@@ -40,7 +40,7 @@ def get_porous_thickness(sem_image):
     edges_sides = edges_on_side(edges, show=False, image=sem_image)
     lines = find_lines(mask_center_h(edges_sides, 0.5),
                        show=False, image=sem_image)
-    features = classify_lines(lines, show=False, image=sem_image)
+    features = classify_lines(lines, show=True, image=sem_image)
     porous_thickness = measure_porous_thickness(features, edges, edges_sides, show=False, image=sem_image)
     if porous_thickness is not None:
         print(*porous_thickness)
@@ -271,6 +271,8 @@ def measure_porous_thickness(features, edges, edges_sides, show=False, image=Non
         return measure_porous_thickness_cavity(features['Cavity'], edges, edges_sides, show=show, image=image)
     if 'Porous Si/void interface' in features:
         return measure_porous_thickness_flat(features['Porous Si/void interface'], edges, edges_sides, show=show, image=image)
+    if 'Si/void interface' in features:
+        return measure_porous_thickness_flat(features['Si/void interface'], edges, edges_sides, show=show, image=image)
     else:
         return 0, 0
 

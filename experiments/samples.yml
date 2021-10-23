@@ -5,7 +5,7 @@ ADB1:
     name: ADB1
     silicon:
         resistivity: 
-            value: 0.005
+            value: '0.005 Ohm cm'
             units: Ohm cm
         thickness: 
             value: 381
@@ -37,7 +37,7 @@ WF56:
     name: WF56
     silicon:
         resistivity: 
-            value: 15
+            value: '15 Ohm cm'
             units: Ohm cm
         thickness: 
             value: 381
@@ -75,7 +75,9 @@ WF66:
             value: 381
             units: um
     mask:
-        material: Cr 5 nm / Au 450 nm
+        material: Au
+        thickness: 450 nm
+        adhesionLayer: Cr 5 nm
         geometry: XFab2
     cavity:
         method: RIE ICP
@@ -107,7 +109,9 @@ WF67:
             value: 381
             units: um
     mask:
-        material: Cr 5 nm / Au 450 nm
+        material: Au
+        thickness: 450 nm
+        adhesionLayer: Cr 5 nm
         geometry: XFab2
     cavity:
         method: RIE ICP
@@ -139,7 +143,9 @@ WF68:
             value: 381
             units: um
     mask:
-        material: Cr 5 nm / Au 450 nm
+        material: Au
+        thickness: 450 nm
+        adhesionLayer: Cr 5 nm
         geometry: XFab2
     cavity:
         method: RIE ICP
@@ -171,7 +177,9 @@ WF69:
             value: 381
             units: um
     mask:
-        material: Cr 5 nm / Au 450 nm
+        material: Au
+        thickness: 450 nm
+        adhesionLayer: Cr 5 nm
         geometry: XFab2
     cavity:
         method: RIE ICP
@@ -235,8 +243,12 @@ WF74:
             value: 381
             units: um
     mask:
-        material: Au 450 nm
+        material: Au
+        thickness: 450 nm
+        adhesionLayer: No adhesion layer
         geometry: XFab2
+        dielectric:
+            material: No dielectric
     cavity:
         method: RIE ICP
     porosification:
@@ -267,7 +279,9 @@ WF102:
             value: 381
             units: um
     mask:
-        material: Cr 25 nm / Au 450 nm
+        material: Au
+        thickness: 450 nm
+        adhesionLayer: Cr 25 nm
         geometry: XFab2
     cavity:
         method: RIE ICP
@@ -417,4 +431,603 @@ WF41:
         contact:
             path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_12232020112045wf56.csv'
             geometry: 4 pads
-        
+
+WF146:
+    name: WF146
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: Std clean, no HF
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF146\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf146.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf146.csv'
+
+WF147:
+    name: WF147
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: Std clean, no HF, Barrel
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF147\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf147.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf147.csv'
+
+WF148:
+    name: WF148
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: Std clean, BHF
+        dielectric:
+            material: No dielectric
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF148\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf148.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf148.csv'
+
+WF149:
+    name: WF149
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: Std clean, HF:ethanol 3:1
+        dielectric:
+            material: No dielectric
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF149\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf149.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf149.csv'
+
+WF43:
+    name: WF43
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Au
+        thickness: 450 nm
+        geometry: XFab2
+        pretreatment: BHF
+        dielectric:
+            material: SiN
+            thickness: 210 nm
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF43\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf43.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf43.csv'
+
+WF42:
+    name: WF42
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF
+        dielectric:
+            material: SiN
+            thickness: 210 nm
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF42\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf42.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf42.csv'
+
+WF162:
+    name: WF162
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF
+        dielectric:
+            material: SiO2
+            thickness: 120 nm
+        adhesion:
+            material: Al
+            thickness: 5 nm
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM IMAP\WF162\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf162.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf162.csv'
+
+WF47:
+    name: WF47
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF
+        dielectric:
+            material: SiN
+            thickness: 52 nm
+        adhesion:
+            material: Al
+            thickness: 5 nm
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM IMAP\WF47\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf47.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf47.csv'
+
+WF48:
+    name: WF48
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF
+        dielectric:
+            material: SiN
+            thickness: 52 nm
+        adhesion:
+            material: Al
+            thickness: 5 nm
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 100
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF48\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf48.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_09102021112854wf48.csv'
+
+WF175:
+    name: WF175
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF
+        dielectric:
+            material: n-Si
+            thickness: 1000 nm
+        adhesion:
+            material: Al
+            thickness: 5 nm
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF175\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf175.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf175.csv'
+
+WF245:
+    name: WF245
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF 30 sec.
+        dielectric:
+            material: SiN LPCVD low stress annealed 2h 950 C
+            thickness: 60 nm
+        adhesion:
+            material: Al
+            thickness: 30 sec
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 100
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF245\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf245.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_10152021095540wf245.csv'
+
+WF246:
+    name: WF246
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF 30 sec.
+        dielectric:
+            material: SiN LPCVD low stress annealed 2h 950 C
+            thickness: 60 nm
+        adhesion:
+            material: Al
+            thickness: 10 sec
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 100
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF246\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf246.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_10152021120539wf246.csv'
+
+WF247:
+    name: WF247
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF 30 sec.
+        dielectric:
+            material: SiN LPCVD low stress annealed 2h 950 C
+            thickness: 60 nm
+        adhesion:
+            material: Al
+            thickness: 120 sec
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 100
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF247\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf247.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_10152021143204wf247.csv'
+
+WF248:
+    name: WF248
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF 30 sec.
+        dielectric:
+            material: SiN LPCVD low stress annealed 2h 950 C
+            thickness: 60 nm
+        adhesion:
+            material: Al
+            thickness: 120 sec
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 90
+            units: mA/cm2
+        time:
+            value: 13
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF248\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf248.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_10212021115451wf248.csv'
+
+
+WF54:
+    name: WF54
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 387
+            units: um
+    mask:
+        material: SiN
+        thickness: 120 nm
+    pretreatment: BHF 30 sec.
+    deposition: Al
+    experiments:
+        MOSS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\MOSS\WF54*.xls'
+            timing:
+                plasma: 600
+                shutter: 780
+                off: 1000
+            
+WF158:
+    name: WF158
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 387
+            units: um
+    mask:
+        material: SiO2
+        thickness: 120 nm
+    pretreatment: BHF 30 sec.
+    deposition: Al
+    experiments:
+        MOSS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\MOSS\WF158*.xls'
+            timing:
+                plasma: 300
+                shutter: 480
+                off: 710
+
+WF125:
+    name: WF125
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 382
+            units: um
+    mask:
+        material: Si
+    pretreatment: BHF 30 sec.
+    deposition: Al
+    experiments:
+        MOSS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\MOSS\WF125*.xls'
+            timing:
+                plasma: 500
+                shutter: 680
+                off: 900

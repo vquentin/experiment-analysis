@@ -75,9 +75,12 @@ class SEMZeissImage(object):
         If a banner is present, the banner and lines below will be masked.
         """
         line_banner = 676  # valid for Zeiss microscope in Winfab
+        line_banner_IMAP = 692  # valid for IMAP microscope 
         mask = np.ones(self.image.shape, dtype=bool)
-        if (np.amin(self.image[line_banner, :]) == 0
-                and np.amax(self.image[line_banner+1, :]) == 255):
+        if ((np.amin(self.image[line_banner, :]) == 0
+                and np.amax(self.image[line_banner+1, :]) == 255)
+                or (np.amax(self.image[line_banner_IMAP, :]) == 255
+                    and np.amax(self.image[line_banner_IMAP, :]) == 255)):
             has_banner = True
             mask_first_line = min(line_banner, line_count)
         else:

@@ -8,10 +8,13 @@ import glob
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+import itertools
+from cycler import cycler
 
 from semimage.sem_image import SEMZeissImage
 import semimage.image_analysis as ia
 import voltage.electrochemistry as ec
+import optical.moss as moss
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -31,6 +34,7 @@ samples_description = yaml.safe_load(open(path.parent / 'samples.yml'))
 UNIFORMITYSEMCS = 'uniformity-SEM-CS'
 UNIFORMITYSEMCSNORMALIZE = 'uniformity-SEM-CS-normalize'
 UVST = 'u-vs-t'
+MOSS = 'MOSS'
 
 
 class Experiment(object):
@@ -56,6 +60,10 @@ class Experiment(object):
 
     def plot(self):
         raise NotImplementedError
+
+    def save(self):
+        """Cache experiment results"""
+        pass
 
     def get_path(self, *args):
         return ([Experiment.get_nested(samples_description, sample, 'experiments', self._type, 'path') for sample in args])
@@ -137,12 +145,26 @@ class UniformitySEMCSNormalize(UniformitySEMCS):
 
     def plot(self, legend):
         fig = plt.figure()
+        colors = itertools.cycle(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])
+        #cycler('color', ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']))
         for result in self._result:
             #plt.errorbar(result[:,4], result[:,2], yerr=result[:,3])
-            result.plot(x='Distance to collector [mm]', y='Thickness Ratio Center [-]', ax=fig.gca(), kind='scatter')
+            result.plot(x='Distance to collector [mm]', y='Porous thickness [um]', ax=fig.gca(), kind='scatter', logy=False, color=next(colors))
+            #result.plot(x='Distance to collector [mm]', y='Thickness Ratio Center [-]', ax=fig.gca(), kind='scatter', logy=False, color=next(colors))
         plt.legend(self.get_legend(legend_struct=legend))
         plt.xlabel('Distance from current collector [mm]')
-        plt.ylabel('Ratio porous Si thickness edge/center')
+        plt.ylabel('Porous thickness ['+chr(956)+'m]')
+        fig.gca().set_xlim(xmin=0)
+        if fig.gca().get_yscale() is 'linear':
+            fig.gca().set_ylim(ymin=0)
+        #for result in self._result:
+            #A, K = fit_exp_linear(result['Distance to collector [mm]'], result['Porous thickness [um]'], 0)
+            #fit_y = model_func(result['Distance to collector [mm]'], A, K, 0)
+            #fig.gca().plot(result['Distance to collector [mm]'], fit_y, 'blue', linewidth=1)
+
+            #p = np.polyfit(result['Distance to collector [mm]'], result['Porous thickness [um]'], 3)
+            #fig.gca().plot(result['Distance to collector [mm]'], np.polyval(p, result['Distance to collector [mm]']), 'blue', linewidth=1)
+
         plt.show()
 
 
@@ -169,10 +191,35 @@ class UvsT(Experiment):
         plt.show()
 
 
+
+class MOSS(Experiment):
+
+    def __init__(self, *samples, **ignored_kwargs):
+        super().__init__(MOSS, *samples)
+        self._sample_paths = self.get_path(*samples)
+        self._result = []
+
+    def run(self):
+        for sample_path in self._sample_paths:
+            plt.show()
+            self._result.append(
+                ec.get_U_vs_t(sample_path))
+
+    def plot(self, legend):
+        fig = plt.figure()
+        for result in self._result:
+            result.plot(x='Seconds', y='Voltage', ax=fig.gca())
+        plt.legend(self.get_legend(legend_struct=legend))
+        plt.xlabel('Time [seconds]')
+        plt.ylabel('Cell voltage [V]')
+        plt.show()
+
+
 factory = {
         UNIFORMITYSEMCS: UniformitySEMCS,
         UNIFORMITYSEMCSNORMALIZE: UniformitySEMCSNormalize,
-        UVST: UvsT
+        UVST: UvsT,
+        MOSS: MOSS
     }
 
 
