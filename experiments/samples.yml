@@ -983,11 +983,11 @@ WF54:
     deposition: Al
     experiments:
         MOSS:
-            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\MOSS\WF54*.xls'
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\MOSS\WF54_20211006.114205 MOS Data.xls'
             timing:
                 plasma: 600
                 shutter: 780
-                off: 1000
+                poweroff: 1000
             
 WF158:
     name: WF158
@@ -1005,11 +1005,11 @@ WF158:
     deposition: Al
     experiments:
         MOSS:
-            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\MOSS\WF158*.xls'
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\MOSS\WF158_20211006.134538 MOS Data.xls'
             timing:
                 plasma: 300
                 shutter: 480
-                off: 710
+                poweroff: 710
 
 WF125:
     name: WF125
@@ -1026,8 +1026,8 @@ WF125:
     deposition: Al
     experiments:
         MOSS:
-            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\MOSS\WF125*.xls'
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\MOSS\WF125_20211006.143527 MOS Data.xls'
             timing:
                 plasma: 500
                 shutter: 680
-                off: 900
+                poweroff: 900

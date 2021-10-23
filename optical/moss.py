@@ -9,15 +9,7 @@ import pandas as pd
 import random
 
 
-def get_mds(sample_path, mask_type=None):
+def get_mds_vs_t(sample_path, mask_type=None):
     """Returns the voltage vs. time from a formatted .csv file."""
-    df = pd.read_csv(sample_path)
-    df = __shift_time(df, -30)
-    return df
-
-
-def __shift_time(df, time=-30):
-    """Returns a data frame with the time values shifted by x seconds.
-    """
-    df['Seconds'] = df['Seconds']+time
+    df = pd.read_excel(sample_path)
     return df

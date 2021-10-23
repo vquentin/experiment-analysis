@@ -38,7 +38,7 @@ if __name__ == '__main__':
     Al_thickness_dependence = ('WF48','WF245', 'WF246', 'WF247')
 
 
-    MOSS_experiments = ('WF54',)
+    MOSS_experiments = ('WF54', 'WF158', 'WF125')
 
     #legend='mask.material+mask.dielectric.material'
     #legend='mask.material'
@@ -50,13 +50,13 @@ if __name__ == '__main__':
     #legend = 'mask.adhesion.thickness'
     #samples = ('examples',)
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *metal_masks_Al_time)
-    experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *thick_porous_attempts)
+    #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *thick_porous_attempts)
 
-    #experiment = get_experiment(MOSS, *MOSS_experiments)
+    experiment = get_experiment(MOSS, *MOSS_experiments)
 
     
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *metal_masks_implant)
-    experiment = get_experiment(U_VS_T, *best_sample)
+    #experiment = get_experiment(U_VS_T, *best_sample)
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *Al_thickness_dependence)
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *metal_masks_Ag_pretreatment)
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *metal_masks_Au_Cr)
