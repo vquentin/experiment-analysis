@@ -52,7 +52,7 @@ if __name__ == '__main__':
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *metal_masks_Al_time)
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *thick_porous_attempts)
 
-    experiment = get_experiment(MOSS, *MOSS_experiments)
+    #experiment = get_experiment(MOSS, *MOSS_experiments)
 
     
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *metal_masks_implant)
@@ -63,9 +63,10 @@ if __name__ == '__main__':
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *resistivity)
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *metal_masks_dielectric)
     #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *metal_masks_dielectric_Al)
+    experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *best_sample)
     #experiment = get_experiment(SEM_UNIFORMITY, *newSample)
     experiment.run()
-    #experiment.save()
+    experiment.save()
     #experiment.plot(legend)
     experiment.plot(legend)
    

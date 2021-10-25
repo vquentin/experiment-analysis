@@ -101,16 +101,14 @@ class UniformitySEMCS(Experiment):
             if file_candidate.exists():
                 self._result.append(pd.read_csv(file_candidate))
             else:
-                result_image = np.zeros((len(sample_path), 4))
-                for i, image_file in enumerate(sample_path):
+                result_image = []
+                for image_file in sample_path:
                     plt.show()
-                    result_image[i, :] = ia.get_porous_thickness(SEMZeissImage(image_file))  # x, y, thickness, uncertainty
-                idx = np.argmin(result_image[:,0])
-                d = np.linalg.norm(result_image[:, 0:1] - result_image[idx, 0:1], axis=1)
-                d = d-np.min(d)
-                result = np.concatenate((result_image, d[:, np.newaxis]), axis=1)
-                result = result[result[:,0].argsort()]
-                df = pd.DataFrame(result, columns=['X [mm]', 'Y [mm]', 'Porous thickness [um]', 'Uncertainty [um]', 'Distance [mm]'])
+                    result_image.append(ia.get_porous_thickness(SEMZeissImage(image_file)))
+                df = pd.DataFrame(result_image, columns=['Image', 'X [mm]', 'Y [mm]', 'Porous thickness [um]', 'Uncertainty [um]'])
+                xy = df.iloc[:, df.columns.get_indexer(['X [mm]', 'Y [mm]'])].to_numpy()
+                d = np.linalg.norm(xy - xy[0, :], axis=1) 
+                df['Distance [mm]'] = d
                 self._result.append(df)
 
     def plot(self, legend):
@@ -142,7 +140,9 @@ class UniformitySEMCSNormalize(UniformitySEMCS):
             distFirstCavity = 6400  # um
             result['Distance to collector [mm]'] = abs(abs((result['Distance [mm]']+distFirstCavity/1000)-(distCenterCollector/1000))-distCenterCollector/1000)
             #TODO normalize thickness result['Ratio ']
-            result['Thickness Ratio Center [-]'] = result['Porous thickness [um]']/min(result['Porous thickness [um]'])
+            log.debug(result.dtypes)
+            log.debug(result.loc[:, 'Porous thickness [um]'])
+            result['Thickness Ratio Center [-]'] = result.loc[:, 'Porous thickness [um]'] / min(result.loc[:, 'Porous thickness [um]'])
 
     def plot(self, legend):
         fig = plt.figure()
