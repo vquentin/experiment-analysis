@@ -186,10 +186,13 @@ class Line(object):
         """
         Return the intensity difference between line at other side of current
         line, and line at same side, separated by 2*distance.
+        TODO make more robust if lines are not the same length, e.g. errors:
+            return line_minus.intensity - line_plus.intensity
+            ValueError: operands could not be broadcast together with shapes (1006,) (1024,)
         """
         line_minus, line_plus = self.lines_at_offset(distance=distance)
         if self.side == 0:
-            return line_plus.intensity-line_minus.intensity
+            return line_plus.intensity - line_minus.intensity
         elif self.side == 1:
             return line_minus.intensity - line_plus.intensity
 
@@ -266,6 +269,7 @@ class Line(object):
         if show:
             plt.figure()
             plt.plot(dist)
+        #return abs(np.max(dist)), np.std(dist)
         return abs(np.median(dist)), np.std(dist)
 
     def distance_to_points(self, p):
@@ -285,8 +289,9 @@ class Line(object):
         """Return the median and deviation of distances to line point by point, excluding zeros."""
         idx = np.column_stack(np.where(edge))
         dist = self.distance_to_points(idx)*self.__image.metadata.pixel_size/1000
-        dist_excl_zeros = dist[~np.isclose(dist, 0, rtol=0, atol=0.1)]
+        dist_excl_zeros = dist[~np.isclose(dist, 0, rtol=0, atol=0.9*max(dist))]
         if show:
             plt.figure()
             plt.plot(dist)
+            plt.plot(dist_excl_zeros)
         return abs(np.median(dist_excl_zeros)), np.std(dist_excl_zeros)

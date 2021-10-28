@@ -9,7 +9,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 import itertools
-from cycler import cycler
 
 from semimage.sem_image import SEMZeissImage
 import semimage.image_analysis as ia
@@ -27,8 +26,7 @@ except ImportError:
     log.warning("Could not import yaml.CLoader")
 
 # load sample descriptions
-path = Path(__file__)
-samples_description = yaml.safe_load(open(path.parent / 'samples.yml'))
+samples_description = yaml.safe_load(open(Path(__file__).parent / 'samples.yml'))
 
 # constant variables for experiment types
 UNIFORMITYSEMCS = 'uniformity-SEM-CS'
@@ -52,13 +50,15 @@ class Experiment(object):
     def __init__(self, experiment_id, *samples):
         self._type = experiment_id
         self._samples = samples
-        print(samples)
-        print(*samples)
+        self._sample_paths = [glob.glob(sample) if sample is not None else None
+                              for sample in self.get_path(*samples)]
+        self._result = []
+        log.debug(samples)
 
     def run(self):
         raise NotImplementedError
 
-    def plot(self):
+    def plot(self, legend):
         raise NotImplementedError
 
     def save(self):
@@ -89,15 +89,12 @@ class UniformitySEMCS(Experiment):
 
     def __init__(self, *samples, **ignored_kwargs):
         super().__init__(UNIFORMITYSEMCS, *samples)
-        self._sample_paths = [glob.glob(sample) if sample is not None else None
-                              for sample in self.get_path(*samples)]
-        self._result = []
+        self.__cache_name = "result.csv"
 
     def run(self):
         for sample_path in self._sample_paths:
             path = Path(sample_path[0])
-            name = "result.csv"
-            file_candidate = path.parent / name
+            file_candidate = path.parent / self.__cache_name
             if file_candidate.exists():
                 self._result.append(pd.read_csv(file_candidate))
             else:
@@ -105,11 +102,12 @@ class UniformitySEMCS(Experiment):
                 for image_file in sample_path:
                     plt.show()
                     result_image.append(ia.get_porous_thickness(SEMZeissImage(image_file)))
-                df = pd.DataFrame(result_image, columns=['Image', 'X [mm]', 'Y [mm]', 'Porous thickness [um]', 'Uncertainty [um]'])
-                xy = df.iloc[:, df.columns.get_indexer(['X [mm]', 'Y [mm]'])].to_numpy()
+                result = pd.DataFrame(result_image, columns=['Image', 'X [mm]', 'Y [mm]', 'Porous thickness [um]', 'Uncertainty [um]'])
+                xy = result.iloc[:, result.columns.get_indexer(['X [mm]', 'Y [mm]'])].to_numpy()
                 d = np.linalg.norm(xy - xy[0, :], axis=1) 
-                df['Distance [mm]'] = d
-                self._result.append(df)
+                result['Distance [mm]'] = d
+                result.sort_values('Distance [mm]', inplace=True, ignore_index=True)
+                self._result.append(result)
 
     def plot(self, legend):
         fig = plt.figure()
@@ -118,39 +116,34 @@ class UniformitySEMCS(Experiment):
             result.plot(x='Distance [mm]', y='Porous thickness [um]', ax=fig.gca())
         plt.legend(self.get_legend(legend_struct=legend))
         plt.xlabel('Distance [mm]')
-        plt.ylabel('Porous Si thickness [um]')
+        plt.ylabel('Porous Si thickness ['+chr(956)+'m]')
         plt.show()
 
     def save(self):
         for i, result in enumerate(self._result):
             path = Path(self._sample_paths[i][0])
-            name = "result.csv"
-            result.to_csv(path.parent / name)
+            result.to_csv(path.parent / self.__cache_name, index=False)
 
 
 class UniformitySEMCSNormalize(UniformitySEMCS):
-    def __init__(self, *samples, **ignored_kwargs):
-        super().__init__(*samples, **ignored_kwargs)
 
     def run(self):
         super().run()
         for result in self._result:
             # transform points to distance from edge
-            distCenterCollector = 26500  # um
-            distFirstCavity = 6400  # um
-            result['Distance to collector [mm]'] = abs(abs((result['Distance [mm]']+distFirstCavity/1000)-(distCenterCollector/1000))-distCenterCollector/1000)
+            distance_center_collector = 26.500  # mm
+            distance_first_cavity = 6.400  # mm
+            result['Distance to collector [mm]'] = abs(abs((result['Distance [mm]']+distance_first_cavity)-(distance_center_collector))-distance_center_collector)
             #TODO normalize thickness result['Ratio ']
-            log.debug(result.dtypes)
-            log.debug(result.loc[:, 'Porous thickness [um]'])
             result['Thickness Ratio Center [-]'] = result.loc[:, 'Porous thickness [um]'] / min(result.loc[:, 'Porous thickness [um]'])
 
     def plot(self, legend):
         fig = plt.figure()
         colors = itertools.cycle(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])
-        #cycler('color', ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']))
+        styles = itertools.cycle(['-o', '-s', '-+', '-D'])
         for result in self._result:
+            result.plot.line(x='Distance to collector [mm]', y='Porous thickness [um]', ax=fig.gca(), style=next(styles), logy=False, color=next(colors))
             #plt.errorbar(result[:,4], result[:,2], yerr=result[:,3])
-            result.plot(x='Distance to collector [mm]', y='Porous thickness [um]', ax=fig.gca(), kind='scatter', logy=False, color=next(colors))
             #result.plot(x='Distance to collector [mm]', y='Thickness Ratio Center [-]', ax=fig.gca(), kind='scatter', logy=False, color=next(colors))
         plt.legend(self.get_legend(legend_struct=legend))
         plt.xlabel('Distance from current collector [mm]')
@@ -158,14 +151,6 @@ class UniformitySEMCSNormalize(UniformitySEMCS):
         fig.gca().set_xlim(xmin=0)
         if fig.gca().get_yscale() is 'linear':
             fig.gca().set_ylim(ymin=0)
-        #for result in self._result:
-            #A, K = fit_exp_linear(result['Distance to collector [mm]'], result['Porous thickness [um]'], 0)
-            #fit_y = model_func(result['Distance to collector [mm]'], A, K, 0)
-            #fig.gca().plot(result['Distance to collector [mm]'], fit_y, 'blue', linewidth=1)
-
-            #p = np.polyfit(result['Distance to collector [mm]'], result['Porous thickness [um]'], 3)
-            #fig.gca().plot(result['Distance to collector [mm]'], np.polyval(p, result['Distance to collector [mm]']), 'blue', linewidth=1)
-
         plt.show()
 
 
@@ -173,14 +158,12 @@ class UvsT(Experiment):
 
     def __init__(self, *samples, **ignored_kwargs):
         super().__init__(UVST, *samples)
-        self._sample_paths = self.get_path(*samples)
-        self._result = []
 
     def run(self):
         for sample_path in self._sample_paths:
             plt.show()
             self._result.append(
-                ec.get_U_vs_t(sample_path))
+                ec.get_U_vs_t(*sample_path))
 
     def plot(self, legend):
         fig = plt.figure()
@@ -196,7 +179,6 @@ class Moss(Experiment):
 
     def __init__(self, *samples, **ignored_kwargs):
         super().__init__(MOSS, *samples)
-        self._sample_paths = self.get_path(*samples)
         self._sample_times = self.get_arg(*samples, key='timing')
         self._result = []
 

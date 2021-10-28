@@ -245,7 +245,7 @@ WF74:
     mask:
         material: Au
         thickness: 450 nm
-        adhesionLayer: No adhesion layer
+        adhesionLayer: no adhesion layer
         geometry: XFab2
         dielectric:
             material: No dielectric
@@ -514,8 +514,9 @@ WF148:
         thickness: 600 nm
         geometry: XFab2
         pretreatment: Std clean, BHF
+        adhesionLayer: no adhesion layer
         dielectric:
-            material: No dielectric
+            material: no SiN
     cavity:
         method: RIE ICP
     porosification:
@@ -844,7 +845,7 @@ WF245:
             path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf245.csv'
             geometry: 4 pads
         u-vs-t:
-            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_10152021095540wf245.csv'
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf245.csv'
 
 WF246:
     name: WF246
@@ -964,7 +965,7 @@ WF248:
             path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf248.csv'
             geometry: 4 pads
         u-vs-t:
-            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_10212021115451wf248.csv'
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf248.csv'
 
 
 WF54:

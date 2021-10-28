@@ -225,18 +225,22 @@ def classify_lines(lines, show=False, image=None):
             features[line.classify(5)] = line
     # TODO: add an if clause to reclassify porous_void as si_void if it's more than 100 um away from cavity
     if show:
-        plt.figure()
-        plt.imshow(image.image, cmap=cm.gray, vmin=0, vmax=255)
-        cavity = features.get('Cavity')
-        si_void = features.get('Si/void interface')
-        porous_void = features.get('Porous Si/void interface')
-        if cavity is not None:
-            cavity.show2(c='r')
-        if si_void is not None:
-            si_void.show2(c='b')
-        if porous_void is not None:
-            porous_void.show2(c='g')
+        show_lines(features, image=image)
     return features
+
+
+def show_lines(features, image=None):
+    plt.figure()
+    plt.imshow(image.image, cmap=cm.gray, vmin=0, vmax=255)
+    cavity = features.get('Cavity')
+    si_void = features.get('Si/void interface')
+    porous_void = features.get('Porous Si/void interface')
+    if cavity is not None:
+        cavity.show2(c='r')
+    if si_void is not None:
+        si_void.show2(c='b')
+    if porous_void is not None:
+        porous_void.show2(c='g')
 
 
 def classify(self, lines=None, debug=False):
@@ -280,7 +284,7 @@ def measure_porous_thickness(features, edges, edges_sides, show=False, image=Non
     if 'Si/void interface' in features:
         return measure_porous_thickness_flat(features['Si/void interface'], edges, edges_sides, show=show, image=image)
     else:
-        return 0, 0
+        return None
 
 
 def measure_porous_thickness_flat(interface, edges, edges_sides, show=False, image=None):
@@ -295,17 +299,26 @@ def measure_porous_thickness_cavity(cavity, edges, edges_sides, show=False, imag
     side_cavity = cavity.side
     side_porous = math.floor(side_cavity/2)*2+(side_cavity+1) % 2
     cavity_depth = cavity.distance_to_edge_exclude_zero_um(edges_sides[..., side_cavity], show=False)
-    porous_depth = cavity.distance_to_edge_um(edges_sides[..., side_porous], show=False)
+    porous_depth = cavity.distance_to_edge_um(edges_sides[..., side_porous], show=show)
     porous_thickness = porous_depth[0]-cavity_depth[0]
     #unc = porous_thickness * ((porous_depth[1]/porous_depth[0])**2+(cavity_depth[1]/cavity_depth[0])**2)**0.5
     unc = (porous_depth[1]**2+cavity_depth[1]**2)**0.5
+    log.debug(f"Cavity depth is {cavity_depth[0]} \u00B1 {cavity_depth[1]} {chr(956)}m")
+    if show:
+        show_lines({'Cavity': cavity}, image=image)
+        show_edges(edges_sides[..., side_cavity], image=image, overlay=True)
+        show_edges(edges_sides[..., side_porous], image=image, overlay=True)
     return porous_thickness, unc
 
 
-
-
-
-
+def show_edges(edges, image=None, overlay=True):
+    if isinstance(image, SEMZeissImage):
+        image = image.image
+    else:
+        image = np.ones(edges.shape)
+    if overlay:
+        __plt_overlay(image, edges, axes=plt.gca(),
+                        title=None)
 
 
 def analyze(self, analyses=None):
