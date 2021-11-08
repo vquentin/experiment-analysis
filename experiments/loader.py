@@ -14,6 +14,7 @@ from semimage.sem_image import SEMZeissImage
 import semimage.image_analysis as ia
 import voltage.electrochemistry as ec
 import optical.moss as moss
+import utils.wafer_mapping as wm
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -129,12 +130,9 @@ class UniformitySEMCSNormalize(UniformitySEMCS):
 
     def run(self):
         super().run()
-        for result in self._result:
+        for sample, result in zip(self._samples, self._result):
             # transform points to distance from edge
-            result['Distance to collector [mm]'] = 
-            distance_center_collector = 26.500  # mm
-            distance_first_cavity = 6.400  # mm
-            result['Distance to collector [mm]'] = abs(abs((result['Distance [mm]']+distance_first_cavity)-(distance_center_collector))-distance_center_collector)
+            result['Distance to collector [mm]'] = wm.distance_to_collector(result['Distance [mm]'], samples_description[sample]['mask']['geometry'])
             #TODO normalize thickness result['Ratio ']
             result['Thickness Ratio Center [-]'] = result.loc[:, 'Porous thickness [um]'] / min(result.loc[:, 'Porous thickness [um]'])
 
