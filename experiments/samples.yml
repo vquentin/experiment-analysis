@@ -1032,3 +1032,84 @@ WF125:
                 plasma: 500
                 shutter: 680
                 poweroff: 900
+
+WF164:
+    name: WF164
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF 20 sec.
+        dielectric:
+            material: SiO2 dry oxidation 1100 C
+            thickness: 80 nm
+        adhesion:
+            material: Al
+            thickness: 120 sec
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 90
+            units: mA/cm2
+        time:
+            value: 13
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF164\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf164.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf164.csv'
+
+
+WF185:
+    name: WF185
+    silicon:
+        resistivity: 
+            value: 15
+            units: Ohm cm
+        thickness: 
+            value: 381
+            units: um
+    mask:
+        material: Ag
+        thickness: 600 nm
+        geometry: XFab2
+        pretreatment: BHF 30 sec.
+        dielectric:
+            material: n-Si P implantation
+            thickness: 0 nm
+        adhesion:
+            material: none
+            thickness: 0 sec
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 90
+            units: mA/cm2
+        time:
+            value: 13
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM WinFab\Quentin VO\WF185\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf185.csv'
+            geometry: 4 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf185.csv'

@@ -131,6 +131,7 @@ class UniformitySEMCSNormalize(UniformitySEMCS):
         super().run()
         for result in self._result:
             # transform points to distance from edge
+            result['Distance to collector [mm]'] = 
             distance_center_collector = 26.500  # mm
             distance_first_cavity = 6.400  # mm
             result['Distance to collector [mm]'] = abs(abs((result['Distance [mm]']+distance_first_cavity)-(distance_center_collector))-distance_center_collector)
