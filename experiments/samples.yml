@@ -1,6 +1,103 @@
 # Copyright (c) 2021, Quentin Van Overmeere
 # Licensed under MIT License
 ---
+
+WF55:
+    name: WF55
+    silicon:
+        resistivity: 
+            value: 16.2
+            units: Ohm cm
+        thickness: 
+            value: 372.0
+            units: um
+    mask:
+        material: SiN
+        geometry: XFab2
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 100
+            units: mA/cm2
+        time:
+            value: 10
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM IMAP\WF55\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf55.csv'
+            geometry: 2 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf55.csv'
+
+WF5:
+    name: WF5
+    silicon:
+        resistivity: 
+            value: 15.35
+            units: Ohm cm
+        thickness: 
+            value: 388.0
+            units: um
+    mask:
+        material: SiN
+        geometry: XFab2
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 100
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM IMAP\WF5\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*wf5.csv'
+            geometry: 2 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*wf5.csv'
+
+GD23:
+    name: GD23
+    silicon:
+        resistivity: 
+            value: 0.21
+            units: Ohm cm
+        thickness: 
+            value: 367.0
+            units: um
+    mask:
+        material: SiN
+        geometry: GSLines
+    cavity:
+        method: RIE ICP
+    porosification:
+        current-density:
+            value: 10
+            units: mA/cm2
+        time:
+            value: 100
+            units: min
+        electrolyte: HF:ethanol 3:1
+        light: No
+    experiments:
+        uniformity-SEM-CS:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\SEM IMAP\GD23\*.tif'
+        contact:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_iv_*gd23.csv'
+            geometry: 2 pads
+        u-vs-t:
+            path: 'C:\Users\qvovermeere\OneDrive - UCL\PoSiSTAN\Experiments\Keithley 2460 logs\posistan_log_*gd23.csv'
+
 ADB1:
     name: ADB1
     silicon:
@@ -20,7 +117,7 @@ ADB1:
             value: 100
             units: mA/cm2
         time:
-            value: 0
+            value: 30
             units: min
         electrolyte: HF:ethanol 3:1
         light: No
@@ -37,10 +134,10 @@ WF56:
     name: WF56
     silicon:
         resistivity: 
-            value: '15 Ohm cm'
+            value: 16.66
             units: Ohm cm
         thickness: 
-            value: 381
+            value: 388.0
             units: um
     mask:
         material: SiN
@@ -69,7 +166,7 @@ WF66:
     name: WF66
     silicon:
         resistivity: 
-            value: 15
+            value: 15.45
             units: Ohm cm
         thickness: 
             value: 381
@@ -103,7 +200,7 @@ WF67:
     name: WF67
     silicon:
         resistivity: 
-            value: 15
+            value: 15.44
             units: Ohm cm
         thickness: 
             value: 381
@@ -137,7 +234,7 @@ WF68:
     name: WF68
     silicon:
         resistivity: 
-            value: 15
+            value: 15.5
             units: Ohm cm
         thickness: 
             value: 381
@@ -171,7 +268,7 @@ WF69:
     name: WF69
     silicon:
         resistivity: 
-            value: 15
+            value: 15.25
             units: Ohm cm
         thickness: 
             value: 381
@@ -205,7 +302,7 @@ WF71:
     name: WF71
     silicon:
         resistivity: 
-            value: 15
+            value: 15.5
             units: Ohm cm
         thickness: 
             value: 381
@@ -237,7 +334,7 @@ WF74:
     name: WF74
     silicon:
         resistivity: 
-            value: 15
+            value: 16.03
             units: Ohm cm
         thickness: 
             value: 381
@@ -339,7 +436,7 @@ UB19:
     name: UB19
     silicon:
         resistivity:
-            value: 0.015
+            value: 0.03
             units: Ohm cm
         thickness:
             value: 180

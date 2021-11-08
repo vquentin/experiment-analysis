@@ -73,16 +73,17 @@ class Experiment(object):
         return ([Experiment.get_nested(samples_description, sample, 'experiments', self._type, key) for sample in args])
 
     def get_legend(self, legend_struct=None):
-        if legend_struct is None:
-            return ([samples_description[sample]['name']
-                     for sample in self._samples])
         legend = []
-        subparts = legend_struct.split('+')
-        for sample in self._samples:
-            legend.append(', '.join(
-                [Experiment.get_nested(samples_description, sample,
-                                       *tuple(part.split('.')))
-                 for part in subparts]))
+        try:
+            subparts = legend_struct.split('+')
+            for sample in self._samples:
+                legend.append(', '.join(
+                    [Experiment.get_nested(samples_description, sample,
+                                            *tuple(part.split('.')))
+                        for part in subparts]))
+        except:
+            legend = ([samples_description[sample]['name']
+                       for sample in self._samples])
         return legend
 
 

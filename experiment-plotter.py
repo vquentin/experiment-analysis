@@ -12,6 +12,7 @@ U_VS_T = 'u-vs-t'
 MOSS = 'MOSS'
 
 if __name__ == '__main__':
+    SiN_vs_resistivity = ('WF5', 'GD23', 'WF55', 'WF56', 'ADB1')
     Ag_high_cd = ('WF248', 'WF164', 'WF185')
     metal_masks_Au_Ag = ('WF74', 'WF148',)
     Au_different_Cr_thickness = ('WF74', 'WF67', 'WF102')
@@ -47,8 +48,8 @@ if __name__ == '__main__':
     #legend = 'mask.adhesion.thickness'
 
     #experiment = get_experiment(MOSS, *MOSS_experiments)
-    experiment = get_experiment(U_VS_T, *Ag_high_cd)
-    #experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *Ag_high_cd)
+    #experiment = get_experiment(U_VS_T, *Ag_high_cd)
+    experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *SiN_vs_resistivity)
     #experiment = get_experiment(SEM_UNIFORMITY, *newSample)
 
     experiment.run()
