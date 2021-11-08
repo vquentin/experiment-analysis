@@ -12,7 +12,7 @@ U_VS_T = 'u-vs-t'
 MOSS = 'MOSS'
 
 if __name__ == '__main__':
-    SiN_vs_resistivity = ('WF5', 'GD23', 'WF55', 'WF56', 'ADB1')
+    SiN_vs_resistivity = ('WF5', 'GD23', 'ADB1')
     Ag_high_cd = ('WF248', 'WF164', 'WF185')
     metal_masks_Au_Ag = ('WF74', 'WF148',)
     Au_different_Cr_thickness = ('WF74', 'WF67', 'WF102')
@@ -32,12 +32,12 @@ if __name__ == '__main__':
     metal_masks_Al_time = ('WF245', 'WF246')
     justification_Al_adhesion = ('WF56', 'WF148', 'WF162', 'WF47', 'WF42', 'WF175')
     Al_vs_antiporous = ('WF162', 'WF47', 'WF175')
-    thick_porous_attempts = ('WF48', 'WF245', 'WF248')
+    thick_porous_attempts = ('WF245', 'WF248')
     best_sample = ('WF248',)
     Al_thickness_dependence = ('WF48', 'WF245', 'WF246', 'WF247')
     MOSS_experiments = ('WF54', 'WF158', 'WF125')
 
-    legend = 'mask.dielectric.material'
+    legend = 'porosification.current-density+porosification.time'
     #legend = 'mask.material+mask.dielectric.material'
     #legend = 'mask.material+mask.adhesionLayer'
     #legend = 'mask.material'
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     #experiment = get_experiment(MOSS, *MOSS_experiments)
     #experiment = get_experiment(U_VS_T, *Ag_high_cd)
-    experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *SiN_vs_resistivity)
+    experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *thick_porous_attempts)
     #experiment = get_experiment(SEM_UNIFORMITY, *newSample)
 
     experiment.run()

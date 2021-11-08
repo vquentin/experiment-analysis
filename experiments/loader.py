@@ -39,12 +39,25 @@ MOSS = 'MOSS'
 class Experiment(object):
 
     @staticmethod
+    def represents_int(s):
+        """From https://stackoverflow.com/a/1267145"""
+        try:
+            int(s)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
     def get_nested(dict_, *keys, default=None):
         """From https://stackoverflow.com/a/34958071/13969506"""
         if not isinstance(dict_, dict):
             return default
         elem = dict_.get(keys[0], default)
         if len(keys) == 1:
+            if isinstance(elem, dict):
+                return str(elem['value'])+' '+elem['units']
+            if Experiment.represents_int(elem):
+                return str(elem)
             return elem
         return Experiment.get_nested(elem, *keys[1:], default=default)
 
@@ -79,9 +92,10 @@ class Experiment(object):
             for sample in self._samples:
                 legend.append(', '.join(
                     [Experiment.get_nested(samples_description, sample,
-                                            *tuple(part.split('.')))
+                                           *tuple(part.split('.')))
                         for part in subparts]))
-        except TypeError:
+        except TypeError as e:
+            log.debug(e)
             legend = ([samples_description[sample]['name']
                        for sample in self._samples])
         return legend
@@ -106,8 +120,8 @@ class UniformitySEMCS(Experiment):
                     result_image.append(ia.get_porous_thickness(SEMZeissImage(image_file)))
                 result = pd.DataFrame(result_image, columns=['Image', 'X [mm]', 'Y [mm]', 'Porous thickness [um]', 'Uncertainty [um]'])
                 xy = result.iloc[:, result.columns.get_indexer(['X [mm]', 'Y [mm]'])].to_numpy()
-                d = np.linalg.norm(xy - xy[0, :], axis=1) 
-                result['Distance [mm]'] = d
+                # TODO: correct bug here since distance function is not working when program starts with an extreme position image
+                result['Distance [mm]'] = np.linalg.norm(xy - xy[0, :], axis=1)
                 result.sort_values('Distance [mm]', inplace=True, ignore_index=True)
                 self._result.append(result)
 
@@ -144,10 +158,11 @@ class UniformitySEMCSNormalize(UniformitySEMCS):
         for result in self._result:
             result.plot.line(x='Distance to collector [mm]', y='Porous thickness [um]', ax=fig.gca(), style=next(styles), logy=False, color=next(colors))
             #plt.errorbar(result[:,4], result[:,2], yerr=result[:,3])
-            #result.plot(x='Distance to collector [mm]', y='Thickness Ratio Center [-]', ax=fig.gca(), kind='scatter', logy=False, color=next(colors))
+            #result.plot.line(x='Distance to collector [mm]', y='Thickness Ratio Center [-]', ax=fig.gca(), style=next(styles), logy=True, color=next(colors))
         plt.legend(self.get_legend(legend_struct=legend))
         plt.xlabel('Distance from current collector [mm]')
         plt.ylabel('Porous thickness ['+chr(956)+'m]')
+        #plt.ylabel('Thickness ratio [-]')
         fig.gca().set_xlim(xmin=0)
         if fig.gca().get_yscale() is 'linear':
             fig.gca().set_ylim(ymin=0)
