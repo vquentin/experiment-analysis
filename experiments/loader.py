@@ -81,7 +81,7 @@ class Experiment(object):
                     [Experiment.get_nested(samples_description, sample,
                                             *tuple(part.split('.')))
                         for part in subparts]))
-        except:
+        except TypeError:
             legend = ([samples_description[sample]['name']
                        for sample in self._samples])
         return legend
