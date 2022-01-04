@@ -53,10 +53,16 @@ class Experiment(object):
         if not isinstance(dict_, dict):
             return default
         elem = dict_.get(keys[0], default)
+        if keys == ('silicon', 'sheet_resistance'):
+            sheet_resistance = elem['resistivity']['value']/elem['thickness']['value']*1e4
+            if sheet_resistance < 10:
+                return f'{sheet_resistance:.1g} \u03A9/\u25FB'
+            else:
+                return(f'{int(sheet_resistance)} \u03A9/\u25FB')
         if len(keys) == 1:
             if isinstance(elem, dict):
                 return str(elem['value'])+' '+elem['units']
-            if Experiment.represents_int(elem):
+            elif Experiment.represents_int(elem):
                 return str(elem)
             return elem
         return Experiment.get_nested(elem, *keys[1:], default=default)
@@ -158,7 +164,7 @@ class UniformitySEMCSNormalize(UniformitySEMCS):
         for result in self._result:
             result.plot.line(x='Distance to collector [mm]', y='Porous thickness [um]', ax=fig.gca(), style=next(styles), logy=False, color=next(colors))
             #plt.errorbar(result[:,4], result[:,2], yerr=result[:,3])
-            #result.plot.line(x='Distance to collector [mm]', y='Thickness Ratio Center [-]', ax=fig.gca(), style=next(styles), logy=True, color=next(colors))
+            #result.plot.line(x='Distance to collector [mm]', y='Thickness Ratio Center [-]', ax=fig.gca(), style=next(styles), logy=False, color=next(colors))
         plt.legend(self.get_legend(legend_struct=legend))
         plt.xlabel('Distance from current collector [mm]')
         plt.ylabel('Porous thickness ['+chr(956)+'m]')

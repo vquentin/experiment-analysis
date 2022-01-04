@@ -45,11 +45,15 @@ def get_porous_thickness(sem_image):
     edges_sides = edges_on_side(edges, show=False, image=sem_image)
     lines = find_lines(mask_center_h(edges_sides, 0.5),
                        show=False, image=sem_image)
-    features = classify_lines(lines, show=False, image=sem_image)
-    porous_thickness = measure_porous_thickness(features, edges, edges_sides, show=False, image=sem_image)
     result = [sem_image.image_name, sem_image.metadata.stage_x, sem_image.metadata.stage_y, np.nan, np.nan]
+    porous_thickness = None
+    try:
+        features = classify_lines(lines, show=False, image=sem_image)
+        porous_thickness = measure_porous_thickness(features, edges, edges_sides, show=False, image=sem_image)
+    except ValueError as e:
+        log.debug(e)
     if porous_thickness is not None:
-        log.debug(porous_thickness)
+        log.debug(f"Porous thickness is {porous_thickness[0]} \u00B1 {porous_thickness[1]} {chr(956)}m")
         result[3] = porous_thickness[0]
         result[4] = porous_thickness[1]
     return result
