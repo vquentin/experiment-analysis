@@ -44,14 +44,14 @@ if __name__ == '__main__':
     #legend = 'mask.material+mask.adhesionLayer'
     legend = 'mask.material'
     #legend = 'porosification.time'
-    #legend = 'mask.material+mask.adhesionLayer'
+    legend = 'mask.material+mask.adhesionLayer'
     #legend = 'silicon.resistivity.value'
     #legend = 'mask.pretreatment'
     #legend = 'mask.adhesion.thickness'
 
     #experiment = get_experiment(MOSS, *MOSS_experiments)
     #experiment = get_experiment(U_VS_T, *Ag_high_cd)
-    experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *best_sample_2)
+    experiment = get_experiment(SEM_UNIFORMITY_NORMALIZED, *justification_Al_adhesion)
     #experiment = get_experiment(SEM_UNIFORMITY, *newSample)
 
     experiment.run()
